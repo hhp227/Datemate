@@ -4,6 +4,10 @@
     <string name="connection_error_message">Unable to fetch podcasts feeds.\nCheck your internet connection and try again.</string>
     <string name="app_tagline">Find your datemate</string>
     <string name="retry_label">Retry</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
     <string name="hint_email">이메일</string>
     <string name="hint_password">패스워드</string>
     <string name="sign_in">로그인</string>

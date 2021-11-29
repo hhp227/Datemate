@@ -10,9 +10,9 @@ import com.kortek.myapplication.ui.theme.DateMateTheme
 fun DateMateApp() {
     ProvideWindowInsets {
         DateMateTheme {
-            val viewModel = viewModel(LoginViewModel::class.java)
+            val viewModel: LoginViewModel = viewModel()
 
-            MainScreen()
+            LoginScreen()
         }
     }
 }
