@@ -31,21 +31,13 @@ fun LoginScreen() {
     val viewModel: LoginViewModel = viewModel()
 
     Column {
-        Column(
-            modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically)
-        ) {
-            Logo(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 76.dp)
-            )
+        Column(modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically)) {
+            Logo(modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 76.dp))
             Text(
                 text = stringResource(id = R.string.app_tagline),
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
+                modifier = Modifier.padding(top = 24.dp).fillMaxWidth()
             )
         }
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -64,9 +56,7 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = { viewModel.signIn(emailState.text, passwordState.text) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                 enabled = emailState.isValid && passwordState.isValid
             ) {
                 Text(text = stringResource(id = R.string.sign_in))
@@ -140,14 +130,12 @@ fun Password(
             passwordState.text = it
             passwordState.enableShowErrors()
         },
-        modifier = modifier
-            .fillMaxWidth()
-            .onFocusChanged { focusState ->
-                passwordState.onFocusChange(focusState.isFocused)
-                if (!focusState.isFocused) {
-                    passwordState.enableShowErrors()
-                }
-            },
+        modifier = modifier.fillMaxWidth().onFocusChanged { focusState ->
+            passwordState.onFocusChange(focusState.isFocused)
+            if (!focusState.isFocused) {
+                passwordState.enableShowErrors()
+            }
+        },
         textStyle = MaterialTheme.typography.body2,
         label = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
@@ -181,11 +169,7 @@ fun Password(
         },
         isError = passwordState.showErrors(),
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = imeAction),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                onImeAction()
-            }
-        )
+        keyboardActions = KeyboardActions(onDone = { onImeAction() })
     )
 
     passwordState.getError()?.let { error -> TextFieldError(textError = error) }
