@@ -23,14 +23,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kortek.myapplication.ui.theme.DateMateTheme
 
 @Composable
-fun LoginScreen() {
-    val viewModel: LoginViewModel = viewModel()
-
-    Column {
+fun SignInScreen(viewModel: SignInViewModel?) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp)
+    ) {
         Column(modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically)) {
             Logo(modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 76.dp))
             Text(
@@ -40,7 +41,10 @@ fun LoginScreen() {
                 modifier = Modifier.padding(top = 24.dp).fillMaxWidth()
             )
         }
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             val focusRequester = remember { FocusRequester() }
             val emailState = remember { EmailState() }
             val passwordState = remember { PasswordState() }
@@ -51,11 +55,11 @@ fun LoginScreen() {
                 label = stringResource(id = R.string.password),
                 passwordState = passwordState,
                 modifier = Modifier.focusRequester(focusRequester),
-                onImeAction = { viewModel.signIn(emailState.text, passwordState.text) }
+                onImeAction = { viewModel?.signIn(emailState.text, passwordState.text) }
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { viewModel.signIn(emailState.text, passwordState.text) },
+                onClick = { viewModel?.signIn(emailState.text, passwordState.text) },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                 enabled = emailState.isValid && passwordState.isValid
             ) {
@@ -130,12 +134,14 @@ fun Password(
             passwordState.text = it
             passwordState.enableShowErrors()
         },
-        modifier = modifier.fillMaxWidth().onFocusChanged { focusState ->
-            passwordState.onFocusChange(focusState.isFocused)
-            if (!focusState.isFocused) {
-                passwordState.enableShowErrors()
-            }
-        },
+        modifier = modifier
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                passwordState.onFocusChange(focusState.isFocused)
+                if (!focusState.isFocused) {
+                    passwordState.enableShowErrors()
+                }
+            },
         textStyle = MaterialTheme.typography.body2,
         label = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
@@ -171,7 +177,6 @@ fun Password(
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = imeAction),
         keyboardActions = KeyboardActions(onDone = { onImeAction() })
     )
-
     passwordState.getError()?.let { error -> TextFieldError(textError = error) }
 }
 
@@ -187,5 +192,21 @@ fun TextFieldError(textError: String) {
             modifier = Modifier.fillMaxWidth(),
             style = LocalTextStyle.current.copy(color = MaterialTheme.colors.error)
         )
+    }
+}
+
+@Preview(name = "Sign in light theme")
+@Composable
+fun SignInPreview() {
+    DateMateTheme {
+        SignInScreen(null)
+    }
+}
+
+@Preview(name = "Sign in dark theme")
+@Composable
+fun SignInPreviewDark() {
+    DateMateTheme(darkTheme = true) {
+        SignInScreen(null)
     }
 }

@@ -10,9 +10,13 @@ import com.kortek.myapplication.ui.theme.DateMateTheme
 fun DateMateApp() {
     ProvideWindowInsets {
         DateMateTheme {
-            val viewModel: LoginViewModel = viewModel()
+            val viewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(UserRepository()))
 
-            LoginScreen()
+            if (viewModel.signInResult.success) {
+                MainScreen()
+            } else {
+                SignInScreen(viewModel)
+            }
         }
     }
 }
