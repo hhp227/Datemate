@@ -25,6 +25,6 @@ fun DateMateApp() {
 @Composable
 fun DefaultPreview() {
     DateMateTheme {
-        Greeting("Android")
+        MainScreen()
     }
 }

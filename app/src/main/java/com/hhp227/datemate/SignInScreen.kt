@@ -71,11 +71,12 @@ fun SignInScreen(viewModel: SignInViewModel?) {
 
 @Composable
 private fun Logo(modifier: Modifier = Modifier, lightTheme: Boolean = MaterialTheme.colors.isLight) {
-    val assetId = if (lightTheme) {
+    /*val assetId = if (lightTheme) {
         R.drawable.ic_logo_light
     } else {
         R.drawable.ic_logo_dark
-    }
+    }*/
+    val assetId = R.drawable.ic_logo_eng
 
     Image(
         painter = painterResource(id = assetId),
