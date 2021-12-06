@@ -6,13 +6,10 @@ import com.google.firebase.auth.FirebaseAuth
 class UserRepository {
     val auth = FirebaseAuth.getInstance()
 
-    var isSignedIn: Boolean = auth.currentUser == null
-
     fun signIn(email: String, password: String, result: (SignInStatus) -> Unit) {
         result(SignInStatus.Loading)
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                isSignedIn = true
                 Log.e("TEST", "LoginSuccess")
                 result(SignInStatus.Success)
             }

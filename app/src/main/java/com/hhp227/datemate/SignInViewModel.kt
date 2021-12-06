@@ -28,8 +28,11 @@ class SignInViewModel(private val repository: UserRepository) : ViewModel() {
             //TODO 더 좋은 방법있으면 개선해나가기
             repository.signIn(email, password) {
                 when (it) {
-                    SignInStatus.Success, SignInStatus.Failure -> {
-                        signInResult = SignInResult(repository.isSignedIn)
+                    SignInStatus.Success -> {
+                        signInResult = SignInResult(true)
+                    }
+                    SignInStatus.Failure -> {
+                        signInResult = SignInResult(false)
                     }
                     SignInStatus.Loading -> {
                         Log.e("TEST", "loading중입니다.")
