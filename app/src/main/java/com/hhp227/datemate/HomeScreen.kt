@@ -1,6 +1,7 @@
 package com.hhp227.datemate
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,10 @@ import com.kortek.myapplication.ui.theme.DateMateTheme
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
-    Text("Home")
+    Text(
+        text = "Home",
+        modifier = Modifier.clickable { viewModel.test() }
+    )
 }
 
 @Preview(name = "Home in light theme")
