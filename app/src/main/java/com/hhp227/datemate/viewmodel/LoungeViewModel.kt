@@ -2,5 +2,5 @@ package com.hhp227.datemate.viewmodel
 
 import androidx.lifecycle.ViewModel
 
-class HomeViewModel : ViewModel() {
+class LoungeViewModel : ViewModel() {
 }

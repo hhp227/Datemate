@@ -10,10 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.hhp227.datemate.viewmodel.HomeViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kortek.myapplication.ui.theme.DateMateTheme
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: HomeViewModel = viewModel()
+) {
     Text("Home")
 }
 
