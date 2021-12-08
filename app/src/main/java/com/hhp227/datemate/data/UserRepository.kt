@@ -1,21 +1,18 @@
-package com.hhp227.datemate
+package com.hhp227.datemate.data
 
-import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.auth.FirebaseAuth
 
 class UserRepository {
-    val dataStore = preferencesDataStore("user")
-
     val auth = FirebaseAuth.getInstance()
 
-    fun signIn(email: String, password: String, result: (SignInStatus) -> Unit) {
-        result(SignInStatus.Loading)
+    fun signIn(email: String, password: String, result: (SignInState) -> Unit) {
+        result(SignInState.Loading)
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                result(SignInStatus.Success)
+                result(SignInState.Success)
             }
         }.addOnFailureListener {
-            result(SignInStatus.Failure)
+            result(SignInState.Failure)
         }
     }
 
@@ -31,6 +28,6 @@ class UserRepository {
     fun getCurrentUser() = auth.currentUser
 }
 
-enum class SignInStatus {
+enum class SignInState {
     Success, Loading, Failure
 }

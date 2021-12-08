@@ -1,4 +1,4 @@
-package com.hhp227.datemate
+package com.hhp227.datemate.viewmodel
 
 import android.util.Log
 import android.util.Patterns
@@ -7,9 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.hhp227.datemate.data.SignInState
+import com.hhp227.datemate.data.UserRepository
 
 class SignInViewModel(private val repository: UserRepository) : ViewModel() {
-    var signInResult by mutableStateOf(SignInResult())
+    var signInResult by mutableStateOf(SignInResult(repository.getCurrentUser() != null))
 
     private fun isEmailValid(email: String): Boolean {
         return if (email.contains('@')) {
@@ -28,18 +30,22 @@ class SignInViewModel(private val repository: UserRepository) : ViewModel() {
             //TODO 더 좋은 방법있으면 개선해나가기
             repository.signIn(email, password) {
                 when (it) {
-                    SignInStatus.Success -> {
+                    SignInState.Success -> {
                         signInResult = SignInResult(true)
                     }
-                    SignInStatus.Failure -> {
+                    SignInState.Failure -> {
                         signInResult = SignInResult(false)
                     }
-                    SignInStatus.Loading -> {
+                    SignInState.Loading -> {
                         Log.e("TEST", "loading중입니다.")
                     }
                 }
             }
         }
+    }
+
+    fun signOut() {
+        repository.signOut()
     }
 
     data class SignInResult(val success: Boolean = false)

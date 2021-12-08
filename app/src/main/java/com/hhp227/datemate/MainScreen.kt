@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -15,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -35,11 +33,13 @@ fun MainScreen() {
                     color = MaterialTheme.colors.primary,
                     elevation = 4.dp
                 ) {
-                    TopAppBar(title = { Text(
-                        text = stringResource(id = R.string.app_name),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) })
+                    TopAppBar(title = {
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    })
                 }
             },
             bottomBar = { BottomNavigationBar(navController) }
