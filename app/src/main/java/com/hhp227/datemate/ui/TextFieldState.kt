@@ -1,4 +1,4 @@
-package com.hhp227.datemate
+package com.hhp227.datemate.ui
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

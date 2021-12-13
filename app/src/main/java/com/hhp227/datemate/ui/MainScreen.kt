@@ -1,9 +1,10 @@
-package com.hhp227.datemate
+package com.hhp227.datemate.ui
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -13,11 +14,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.*
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.hhp227.datemate.ui.NavigationItem
+import com.hhp227.datemate.R
 
 @Composable
 fun MainScreen() {
@@ -46,10 +51,26 @@ fun MainScreen() {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = NavigationItem.Home.route
+                startDestination = "Main"
             ) {
-                composable(NavigationItem.Home.route) { HomeScreen() }
-                composable(NavigationItem.Lounge.route) { LoungeScreen() }
+                navigation(
+                    route = "Main",
+                    startDestination = NavigationItem.Home.route
+                ) {
+                    composable(NavigationItem.Home.route) { HomeScreen() }
+                    composable(NavigationItem.Lounge.route) { from ->
+                        LoungeScreen(onNavigate = {
+                            if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                navController.navigate("PostDetail")
+                            }
+                            Log.e("TEST", "우왕국")
+                        })
+                    }
+                }
+                composable(
+                    route = "PostDetail",
+                    arguments = emptyList()
+                ) { PostDetailScreen() }
             }
         }
     } else {
@@ -74,6 +95,9 @@ fun OfflineDialog(onRetry: () -> Unit) {
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     BottomNavigation {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+
         listOf(NavigationItem.Home, NavigationItem.Lounge).forEach { item ->
             BottomNavigationItem(
                 icon = {
@@ -83,16 +107,14 @@ fun BottomNavigationBar(navController: NavController) {
                     )
                 },
                 alwaysShowLabel = true,
-                selected = false,
+                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                 onClick = {
                     navController.navigate(item.route) {
                         launchSingleTop = true
                         restoreState = true
 
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
-                            }
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
                         }
                     }
                 }

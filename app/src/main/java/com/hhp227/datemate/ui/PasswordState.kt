@@ -1,4 +1,4 @@
-package com.hhp227.datemate
+package com.hhp227.datemate.ui
 
 class PasswordState : TextFieldState(validator = ::isPasswordValid, errorFor = ::passwordValidationError)
 

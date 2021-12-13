@@ -1,4 +1,4 @@
-package com.hhp227.datemate
+package com.hhp227.datemate.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hhp227.datemate.R
 import com.hhp227.datemate.viewmodel.SignInViewModel
 import com.kortek.myapplication.ui.theme.DateMateTheme
 

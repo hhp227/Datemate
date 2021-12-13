@@ -1,4 +1,4 @@
-package com.hhp227.datemate
+package com.hhp227.datemate.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
