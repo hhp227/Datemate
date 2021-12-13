@@ -94,10 +94,11 @@ fun OfflineDialog(onRetry: () -> Unit) {
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    
+    Log.e("TEST", "CurrentDestination: $currentDestination")
     BottomNavigation {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
-
         listOf(NavigationItem.Home, NavigationItem.Lounge).forEach { item ->
             BottomNavigationItem(
                 icon = {
