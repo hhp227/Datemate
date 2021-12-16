@@ -32,7 +32,7 @@ fun LoungeScreen(
     viewModel: LoungeViewModel = viewModel(factory = viewModelProviderFactoryOf { LoungeViewModel(LoungeRepository()) }),
     onNavigate: () -> Unit
 ) {
-    val posts by viewModel.getPosts().collectAsState(initial = emptyList())
+    val posts by viewModel.posts
 
     Column {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {

@@ -96,8 +96,7 @@ fun OfflineDialog(onRetry: () -> Unit) {
 fun BottomNavigationBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    
-    Log.e("TEST", "CurrentDestination: $currentDestination")
+
     BottomNavigation {
         listOf(NavigationItem.Home, NavigationItem.Lounge).forEach { item ->
             BottomNavigationItem(
