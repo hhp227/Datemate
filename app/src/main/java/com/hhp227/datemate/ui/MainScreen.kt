@@ -71,6 +71,10 @@ fun MainScreen() {
                     route = "PostDetail",
                     arguments = emptyList()
                 ) { PostDetailScreen() }
+                composable(
+                    route = "Write",
+                    arguments = emptyList()
+                ) { WriteScreen() }
             }
         }
     } else {
