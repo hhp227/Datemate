@@ -10,7 +10,7 @@ class LoungeRepository(
     private val rootRef: DatabaseReference = FirebaseDatabase.getInstance().reference,
     private val postRef: DatabaseReference = rootRef.child("posts")
 ) {
-    fun getResponseFromRealtimeDatabaseUsingFlow(): Flow<List<Post>> {
+    fun getPosts(): Flow<List<Post>> {
         val mutableStateFlow = MutableStateFlow<List<Post>>(emptyList())
 
         postRef.get().addOnCompleteListener { task ->
