@@ -36,9 +36,16 @@ fun LoungeScreen(
     val state by viewModel.state
 
     Box {
-        when {
-            state.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            state.error.isNotBlank() -> Text(
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+            items(state.posts) { post ->
+                PostItem(post = post, onItemClick = onNavigate)
+                Divider()
+            }
+        }
+        if (state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        } else if (state.error.isNotBlank()) {
+            Text(
                 text = state.error,
                 color = MaterialTheme.colors.error,
                 textAlign = TextAlign.Center,
@@ -46,12 +53,6 @@ fun LoungeScreen(
                     .padding(horizontal = 20.dp)
                     .align(Alignment.Center)
             )
-        }
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-            items(state.posts) { post ->
-                PostItem(post = post, onItemClick = onNavigate)
-                Divider()
-            }
         }
     }
 }
