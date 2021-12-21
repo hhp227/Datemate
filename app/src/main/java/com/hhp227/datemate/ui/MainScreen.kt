@@ -50,7 +50,7 @@ fun MainScreen() {
             bottomBar = { BottomNavigationBar(navController) },
             floatingActionButton = {
                 val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = null)
-                
+
                 if (currentBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
                     FloatingActionButton(onClick = { /*TODO*/ }) {
                         Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
