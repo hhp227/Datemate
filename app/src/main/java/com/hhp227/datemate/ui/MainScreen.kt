@@ -7,6 +7,8 @@ import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +31,8 @@ fun MainScreen() {
     val context = LocalContext.current
     var isOnline by remember { mutableStateOf(checkIfOnline(context)) }
     val navController = rememberNavController()
+    val list = listOf(NavigationItem.Home, NavigationItem.Lounge)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     if (isOnline) {
         Scaffold(
@@ -38,16 +42,30 @@ fun MainScreen() {
                     color = MaterialTheme.colors.primary,
                     elevation = 4.dp
                 ) {
-                    TopAppBar(title = {
-                        Text(
-                            text = stringResource(id = R.string.app_name),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    })
+                    TopAppBar(
+                        title = {
+                            Text(
+                                text = stringResource(id = R.string.app_name),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        navigationIcon = if (navBackStackEntry?.destination?.route !in list.map { it.route }) {
+                            {
+                                //TODO 더 좋은방법 있으면 고치기
+                                IconButton(onClick = { navController.navigateUp() }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.ArrowBack,
+                                        contentDescription = "Back"
+                                    )
+                                }
+                            }
+                        } else {
+                            null
+                        })
                 }
             },
-            bottomBar = { BottomNavigationBar(navController) },
+            bottomBar = { BottomNavigationBar(navController, list, navBackStackEntry?.destination) },
             floatingActionButton = {
                 val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = null)
 
@@ -106,32 +124,31 @@ fun OfflineDialog(onRetry: () -> Unit) {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
+fun BottomNavigationBar(navController: NavController, list: List<NavigationItem>, currentDestination: NavDestination?) {
+    if (currentDestination?.route in list.map { it.route }) {
+        BottomNavigation {
+            list.forEach { item ->
+                BottomNavigationItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = item.icon),
+                            contentDescription = item.title
+                        )
+                    },
+                    alwaysShowLabel = true,
+                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                    onClick = {
+                        navController.navigate(item.route) {
+                            launchSingleTop = true
+                            restoreState = true
 
-    BottomNavigation {
-        listOf(NavigationItem.Home, NavigationItem.Lounge).forEach { item ->
-            BottomNavigationItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = item.icon),
-                        contentDescription = item.title
-                    )
-                },
-                alwaysShowLabel = true,
-                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                onClick = {
-                    navController.navigate(item.route) {
-                        launchSingleTop = true
-                        restoreState = true
-
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
