@@ -50,9 +50,8 @@ fun MainScreen() {
                                 modifier = Modifier.fillMaxWidth()
                             )
                         },
-                        navigationIcon = if (navBackStackEntry?.destination?.route !in list.map { it.route }) {
+                        navigationIcon = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let {
                             {
-                                //TODO 더 좋은방법 있으면 고치기
                                 IconButton(onClick = { navController.navigateUp() }) {
                                     Icon(
                                         imageVector = Icons.Filled.ArrowBack,
@@ -60,16 +59,12 @@ fun MainScreen() {
                                     )
                                 }
                             }
-                        } else {
-                            null
                         })
                 }
             },
             bottomBar = { BottomNavigationBar(navController, list, navBackStackEntry?.destination) },
             floatingActionButton = {
-                val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = null)
-
-                if (currentBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
+                if (navBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
                     FloatingActionButton(onClick = { /*TODO*/ }) {
                         Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
                     }
@@ -125,7 +120,7 @@ fun OfflineDialog(onRetry: () -> Unit) {
 
 @Composable
 fun BottomNavigationBar(navController: NavController, list: List<NavigationItem>, currentDestination: NavDestination?) {
-    if (currentDestination?.route in list.map { it.route }) {
+    if (currentDestination?.route in list.map(NavigationItem::route)) {
         BottomNavigation {
             list.forEach { item ->
                 BottomNavigationItem(
