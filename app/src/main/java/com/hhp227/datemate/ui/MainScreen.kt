@@ -46,7 +46,7 @@ fun MainScreen() {
                         title = {
                             Text(
                                 text = stringResource(id = R.string.app_name),
-                                textAlign = TextAlign.Center,
+                                textAlign = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let { TextAlign.Start } ?: TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         },
@@ -65,7 +65,11 @@ fun MainScreen() {
             bottomBar = { BottomNavigationBar(navController, list, navBackStackEntry?.destination) },
             floatingActionButton = {
                 if (navBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
-                    FloatingActionButton(onClick = { /*TODO*/ }) {
+                    FloatingActionButton(onClick = {
+                        if (navBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                            navController.navigate("Write")
+                        }
+                    }) {
                         Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
                     }
                 }
@@ -85,7 +89,6 @@ fun MainScreen() {
                             if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
                                 navController.navigate("PostDetail")
                             }
-                            Log.e("TEST", "우왕국")
                         })
                     }
                 }
