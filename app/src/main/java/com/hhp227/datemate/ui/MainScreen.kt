@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -25,6 +24,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hhp227.datemate.R
+import com.hhp227.datemate.ui.MainDestinations.MAIN_ROUTE
+import com.hhp227.datemate.ui.MainDestinations.POST_DETAIL_ROUTE
+import com.hhp227.datemate.ui.MainDestinations.POST_KEY
+import com.hhp227.datemate.ui.MainDestinations.WRITE_ROUTE
 
 @Composable
 fun MainScreen() {
@@ -67,7 +70,7 @@ fun MainScreen() {
                 if (navBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
                     FloatingActionButton(onClick = {
                         if (navBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-                            navController.navigate("Write")
+                            navController.navigate(WRITE_ROUTE)
                         }
                     }) {
                         Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
@@ -77,27 +80,27 @@ fun MainScreen() {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = "Main"
+                startDestination = MAIN_ROUTE
             ) {
                 navigation(
-                    route = "Main",
+                    route = MAIN_ROUTE,
                     startDestination = NavigationItem.Home.route
                 ) {
                     composable(NavigationItem.Home.route) { HomeScreen() }
                     composable(NavigationItem.Lounge.route) { from ->
-                        LoungeScreen(onNavigate = {
+                        LoungeScreen(onNavigate = { postKey ->
                             if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                                navController.navigate("PostDetail")
+                                navController.navigate("$POST_DETAIL_ROUTE/$postKey")
                             }
                         })
                     }
                 }
                 composable(
-                    route = "PostDetail",
+                    route = "$POST_DETAIL_ROUTE/{$POST_KEY}",
                     arguments = emptyList()
-                ) { PostDetailScreen() }
+                ) { PostDetailScreen(it.arguments?.getString(POST_KEY) ?: "") }
                 composable(
-                    route = "Write",
+                    route = WRITE_ROUTE,
                     arguments = emptyList()
                 ) { WriteScreen() }
             }
@@ -163,4 +166,11 @@ private fun checkIfOnline(context: Context): Boolean {
     } else {
         cm.activeNetworkInfo?.isConnectedOrConnecting == true
     }
+}
+
+object MainDestinations {
+    const val MAIN_ROUTE = "Main"
+    const val WRITE_ROUTE = "Write"
+    const val POST_DETAIL_ROUTE = "PostDetail"
+    const val POST_KEY = "PostKey"
 }

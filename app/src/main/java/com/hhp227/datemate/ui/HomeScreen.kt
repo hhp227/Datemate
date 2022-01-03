@@ -14,8 +14,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
     Text(
-        text = "Home",
-        modifier = Modifier.clickable { viewModel.test() }
+        text = "Home"
     )
 }
 

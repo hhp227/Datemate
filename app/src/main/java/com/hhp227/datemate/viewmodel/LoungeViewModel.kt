@@ -17,10 +17,10 @@ class LoungeViewModel(
     val state = mutableStateOf(State())
 
     private fun getPosts() {
-        repository.getPosts().map(::postUseCase).flowOn(Dispatchers.IO).onEach(::onReceive).launchIn(viewModelScope)
+        repository.getPosts().map(::getPostsUseCase).flowOn(Dispatchers.IO).onEach(::onReceive).launchIn(viewModelScope)
     }
 
-    private fun postUseCase(batch: List<Post>): Resource<List<Post>> {
+    private fun getPostsUseCase(batch: List<Post>): Resource<List<Post>> {
         return try {
             Resource.Success(batch)
         } catch (e: Exception) {

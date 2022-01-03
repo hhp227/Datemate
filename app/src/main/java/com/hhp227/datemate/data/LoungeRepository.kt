@@ -16,7 +16,7 @@ class LoungeRepository(
         postRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 task.result?.children?.map { snapshot ->
-                    snapshot.getValue(Post::class.java)!!
+                    snapshot.key?.let { snapshot.getValue(Post::class.java)?.apply { key = it } } ?: Post()
                 }?.let {
                     mutableStateFlow.value = it
                 }
