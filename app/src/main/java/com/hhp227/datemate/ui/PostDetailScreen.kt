@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hhp227.datemate.R
 import com.hhp227.datemate.data.PostDetailRepository
+import com.hhp227.datemate.model.Comment
 import com.hhp227.datemate.util.viewModelProviderFactoryOf
 import com.hhp227.datemate.viewmodel.PostDetailViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostDetailScreen(
     postKey: String,
@@ -28,9 +28,11 @@ fun PostDetailScreen(
 ) {
     Column {
         LazyColumn {
-            val state by viewModel.state
+            val postState by viewModel.postState
+            val commentsState by viewModel.commentsState
 
-            state.post?.let { post ->
+            postState.post?.let { post ->
+                @OptIn(ExperimentalFoundationApi::class)
                 stickyHeader {
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -46,10 +48,11 @@ fun PostDetailScreen(
                             Text(text = post.body)
                         }
                     }
+                    Divider()
                 }
             }
-            itemsIndexed(state.comments) { i, comment ->
-
+            itemsIndexed(commentsState.comments) { i, comment ->
+                CommentItem(comment = comment)
             }
         }
         Column {
@@ -57,6 +60,21 @@ fun PostDetailScreen(
             Row {
                 Text(text = "PostDetailScreen")
             }
+        }
+    }
+}
+
+@Composable
+fun CommentItem(comment: Comment) {
+    Row {
+        Image(
+            painter = painterResource(id = R.drawable.ic_action_account_circle_40),
+            contentDescription = null,
+            modifier = Modifier.size(32.dp, 32.dp)
+        )
+        Column {
+            Text(text = comment.author)
+            Text(text = comment.text)
         }
     }
 }

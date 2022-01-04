@@ -2,7 +2,6 @@ package com.hhp227.datemate.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.data.PostDetailRepository
@@ -17,7 +16,9 @@ class PostDetailViewModel(
     private val repository: PostDetailRepository,
     key: String
     ): ViewModel() {
-    val state = mutableStateOf(State())
+    val postState = mutableStateOf(PostState())
+
+    val commentsState = mutableStateOf(CommentsState())
 
     var message: String = ""
 
@@ -25,35 +26,69 @@ class PostDetailViewModel(
         repository.getPost(key).map(::getPostUseCase).onEach(::onReceive).launchIn(viewModelScope)
     }
 
+    private fun getComments(key: String) {
+        repository.getComments(key).map(::getCommentsUseCase).onEach(::onReceive).launchIn(viewModelScope)
+    }
+
     private fun getPostUseCase(post: Post): Resource<Post> {
         return try {
-            Resource.Success(post)
+            Resource.Success(data = post)
         } catch (e: Exception) {
-            Resource.Error(e.localizedMessage ?: "An unexpected error occured")
+            Resource.Error(message = e.localizedMessage ?: "An unexpected error occured")
         }
     }
 
+    private fun getCommentsUseCase(comments: List<Comment>): Resource<List<Comment>> {
+        return try {
+            Resource.Success(data = comments)
+        } catch (e: Exception) {
+            Resource.Error(message = e.localizedMessage ?: "An unexpected error occured")
+        }
+    }
+
+    @JvmName("onReceivePost")
     private fun onReceive(result: Resource<Post>) {
         when (result) {
             is Resource.Success -> {
-                this.state.value = State(post = result.data)
+                this.postState.value = PostState(post = result.data)
             }
             is Resource.Error -> {
-                this.state.value = State(error = result.message ?: "An unexpected error occured")
+                this.postState.value = PostState(error = result.message ?: "An unexpected error occured")
             }
             is Resource.Loading -> {
-                this.state.value = State(isLoading = true)
+                this.postState.value = PostState(isLoading = true)
+            }
+        }
+    }
+
+    @JvmName("onReceiveComment")
+    private fun onReceive(result: Resource<List<Comment>>) {
+        when (result) {
+            is Resource.Success -> {
+                this.commentsState.value = CommentsState(comments = result.data ?: emptyList())
+            }
+            is Resource.Error -> {
+                this.commentsState.value = CommentsState(error = result.message ?: "An unexpected error occured")
+            }
+            is Resource.Loading -> {
+                this.commentsState.value = CommentsState(isLoading = true)
             }
         }
     }
 
     init {
         getPost(key)
+        getComments(key)
     }
 
-    data class State(
+    data class PostState(
         var isLoading: Boolean = false,
         var post: Post? = null,
+        var error: String = ""
+    )
+
+    data class CommentsState(
+        var isLoading: Boolean = false,
         var comments: List<Comment> = emptyList(),
         var error: String = ""
     )
