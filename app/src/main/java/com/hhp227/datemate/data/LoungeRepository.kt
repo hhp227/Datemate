@@ -1,26 +1,37 @@
 package com.hhp227.datemate.data
 
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.hhp227.datemate.model.Post
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.callbackFlow
 
 class LoungeRepository(
     private val rootRef: DatabaseReference = FirebaseDatabase.getInstance().reference,
     private val postRef: DatabaseReference = rootRef.child("posts")
 ) {
-    fun getPosts(): Flow<List<Post>> {
-        val mutableStateFlow = MutableStateFlow<List<Post>>(emptyList())
-
-        postRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                mutableStateFlow.value = task.result.children.mapNotNull { snapshot ->
-                    snapshot.key?.let { snapshot.getValue(Post::class.java)?.apply { key = it } } ?: Post()
+    fun getPosts(): Flow<List<Post>> = callbackFlow {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                runCatching {
+                    trySendBlocking(snapshot.children.mapNotNull { dataSnapshot ->
+                        dataSnapshot.key?.let { dataSnapshot.getValue(Post::class.java)?.apply { key = it } } ?: Post()
+                    })
                 }
             }
+
+            override fun onCancelled(error: DatabaseError) {
+                runCatching { trySendBlocking(emptyList()) }
+            }
         }
-        return mutableStateFlow
+
+        postRef.addListenerForSingleValueEvent(postListener)
+        awaitClose {
+            postRef.removeEventListener(postListener)
+            close()
+        }
     }
 
     fun test() = "헬로우"
