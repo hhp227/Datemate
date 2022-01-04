@@ -1,18 +1,13 @@
 package com.hhp227.datemate.data
 
-import android.util.Log
 import com.google.firebase.database.*
 import com.hhp227.datemate.model.Comment
 import com.hhp227.datemate.model.Post
-import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
-import java.lang.Exception
 
 class PostDetailRepository(
     private val rootRef: DatabaseReference = FirebaseDatabase.getInstance().reference,
@@ -48,5 +43,10 @@ class PostDetailRepository(
             })
         }
         awaitClose { channel.close() }
+    }
+
+    fun getUserPostKeys(key: String): Flow<List<String>> {
+        val mutableStateFlow = MutableStateFlow<List<String>>(emptyList())
+        return mutableStateFlow
     }
 }

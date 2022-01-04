@@ -30,6 +30,10 @@ class PostDetailViewModel(
         repository.getComments(key).map(::getCommentsUseCase).onEach(::onReceive).launchIn(viewModelScope)
     }
 
+    private fun getUserPostKeys(key: String) {
+        repository.getUserPostKeys(key).onEach(::onReceive).launchIn(viewModelScope)
+    }
+
     private fun getPostUseCase(post: Post): Resource<Post> {
         return try {
             Resource.Success(data = post)
@@ -76,9 +80,14 @@ class PostDetailViewModel(
         }
     }
 
+    private fun onReceive(keys: List<String>) {
+
+    }
+
     init {
         getPost(key)
         getComments(key)
+        getUserPostKeys(key)
     }
 
     data class PostState(
