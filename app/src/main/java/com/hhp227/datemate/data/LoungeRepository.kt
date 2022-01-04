@@ -15,15 +15,13 @@ class LoungeRepository(
     fun getPosts(): Flow<List<Post>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                runCatching {
-                    trySendBlocking(snapshot.children.mapNotNull { dataSnapshot ->
-                        dataSnapshot.key?.let { dataSnapshot.getValue(Post::class.java)?.apply { key = it } } ?: Post()
-                    })
-                }
+                trySend(snapshot.children.mapNotNull { dataSnapshot ->
+                    dataSnapshot.key?.let { dataSnapshot.getValue(Post::class.java)?.apply { key = it } } ?: Post()
+                })
             }
 
             override fun onCancelled(error: DatabaseError) {
-                runCatching { trySendBlocking(emptyList()) }
+                trySend(emptyList())
             }
         }
 
