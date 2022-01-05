@@ -4,12 +4,17 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,7 +33,9 @@ import com.hhp227.datemate.ui.MainDestinations.MAIN_ROUTE
 import com.hhp227.datemate.ui.MainDestinations.POST_DETAIL_ROUTE
 import com.hhp227.datemate.ui.MainDestinations.POST_KEY
 import com.hhp227.datemate.ui.MainDestinations.WRITE_ROUTE
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen() {
     val context = LocalContext.current
@@ -36,73 +43,97 @@ fun MainScreen() {
     val navController = rememberNavController()
     val list = listOf(NavigationItem.Home, NavigationItem.Lounge)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val coroutineScope = rememberCoroutineScope()
 
     if (isOnline) {
-        Scaffold(
-            scaffoldState = rememberScaffoldState(),
-            topBar = {
-                Surface(
-                    color = MaterialTheme.colors.primary,
-                    elevation = 4.dp
-                ) {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = stringResource(id = R.string.app_name),
-                                textAlign = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let { TextAlign.Start } ?: TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        },
-                        navigationIcon = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let {
-                            {
-                                IconButton(onClick = { navController.navigateUp() }) {
-                                    Icon(
-                                        imageVector = Icons.Filled.ArrowBack,
-                                        contentDescription = "Back"
-                                    )
-                                }
-                            }
-                        })
-                }
-            },
-            bottomBar = { BottomNavigationBar(navController, list, navBackStackEntry?.destination) },
-            floatingActionButton = {
-                if (navBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
-                    FloatingActionButton(onClick = {
-                        if (navBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-                            navController.navigate(WRITE_ROUTE)
-                        }
-                    }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
-                    }
-                }
+        ModalBottomSheetLayout(
+            sheetState = sheetState,
+            sheetContent = {
+                // Sheet content
+                Text(text = "Sheet content")
             }
         ) {
-            NavHost(
-                navController = navController,
-                startDestination = MAIN_ROUTE
-            ) {
-                navigation(
-                    route = MAIN_ROUTE,
-                    startDestination = NavigationItem.Home.route
-                ) {
-                    composable(NavigationItem.Home.route) { HomeScreen() }
-                    composable(NavigationItem.Lounge.route) { from ->
-                        LoungeScreen(onNavigate = { postKey ->
-                            if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                                navController.navigate("$POST_DETAIL_ROUTE/$postKey")
+            Scaffold(
+                scaffoldState = rememberScaffoldState(),
+                topBar = {
+                    Surface(
+                        color = MaterialTheme.colors.primary,
+                        elevation = 4.dp
+                    ) {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    text = stringResource(id = R.string.app_name),
+                                    textAlign = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let { TextAlign.Start } ?: TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            navigationIcon = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let {
+                                {
+                                    IconButton(onClick = { navController.navigateUp() }) {
+                                        Icon(
+                                            imageVector = Icons.Filled.ArrowBack,
+                                            contentDescription = "Back"
+                                        )
+                                    }
+                                }
+                            },
+                            actions = {
+                                navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let {
+                                    IconButton(onClick = {
+                                        coroutineScope.launch {
+                                            sheetState.show()
+                                        }
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Filled.MoreVert,
+                                            contentDescription = stringResource(id = R.string.more)
+                                        )
+                                    }
+                                }
+                            })
+                    }
+                },
+                bottomBar = { BottomNavigationBar(navController, list, navBackStackEntry?.destination) },
+                floatingActionButton = {
+                    if (navBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
+                        FloatingActionButton(onClick = {
+                            if (navBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                                navController.navigate(WRITE_ROUTE)
                             }
-                        })
+                        }) {
+                            Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
+                        }
                     }
                 }
-                composable(
-                    route = "$POST_DETAIL_ROUTE/{$POST_KEY}",
-                    arguments = emptyList()
-                ) { PostDetailScreen(it.arguments?.getString(POST_KEY) ?: "") }
-                composable(
-                    route = WRITE_ROUTE,
-                    arguments = emptyList()
-                ) { WriteScreen() }
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = MAIN_ROUTE
+                ) {
+                    navigation(
+                        route = MAIN_ROUTE,
+                        startDestination = NavigationItem.Home.route
+                    ) {
+                        composable(NavigationItem.Home.route) { HomeScreen() }
+                        composable(NavigationItem.Lounge.route) { from ->
+                            LoungeScreen(onNavigate = { postKey ->
+                                if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                    navController.navigate("$POST_DETAIL_ROUTE/$postKey")
+                                }
+                            })
+                        }
+                    }
+                    composable(
+                        route = "$POST_DETAIL_ROUTE/{$POST_KEY}",
+                        arguments = emptyList()
+                    ) { PostDetailScreen(it.arguments?.getString(POST_KEY) ?: "") }
+                    composable(
+                        route = WRITE_ROUTE,
+                        arguments = emptyList()
+                    ) { WriteScreen() }
+                }
             }
         }
     } else {
@@ -136,6 +167,7 @@ fun BottomNavigationBar(navController: NavController, list: List<NavigationItem>
                             contentDescription = item.title
                         )
                     },
+                    //label = { Text(text = item.title) },
                     alwaysShowLabel = true,
                     selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                     onClick = {

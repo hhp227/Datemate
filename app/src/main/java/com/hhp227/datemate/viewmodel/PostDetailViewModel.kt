@@ -14,11 +14,13 @@ import java.lang.Exception
 
 class PostDetailViewModel(
     private val repository: PostDetailRepository,
-    key: String
+    private val postKey: String
     ): ViewModel() {
     val postState = mutableStateOf(PostState())
 
     val commentsState = mutableStateOf(CommentsState())
+
+    val isMyPost = mutableStateOf(false)
 
     var message: String = ""
 
@@ -30,8 +32,8 @@ class PostDetailViewModel(
         repository.getComments(key).map(::getCommentsUseCase).onEach(::onReceive).launchIn(viewModelScope)
     }
 
-    private fun getUserPostKeys(key: String) {
-        repository.getUserPostKeys(key).onEach(::onReceive).launchIn(viewModelScope)
+    private fun getUserPostKeys() {
+        repository.getUserPostKeys().onEach(::onReceive).launchIn(viewModelScope)
     }
 
     private fun getPostUseCase(post: Post): Resource<Post> {
@@ -81,13 +83,13 @@ class PostDetailViewModel(
     }
 
     private fun onReceive(keys: List<String>) {
-
+        isMyPost.value = keys.contains(postKey)
     }
 
     init {
-        getPost(key)
-        getComments(key)
-        getUserPostKeys(key)
+        getPost(postKey)
+        getComments(postKey)
+        getUserPostKeys()
     }
 
     data class PostState(
