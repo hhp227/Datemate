@@ -62,4 +62,12 @@ class PostDetailRepository {
         }
         return mutableStateFlow
     }
+
+    fun removePost(key: String) {
+
+    }
+
+    fun addComment(key: String, text: String) {
+
+    }
 }
