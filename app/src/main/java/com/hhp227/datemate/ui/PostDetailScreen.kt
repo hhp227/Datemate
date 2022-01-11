@@ -1,5 +1,6 @@
 package com.hhp227.datemate.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,9 +22,12 @@ import com.hhp227.datemate.data.PostDetailRepository
 import com.hhp227.datemate.model.Comment
 import com.hhp227.datemate.util.viewModelProviderFactoryOf
 import com.hhp227.datemate.viewmodel.PostDetailViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostDetailScreen(
+    sheetState: ModalBottomSheetState,
     postKey: String,
     viewModel: PostDetailViewModel = viewModel(factory = viewModelProviderFactoryOf { PostDetailViewModel(PostDetailRepository(), postKey) })
 ) {
@@ -59,6 +64,15 @@ fun PostDetailScreen(
             Divider()
             Row {
                 Text(text = "PostDetailScreen")
+            }
+        }
+    }
+    if (sheetState.isVisible) {
+        val coroutineScope = rememberCoroutineScope()
+
+        BackHandler {
+            coroutineScope.launch {
+                sheetState.hide()
             }
         }
     }

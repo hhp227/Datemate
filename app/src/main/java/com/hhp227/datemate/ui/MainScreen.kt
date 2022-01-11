@@ -4,17 +4,13 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -128,7 +124,7 @@ fun MainScreen() {
                     composable(
                         route = "$POST_DETAIL_ROUTE/{$POST_KEY}",
                         arguments = emptyList()
-                    ) { PostDetailScreen(it.arguments?.getString(POST_KEY) ?: "") }
+                    ) { PostDetailScreen(sheetState, it.arguments?.getString(POST_KEY) ?: "") }
                     composable(
                         route = WRITE_ROUTE,
                         arguments = emptyList()
