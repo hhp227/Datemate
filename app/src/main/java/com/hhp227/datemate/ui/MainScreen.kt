@@ -79,7 +79,7 @@ fun MainScreen() {
                                 }
                             },
                             actions = {
-                                if (navBackStackEntry?.destination?.route == "$POST_DETAIL_ROUTE/{$POST_KEY}") {
+                                if (navBackStackEntry?.destination?.route == "$POST_DETAIL_ROUTE/{$POST_KEY}") { // TODO 여기에 내포스트인지 확인할 조건이 들어갈것
                                     IconButton(onClick = {
                                         coroutineScope.launch {
                                             sheetState.show()
