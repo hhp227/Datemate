@@ -46,8 +46,11 @@ fun MainScreen() {
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                // Sheet content
-                Text(text = "Sheet content")
+                if (navBackStackEntry?.destination?.route == "$POST_DETAIL_ROUTE/{$POST_KEY}") {
+                    Text(text = "Sheet content ${navBackStackEntry?.destination?.route}")
+                } else {
+                    Text(text = "Sheet Test")
+                }
             }
         ) {
             Scaffold(
@@ -67,7 +70,7 @@ fun MainScreen() {
                             },
                             navigationIcon = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let {
                                 {
-                                    IconButton(onClick = { navController.navigateUp() }) {
+                                    IconButton(onClick = navController::navigateUp) {
                                         Icon(
                                             imageVector = Icons.Filled.ArrowBack,
                                             contentDescription = "Back"
@@ -76,7 +79,7 @@ fun MainScreen() {
                                 }
                             },
                             actions = {
-                                navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let {
+                                if (navBackStackEntry?.destination?.route == "$POST_DETAIL_ROUTE/{$POST_KEY}") {
                                     IconButton(onClick = {
                                         coroutineScope.launch {
                                             sheetState.show()
