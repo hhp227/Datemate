@@ -79,16 +79,24 @@ fun MainScreen() {
                                 }
                             },
                             actions = {
-                                if (navBackStackEntry?.destination?.route == "$POST_DETAIL_ROUTE/{$POST_KEY}") { // TODO 여기에 내포스트인지 확인할 조건이 들어갈것
-                                    IconButton(onClick = {
-                                        coroutineScope.launch {
-                                            sheetState.show()
+                                when (navBackStackEntry?.destination?.route) {
+                                    "$POST_DETAIL_ROUTE/{$POST_KEY}" -> {
+                                        // TODO 여기에 내포스트인지 확인할 조건이 들어갈것
+                                        IconButton(onClick = {
+                                            coroutineScope.launch {
+                                                sheetState.show()
+                                            }
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.MoreVert,
+                                                contentDescription = stringResource(id = R.string.more)
+                                            )
                                         }
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.MoreVert,
-                                            contentDescription = stringResource(id = R.string.more)
-                                        )
+                                    }
+                                    WRITE_EDIT_ROUTE -> {
+                                        IconButton(onClick = { /*TODO*/ }) {
+                                            Text(text = "전송")
+                                        }
                                     }
                                 }
                             })
