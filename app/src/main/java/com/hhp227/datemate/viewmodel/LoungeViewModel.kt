@@ -1,18 +1,17 @@
 package com.hhp227.datemate.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
-import com.hhp227.datemate.data.LoungeRepository
+import com.hhp227.datemate.data.PostRepository
 import com.hhp227.datemate.model.Post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import java.lang.Exception
 
 class LoungeViewModel(
-    private val repository: LoungeRepository
+    private val repository: PostRepository
 ) : ViewModel() {
     val state = mutableStateOf(State())
 
@@ -40,10 +39,6 @@ class LoungeViewModel(
                 this.state.value = State(isLoading = true)
             }
         }
-    }
-
-    fun test() {
-        Log.e("TEST", "LoungeViewModel test ${repository.test()}")
     }
 
     init {

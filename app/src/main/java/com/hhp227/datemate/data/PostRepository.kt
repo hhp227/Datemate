@@ -11,14 +11,32 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 
-class PostDetailRepository {
+class PostRepository {
     private val rootRef: DatabaseReference = FirebaseDatabase.getInstance().reference
 
     private val postRef: DatabaseReference = rootRef.child("posts")
     
     private val userPostRef: DatabaseReference = rootRef.child("user-posts")
 
-    private val commentRef: DatabaseReference = rootRef.child("post-comments")
+    fun getPosts(): Flow<List<Post>> = callbackFlow {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                trySend(snapshot.children.mapNotNull { dataSnapshot ->
+                    dataSnapshot.key?.let { dataSnapshot.getValue(Post::class.java)?.apply { key = it } } ?: Post()
+                })
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                trySend(emptyList())
+            }
+        }
+
+        postRef.addListenerForSingleValueEvent(postListener)
+        awaitClose {
+            postRef.removeEventListener(postListener)
+            close()
+        }
+    }
 
     fun getPost(key: String) = callbackFlow {
         postRef.child(key)
@@ -33,21 +51,12 @@ class PostDetailRepository {
         awaitClose { close() }
     }
 
-    fun getComments(key: String) = callbackFlow<List<Comment>> {
-        commentRef.child(key).also { commentChildRef ->
-            commentChildRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    runCatching { trySendBlocking(snapshot.children.mapNotNull { it.getValue(Comment::class.java) }) }
-                    commentChildRef.removeEventListener(this)
-                }
+    fun addPost(title: String, content: String) {
 
-                override fun onCancelled(error: DatabaseError) {
-                    runCatching { trySendBlocking(emptyList()) }
-                    commentChildRef.removeEventListener(this)
-                }
-            })
-        }
-        awaitClose { channel.close() }
+    }
+
+    fun removePost(key: String) {
+
     }
 
     fun getUserPostKeys(): Flow<List<String>> {
@@ -61,13 +70,5 @@ class PostDetailRepository {
             }
         }
         return mutableStateFlow
-    }
-
-    fun removePost(key: String) {
-
-    }
-
-    fun addComment(key: String, text: String) {
-
     }
 }

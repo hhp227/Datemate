@@ -4,7 +4,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
-import com.hhp227.datemate.data.PostDetailRepository
+import com.hhp227.datemate.data.CommentRepository
+import com.hhp227.datemate.data.PostRepository
 import com.hhp227.datemate.model.Comment
 import com.hhp227.datemate.model.Post
 import kotlinx.coroutines.flow.launchIn
@@ -13,7 +14,8 @@ import kotlinx.coroutines.flow.onEach
 import java.lang.Exception
 
 class PostDetailViewModel(
-    private val repository: PostDetailRepository,
+    private val postRepository: PostRepository,
+    private val commentRepository: CommentRepository,
     private val postKey: String
     ): ViewModel() {
     val postState = mutableStateOf(PostState())
@@ -25,15 +27,15 @@ class PostDetailViewModel(
     var message: String = ""
 
     private fun getPost(key: String) {
-        repository.getPost(key).map(::getPostUseCase).onEach(::onReceive).launchIn(viewModelScope)
+        postRepository.getPost(key).map(::getPostUseCase).onEach(::onReceive).launchIn(viewModelScope)
     }
 
     private fun getComments(key: String) {
-        repository.getComments(key).map(::getCommentsUseCase).onEach(::onReceive).launchIn(viewModelScope)
+        commentRepository.getComments(key).map(::getCommentsUseCase).onEach(::onReceive).launchIn(viewModelScope)
     }
 
     private fun getUserPostKeys() {
-        repository.getUserPostKeys().onEach(::onReceive).launchIn(viewModelScope)
+        postRepository.getUserPostKeys().onEach(::onReceive).launchIn(viewModelScope)
     }
 
     private fun getPostUseCase(post: Post): Resource<Post> {

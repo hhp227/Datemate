@@ -18,7 +18,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hhp227.datemate.R
-import com.hhp227.datemate.data.PostDetailRepository
+import com.hhp227.datemate.data.CommentRepository
+import com.hhp227.datemate.data.PostRepository
 import com.hhp227.datemate.model.Comment
 import com.hhp227.datemate.util.viewModelProviderFactoryOf
 import com.hhp227.datemate.viewmodel.PostDetailViewModel
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 fun PostDetailScreen(
     sheetState: ModalBottomSheetState,
     postKey: String,
-    viewModel: PostDetailViewModel = viewModel(factory = viewModelProviderFactoryOf { PostDetailViewModel(PostDetailRepository(), postKey) })
+    viewModel: PostDetailViewModel = viewModel(factory = viewModelProviderFactoryOf { PostDetailViewModel(PostRepository(), CommentRepository(), postKey) })
 ) {
     Column {
         LazyColumn {

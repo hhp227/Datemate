@@ -28,7 +28,7 @@ import com.hhp227.datemate.R
 import com.hhp227.datemate.ui.MainDestinations.MAIN_ROUTE
 import com.hhp227.datemate.ui.MainDestinations.POST_DETAIL_ROUTE
 import com.hhp227.datemate.ui.MainDestinations.POST_KEY
-import com.hhp227.datemate.ui.MainDestinations.WRITE_ROUTE
+import com.hhp227.datemate.ui.MainDestinations.WRITE_EDIT_ROUTE
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -99,7 +99,7 @@ fun MainScreen() {
                     if (navBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
                         FloatingActionButton(onClick = {
                             if (navBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-                                navController.navigate(WRITE_ROUTE)
+                                navController.navigate(WRITE_EDIT_ROUTE)
                             }
                         }) {
                             Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
@@ -129,9 +129,9 @@ fun MainScreen() {
                         arguments = emptyList()
                     ) { PostDetailScreen(sheetState, it.arguments?.getString(POST_KEY) ?: "") }
                     composable(
-                        route = WRITE_ROUTE,
+                        route = WRITE_EDIT_ROUTE,
                         arguments = emptyList()
-                    ) { WriteScreen() }
+                    ) { WriteEditScreen() }
                 }
             }
         }
@@ -201,7 +201,7 @@ private fun checkIfOnline(context: Context): Boolean {
 
 object MainDestinations {
     const val MAIN_ROUTE = "Main"
-    const val WRITE_ROUTE = "Write"
+    const val WRITE_EDIT_ROUTE = "WriteEdit"
     const val POST_DETAIL_ROUTE = "PostDetail"
     const val POST_KEY = "PostKey"
 }
