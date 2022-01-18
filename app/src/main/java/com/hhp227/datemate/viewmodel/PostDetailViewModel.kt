@@ -1,6 +1,11 @@
 package com.hhp227.datemate.viewmodel
 
+import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
@@ -21,6 +26,8 @@ class PostDetailViewModel(
     val postState = mutableStateOf(PostState())
 
     val commentsState = mutableStateOf(CommentsState())
+
+    var textState = mutableStateOf(TextFieldValue())
 
     val isMyPost = mutableStateOf(false)
 
@@ -86,6 +93,10 @@ class PostDetailViewModel(
 
     private fun onReceive(keys: List<String>) {
         isMyPost.value = keys.contains(postKey)
+    }
+
+    fun addComment() {
+        Log.e("TEST", "AddComment: ${textState.value.text}")
     }
 
     init {

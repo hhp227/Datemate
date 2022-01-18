@@ -1,6 +1,7 @@
 package com.hhp227.datemate.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.contentDescription
@@ -45,6 +45,7 @@ fun PostDetailScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
+    var textFieldValue by viewModel.textState
 
     Column {
         LazyColumn(Modifier.weight(1f)) {
@@ -76,10 +77,12 @@ fun PostDetailScreen(
             }
         }
         UserInput(
-            onMessageSent = {},
+            textState = textFieldValue,
+            setTextState = { textFieldValue = it },
+            onMessageSent = viewModel::addComment,
             resetScroll = {
                 coroutineScope.launch {
-                    scrollState.scrollToItem(0)
+                    //scrollState.scrollToItem(0)
                 }
             },
             modifier = Modifier.navigationBarsWithImePadding()
@@ -111,13 +114,14 @@ fun CommentItem(comment: Comment) {
 
 @Composable
 fun UserInput(
-    onMessageSent: (String) -> Unit,
+    textState: TextFieldValue,
+    setTextState: (TextFieldValue) -> Unit,
+    onMessageSent: () -> Unit,
     modifier: Modifier = Modifier,
     resetScroll: () -> Unit = {},
 ) {
     var currentInputSelector by rememberSaveable { mutableStateOf(InputSelector.NONE) }
     val dismissKeyboard = { currentInputSelector = InputSelector.NONE }
-    var textState by remember { mutableStateOf(TextFieldValue()) }
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     // Intercept back navigation if there's a InputSelector visible
@@ -128,7 +132,7 @@ fun UserInput(
         Divider()
         UserInputText(
             textFieldValue = textState,
-            onTextChanged = { textState = it },
+            onTextChanged = setTextState,
             // Only show the keyboard if there's no input selector and text field has focus
             keyboardShown = currentInputSelector == InputSelector.NONE && textFieldFocusState,
             // Close extended selector if text field receives focus
@@ -140,7 +144,16 @@ fun UserInput(
                 textFieldFocusState = focused
             },
             focusState = textFieldFocusState
-        )
+        ) {
+            onMessageSent()
+
+            // Reset text field and close keyboard
+            setTextState(TextFieldValue())
+
+            // Move scroll to bottom
+            resetScroll()
+            dismissKeyboard()
+        }
     }
 }
 
@@ -154,7 +167,8 @@ private fun UserInputText(
     textFieldValue: TextFieldValue,
     keyboardShown: Boolean,
     onTextFieldFocused: (Boolean) -> Unit,
-    focusState: Boolean
+    focusState: Boolean,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -165,46 +179,63 @@ private fun UserInputText(
             },
         horizontalArrangement = Arrangement.End
     ) {
-        Surface {
-            Box(
-                modifier = Modifier.height(48.dp)
-                    .weight(1f)
-                    .align(Alignment.Bottom)
-            ) {
-                var lastFocusState by remember { mutableStateOf(false) }
+        Box(
+            modifier = Modifier.height(48.dp)
+                .weight(1f)
+                .align(Alignment.Bottom)
+        ) {
+            var lastFocusState by remember { mutableStateOf(false) }
 
-                BasicTextField(
-                    value = textFieldValue,
-                    onValueChange = { onTextChanged(it) },
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(start = 16.dp)
-                        .align(Alignment.CenterStart)
-                        .onFocusChanged { state ->
-                            if (lastFocusState != state.isFocused) {
-                                onTextFieldFocused(state.isFocused)
-                            }
-                            lastFocusState = state.isFocused
-                        },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = keyboardType,
-                        imeAction = ImeAction.Send
-                    ),
-                    maxLines = 1,
-                    cursorBrush = SolidColor(LocalContentColor.current),
-                    textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current)
+            BasicTextField(
+                value = textFieldValue,
+                onValueChange = { onTextChanged(it) },
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = 16.dp)
+                    .align(Alignment.CenterStart)
+                    .onFocusChanged { state ->
+                        if (lastFocusState != state.isFocused) {
+                            onTextFieldFocused(state.isFocused)
+                        }
+                        lastFocusState = state.isFocused
+                    },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = keyboardType,
+                    imeAction = ImeAction.Send
+                ),
+                maxLines = 1,
+                cursorBrush = SolidColor(LocalContentColor.current),
+                textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current)
+            )
+            if (textFieldValue.text.isEmpty() && !focusState) {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterStart).padding(start = 16.dp),
+                    text = "Enter Message",
+                    style = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled))
                 )
-
-                val disableContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)
-
-                if (textFieldValue.text.isEmpty() && !focusState) {
-                    Text(
-                        modifier = Modifier.align(Alignment.CenterStart)
-                            .padding(start = 16.dp),
-                        text = "Enter Message",
-                        style = MaterialTheme.typography.body1.copy(color = disableContentColor)
-                    )
-                }
             }
+        }
+        Button(
+            modifier = Modifier.padding(horizontal = 16.dp).height(36.dp),
+            enabled = textFieldValue.text.isNotBlank(),
+            onClick = onClick,
+            colors = ButtonDefaults.buttonColors(
+                disabledBackgroundColor = MaterialTheme.colors.surface,
+                disabledContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)
+            ),
+            border = if (textFieldValue.text.isBlank()) {
+                BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
+                )
+            } else {
+                null
+            },
+            contentPadding = PaddingValues(0.dp)
+        ) {
+            Text(
+                "Send",
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
     }
 }
