@@ -5,9 +5,11 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -28,6 +30,7 @@ import com.hhp227.datemate.R
 import com.hhp227.datemate.ui.MainDestinations.MAIN_ROUTE
 import com.hhp227.datemate.ui.MainDestinations.POST_DETAIL_ROUTE
 import com.hhp227.datemate.ui.MainDestinations.POST_KEY
+import com.hhp227.datemate.ui.MainDestinations.USER_DETAIL_ROUTE
 import com.hhp227.datemate.ui.MainDestinations.WRITE_EDIT_ROUTE
 import kotlinx.coroutines.launch
 
@@ -80,6 +83,14 @@ fun MainScreen() {
                             },
                             actions = {
                                 when (navBackStackEntry?.destination?.route) {
+                                    MAIN_ROUTE -> {
+                                        IconButton(onClick = { /*TODO*/ }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.ExitToApp,
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
                                     "$POST_DETAIL_ROUTE/{$POST_KEY}" -> {
                                         // TODO 여기에 내포스트인지 확인할 조건이 들어갈것
                                         IconButton(onClick = {
@@ -114,16 +125,23 @@ fun MainScreen() {
                         }
                     }
                 }
-            ) {
+            ) { innerPaddingValues ->
                 NavHost(
                     navController = navController,
-                    startDestination = MAIN_ROUTE
+                    startDestination = MAIN_ROUTE,
+                    modifier = Modifier.padding(innerPaddingValues)
                 ) {
                     navigation(
                         route = MAIN_ROUTE,
                         startDestination = NavigationItem.Home.route
                     ) {
-                        composable(NavigationItem.Home.route) { HomeScreen() }
+                        composable(NavigationItem.Home.route) { from ->
+                            HomeScreen(onNavigate = {
+                                if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                    navController.navigate("$USER_DETAIL_ROUTE")
+                                }
+                            })
+                        }
                         composable(NavigationItem.Lounge.route) { from ->
                             LoungeScreen(onNavigate = { postKey ->
                                 if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
@@ -131,6 +149,12 @@ fun MainScreen() {
                                 }
                             })
                         }
+                    }
+                    composable(
+                        route = "$USER_DETAIL_ROUTE",
+                        arguments = emptyList()
+                    ) {
+                        UserDetailScreen()
                     }
                     composable(
                         route = "$POST_DETAIL_ROUTE/{$POST_KEY}",
@@ -212,4 +236,5 @@ object MainDestinations {
     const val WRITE_EDIT_ROUTE = "WriteEdit"
     const val POST_DETAIL_ROUTE = "PostDetail"
     const val POST_KEY = "PostKey"
+    const val USER_DETAIL_ROUTE = "UserDetail"
 }

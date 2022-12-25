@@ -1,6 +1,7 @@
 package com.hhp227.datemate.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -25,7 +26,7 @@ import com.kortek.myapplication.ui.theme.DateMateTheme
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onNavigate: () -> Unit) {
     val viewModel: HomeViewModel = viewModel()
 
     ScrollView(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -45,7 +46,8 @@ fun HomeScreen() {
                 Card(
                     modifier = Modifier
                         .weight(1f)
-                        .height((LocalConfiguration.current.screenWidthDp / 1.5).dp),
+                        .height((LocalConfiguration.current.screenWidthDp / 1.5).dp)
+                        .clickable { onNavigate() },
                     shape = RoundedCornerShape(10.dp),
                     elevation = 4.dp
                 ) {
@@ -54,7 +56,8 @@ fun HomeScreen() {
                 Card(
                     modifier = Modifier
                         .weight(1f)
-                        .height((LocalConfiguration.current.screenWidthDp / 1.5).dp),
+                        .height((LocalConfiguration.current.screenWidthDp / 1.5).dp)
+                        .clickable { onNavigate() },
                     shape = RoundedCornerShape(10.dp),
                     elevation = 4.dp
                 ) {
@@ -120,9 +123,6 @@ fun HomeScreen() {
         TextButton(onClick = {}) {
             Text(text = "New Recommendation")
         }
-        Spacer(modifier = Modifier
-            .background(Color.Red)
-            .height(56.dp))
     }
 }
 
@@ -146,6 +146,6 @@ fun ScrollView(
 @Composable
 fun HomePreview() {
     DateMateTheme {
-        HomeScreen()
+        HomeScreen(onNavigate = {})
     }
 }
