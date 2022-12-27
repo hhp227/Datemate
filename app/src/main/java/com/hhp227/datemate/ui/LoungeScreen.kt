@@ -27,6 +27,7 @@ import com.kortek.myapplication.ui.theme.DateMateTheme
 
 @Composable
 fun LoungeScreen(
+    modifier: Modifier = Modifier,
     viewModel: LoungeViewModel = viewModel(factory = viewModelProviderFactoryOf { LoungeViewModel(PostRepository()) }),
     onNavigate: (String) -> Unit
 ) {

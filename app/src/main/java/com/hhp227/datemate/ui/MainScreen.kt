@@ -4,12 +4,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,15 +17,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.hhp227.datemate.R
 import com.hhp227.datemate.ui.MainDestinations.MAIN_ROUTE
 import com.hhp227.datemate.ui.MainDestinations.POST_DETAIL_ROUTE
@@ -40,8 +41,8 @@ fun MainScreen() {
     val context = LocalContext.current
     var isOnline by remember { mutableStateOf(checkIfOnline(context)) }
     val navController = rememberNavController()
-    val list = listOf(NavigationItem.Home, NavigationItem.Lounge)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
 
@@ -49,79 +50,21 @@ fun MainScreen() {
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                if (navBackStackEntry?.destination?.route == "$POST_DETAIL_ROUTE/{$POST_KEY}") {
-                    Text(text = "Sheet content ${navBackStackEntry?.destination?.route}")
+                if (currentRoute == "$POST_DETAIL_ROUTE/{$POST_KEY}") {
+                    Text(text = "Sheet content ${currentRoute}")
                 } else {
                     Text(text = "Sheet Test")
                 }
             }
         ) {
-            Scaffold(
-                scaffoldState = rememberScaffoldState(),
-                topBar = {
-                    Surface(
-                        color = MaterialTheme.colors.primary,
-                        elevation = 4.dp
-                    ) {
-                        TopAppBar(
-                            title = {
-                                Text(
-                                    text = stringResource(id = R.string.app_name),
-                                    textAlign = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let { TextAlign.Start } ?: TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            },
-                            navigationIcon = navBackStackEntry?.destination?.route?.takeIf { it !in list.map(NavigationItem::route) }?.let {
-                                {
-                                    IconButton(onClick = navController::navigateUp) {
-                                        Icon(
-                                            imageVector = Icons.Filled.ArrowBack,
-                                            contentDescription = "Back"
-                                        )
-                                    }
-                                }
-                            },
-                            actions = {
-                                when (navBackStackEntry?.destination?.route) {
-                                    MAIN_ROUTE -> {
-                                        IconButton(onClick = { /*TODO*/ }) {
-                                            Icon(
-                                                imageVector = Icons.Filled.ExitToApp,
-                                                contentDescription = null
-                                            )
-                                        }
-                                    }
-                                    "$POST_DETAIL_ROUTE/{$POST_KEY}" -> {
-                                        // TODO 여기에 내포스트인지 확인할 조건이 들어갈것
-                                        IconButton(onClick = {
-                                            coroutineScope.launch {
-                                                sheetState.show()
-                                            }
-                                        }) {
-                                            Icon(
-                                                imageVector = Icons.Filled.MoreVert,
-                                                contentDescription = stringResource(id = R.string.more)
-                                            )
-                                        }
-                                    }
-                                    WRITE_EDIT_ROUTE -> {
-                                        IconButton(onClick = { /*TODO*/ }) {
-                                            Text(text = "전송")
-                                        }
-                                    }
-                                }
-                            })
-                    }
-                },
-                bottomBar = { BottomNavigationBar(navController, list, navBackStackEntry?.destination) },
-                floatingActionButton = {
-                    if (navBackStackEntry?.destination?.route == NavigationItem.Lounge.route) {
-                        FloatingActionButton(onClick = {
-                            if (navBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-                                navController.navigate(WRITE_EDIT_ROUTE)
-                            }
-                        }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
+            StandardScaffold(
+                navController = navController,
+                currentRoute = currentRoute ?: MAIN_ROUTE,
+                bottomNavItems = listOf(NavigationItem.Home, NavigationItem.Lounge),
+                onActionListener = object : OnActionListener {
+                    override fun onShowActionSheet() {
+                        coroutineScope.launch {
+                            sheetState.show()
                         }
                     }
                 }
@@ -163,13 +106,122 @@ fun MainScreen() {
                     composable(
                         route = WRITE_EDIT_ROUTE,
                         arguments = emptyList()
-                    ) { WriteEditScreen() }
+                    ) {
+                        WriteEditScreen()
+                    }
                 }
             }
         }
     } else {
         OfflineDialog { isOnline = checkIfOnline(context) }
     }
+}
+
+@Composable
+fun StandardScaffold(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    currentRoute: String,
+    bottomNavItems: List<NavigationItem> = emptyList(),
+    onActionListener: OnActionListener,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    val isMainScreen: Boolean = currentRoute in bottomNavItems.map(NavigationItem::route)
+
+    Scaffold(
+        modifier = modifier,
+        scaffoldState = rememberScaffoldState(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        textAlign = if (!isMainScreen) TextAlign.Start else TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                navigationIcon = if (!isMainScreen) {
+                    {
+                        IconButton(onClick = navController::navigateUp) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
+                    }
+                } else null,
+                actions = {
+                    when (currentRoute) {
+                        /*MAIN_ROUTE -> {
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(
+                                    imageVector = Icons.Filled.ExitToApp,
+                                    contentDescription = null
+                                )
+                            }
+                        }*/
+                        "$POST_DETAIL_ROUTE/{$POST_KEY}" -> {
+                            // TODO 여기에 내포스트인지 확인할 조건이 들어갈것
+                            IconButton(onClick = onActionListener::onShowActionSheet) {
+                                Icon(
+                                    imageVector = Icons.Filled.MoreVert,
+                                    contentDescription = stringResource(id = R.string.more)
+                                )
+                            }
+                        }
+                        WRITE_EDIT_ROUTE -> {
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Text(text = "전송")
+                            }
+                        }
+                    }
+                })
+        },
+        bottomBar = {
+            if (isMainScreen) {
+                BottomNavigation {
+                    bottomNavItems.forEach { item ->
+                        BottomNavigationItem(
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = item.icon),
+                                    contentDescription = item.title
+                                )
+                            },
+                            //label = { Text(text = item.title) },
+                            alwaysShowLabel = true,
+                            selected = currentRoute == item.route,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    launchSingleTop = true
+                                    restoreState = true
+
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        },
+        floatingActionButton = {
+            if (currentRoute == NavigationItem.Lounge.route) {
+                FloatingActionButton(onClick = {
+                    navController.navigate(WRITE_EDIT_ROUTE)
+                }) {
+                    Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
+                }
+            }
+        }
+    ) { innerPaddingValues ->
+        content(innerPaddingValues)
+    }
+}
+
+interface OnActionListener {
+    fun onShowActionSheet()
 }
 
 @Composable

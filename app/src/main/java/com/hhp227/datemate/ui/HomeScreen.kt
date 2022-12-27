@@ -26,7 +26,7 @@ import com.kortek.myapplication.ui.theme.DateMateTheme
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
-fun HomeScreen(onNavigate: () -> Unit) {
+fun HomeScreen(modifier: Modifier = Modifier, onNavigate: () -> Unit) {
     val viewModel: HomeViewModel = viewModel()
 
     ScrollView(verticalArrangement = Arrangement.spacedBy(10.dp)) {
