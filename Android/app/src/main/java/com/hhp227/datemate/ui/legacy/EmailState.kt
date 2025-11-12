@@ -1,10 +1,10 @@
-package com.hhp227.datemate.ui
+package com.hhp227.datemate.ui.legacy
 
 import java.util.regex.Pattern
 
-private const val EMAIL_VALIDATION_REGEX = "^(.+)@(.+)\$"
-
 class EmailState : TextFieldState(validator = ::isEmailValid, errorFor = ::emailValidationError)
+
+private const val EMAIL_VALIDATION_REGEX = "^(.+)@(.+)\$"
 
 private fun emailValidationError(email: String): String {
     return "Invalid email: $email"

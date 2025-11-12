@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun LoungeScreen(navController: NavController) {
+fun SecondScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -24,12 +24,12 @@ fun LoungeScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            navController.navigate("sub_first/Test")
+            navController.navigate("sub_second")
         }) {
-            Text("Next")
+            Text("Previous")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Lorem Ipsum First Screen")
+        Text("Lorem Ipsum Second Screen")
     }
 }
