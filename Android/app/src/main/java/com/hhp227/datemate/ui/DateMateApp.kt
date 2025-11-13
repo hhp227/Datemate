@@ -2,18 +2,13 @@ package com.hhp227.datemate.ui
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
-import com.hhp227.datemate.data.UserRepository
-import com.hhp227.datemate.ui.legacy.MainScreen
-import com.hhp227.datemate.ui.legacy.SignInScreen
-import com.hhp227.datemate.viewmodel.SignInViewModel
-import com.hhp227.datemate.viewmodel.SignInViewModelFactory
+import com.hhp227.datemate.legacy.ui.MainScreen
 import com.kortek.myapplication.ui.theme.DateMateTheme
 
 @Composable

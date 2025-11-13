@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui.legacy
+package com.hhp227.datemate.legacy.ui
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -28,11 +28,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.hhp227.datemate.R
-import com.hhp227.datemate.ui.legacy.MainDestinations.MAIN_ROUTE
-import com.hhp227.datemate.ui.legacy.MainDestinations.POST_DETAIL_ROUTE
-import com.hhp227.datemate.ui.legacy.MainDestinations.POST_KEY
-import com.hhp227.datemate.ui.legacy.MainDestinations.USER_DETAIL_ROUTE
-import com.hhp227.datemate.ui.legacy.MainDestinations.WRITE_EDIT_ROUTE
+import com.hhp227.datemate.legacy.ui.MainDestinations.MAIN_ROUTE
+import com.hhp227.datemate.legacy.ui.MainDestinations.POST_DETAIL_ROUTE
+import com.hhp227.datemate.legacy.ui.MainDestinations.POST_KEY
+import com.hhp227.datemate.legacy.ui.MainDestinations.USER_DETAIL_ROUTE
+import com.hhp227.datemate.legacy.ui.MainDestinations.WRITE_EDIT_ROUTE
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -50,7 +50,7 @@ fun MainScreen() {
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                if (currentRoute == "${MainDestinations.POST_DETAIL_ROUTE}/{${MainDestinations.POST_KEY}}") {
+                if (currentRoute == "${POST_DETAIL_ROUTE}/{${POST_KEY}}") {
                     Text(text = "Sheet content ${currentRoute}")
                 } else {
                     Text(text = "Sheet Test")
@@ -160,7 +160,7 @@ fun StandardScaffold(
                                 )
                             }
                         }*/
-                        "${MainDestinations.POST_DETAIL_ROUTE}/{${MainDestinations.POST_KEY}}" -> {
+                        "${POST_DETAIL_ROUTE}/{${POST_KEY}}" -> {
                             // TODO 여기에 내포스트인지 확인할 조건이 들어갈것
                             IconButton(onClick = onActionListener::onShowActionSheet) {
                                 Icon(
@@ -169,7 +169,7 @@ fun StandardScaffold(
                                 )
                             }
                         }
-                        MainDestinations.WRITE_EDIT_ROUTE -> {
+                        WRITE_EDIT_ROUTE -> {
                             IconButton(onClick = { /*TODO*/ }) {
                                 Text(text = "전송")
                             }
@@ -209,7 +209,7 @@ fun StandardScaffold(
         floatingActionButton = {
             if (currentRoute == NavigationItem.Lounge.route) {
                 FloatingActionButton(onClick = {
-                    navController.navigate(MainDestinations.WRITE_EDIT_ROUTE)
+                    navController.navigate(WRITE_EDIT_ROUTE)
                 }) {
                     Icon(painter = painterResource(id = R.drawable.ic_add_24), contentDescription = null)
                 }
@@ -240,7 +240,7 @@ fun OfflineDialog(onRetry: () -> Unit) {
 
 @Composable
 fun BottomNavigationBar(navController: NavController, list: List<NavigationItem>, currentDestination: NavDestination?) {
-    if (currentDestination?.route in list.map(NavigationItem::route)) {
+    if (list.map(NavigationItem::route).contains(currentDestination?.route)) {
         BottomNavigation {
             list.forEach { item ->
                 BottomNavigationItem(

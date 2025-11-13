@@ -1,7 +1,7 @@
-package com.hhp227.datemate.viewmodel
+package com.hhp227.datemate.legacy.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.hhp227.datemate.data.PostRepository
+import com.hhp227.datemate.legacy.data.PostRepository
 
 class WriteEditViewModel(
     private val repository: PostRepository

@@ -1,4 +1,4 @@
-package com.hhp227.datemate.viewmodel
+package com.hhp227.datemate.legacy.viewmodel
 
 import android.util.Patterns
 import androidx.compose.runtime.getValue
@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
-import com.hhp227.datemate.data.UserRepository
+import com.hhp227.datemate.legacy.data.UserRepository
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 

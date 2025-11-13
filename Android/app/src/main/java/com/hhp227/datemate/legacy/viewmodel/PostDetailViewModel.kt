@@ -1,18 +1,15 @@
-package com.hhp227.datemate.viewmodel
+package com.hhp227.datemate.legacy.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hhp227.datemate.common.Resource
-import com.hhp227.datemate.data.CommentRepository
-import com.hhp227.datemate.data.PostRepository
-import com.hhp227.datemate.model.Comment
-import com.hhp227.datemate.model.Post
+import com.hhp227.datemate.legacy.common.Resource
+import com.hhp227.datemate.legacy.data.CommentRepository
+import com.hhp227.datemate.legacy.data.PostRepository
+import com.hhp227.datemate.legacy.model.Comment
+import com.hhp227.datemate.legacy.model.Post
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach

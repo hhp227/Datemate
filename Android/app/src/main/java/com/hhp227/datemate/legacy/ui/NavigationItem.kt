@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui.legacy
+package com.hhp227.datemate.legacy.ui
 
 import com.hhp227.datemate.R
 
