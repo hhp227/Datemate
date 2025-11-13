@@ -12,7 +12,7 @@ import Combine
 class SignInViewModel: ObservableObject {
     @Published var signInResult: SignInResult
     
-    private let repository: UserRepository
+    private let repository: UserRepository2
     
     private var subscription = Set<AnyCancellable>()
 
@@ -57,7 +57,7 @@ class SignInViewModel: ObservableObject {
         repository.signOut()
     }
     
-    init(_ repository: UserRepository) {
+    init(_ repository: UserRepository2) {
         self.repository = repository
         self.signInResult = SignInResult(repository.getCurrentUser() != nil)
     }

@@ -34,6 +34,9 @@
 		0A4E5E262EC4C354006AB03E /* SubSecondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E252EC4C354006AB03E /* SubSecondView.swift */; };
 		0A71CD1C2763A96800F0C2C7 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A71CD1B2763A96800F0C2C7 /* Post.swift */; };
 		0AA843542EC4F73B00529431 /* SubFirstViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */; };
+		0AB9C9152EC637BD0032223F /* UserRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */; };
+		0AB9C9172EC63DF20032223F /* UserRepository2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9162EC63DF20032223F /* UserRepository2.swift */; };
+		0AB9C9192EC650290032223F /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9182EC650290032223F /* DependencyContainer.swift */; };
 		0ABC1A5F2759242200771876 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABC1A5E2759242200771876 /* MainView.swift */; };
 		0AC9F4CD27722364000A8BF9 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC9F4CC27722364000A8BF9 /* ProfileViewModel.swift */; };
 		0AF55AC4275F9F120042D9F3 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF55AC3275F9F120042D9F3 /* HomeViewModel.swift */; };
@@ -79,6 +82,9 @@
 		0A4E5E252EC4C354006AB03E /* SubSecondView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSecondView.swift; sourceTree = "<group>"; };
 		0A71CD1B2763A96800F0C2C7 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubFirstViewModel.swift; sourceTree = "<group>"; };
+		0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRemoteDataSource.swift; sourceTree = "<group>"; };
+		0AB9C9162EC63DF20032223F /* UserRepository2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository2.swift; sourceTree = "<group>"; };
+		0AB9C9182EC650290032223F /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		0ABC1A5E2759242200771876 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		0AC9F4CC27722364000A8BF9 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		0AF55AC3275F9F120042D9F3 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -122,7 +128,7 @@
 		0A30EDFC2760E6C900976B98 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				0A3B68A02757C0480041CE9F /* UserRepository.swift */,
+				0AB9C9162EC63DF20032223F /* UserRepository2.swift */,
 				0A2339F6276236EA00ED114F /* LoungeRepository.swift */,
 				0AFE8D0B2768CDA80066F9FC /* PostRepository.swift */,
 				0AFE8D112768CF4A0066F9FC /* CommentRepository.swift */,
@@ -149,11 +155,10 @@
 		0A3F8E34274E765000DD11F9 /* DateMate */ = {
 			isa = PBXGroup;
 			children = (
-				0AF9C74A276B905600379C39 /* Common */,
+				0AB9C9132EC637880032223F /* Data */,
+				0AB9C9122EC636700032223F /* Common */,
+				0AB9C9102EC6333F0032223F /* Legacy */,
 				0A4CE23A2766182F00C0A889 /* UI */,
-				0A71CD1A2763A94900F0C2C7 /* Model */,
-				0A30EDFC2760E6C900976B98 /* Data */,
-				0A30EDF92760E61C00976B98 /* ViewModel */,
 				0A3F402027539CF600034106 /* GoogleService-Info.plist */,
 				0A3F8E35274E765000DD11F9 /* DateMateApp.swift */,
 				0A3F8E39274E765100DD11F9 /* Assets.xcassets */,
@@ -174,7 +179,6 @@
 		0A4CE23A2766182F00C0A889 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				0A4E5E1A2EC4C140006AB03E /* Legacy */,
 				0A4E5E1B2EC4C235006AB03E /* RootNavigation.swift */,
 				0A4E5E1F2EC4C295006AB03E /* FirstView.swift */,
 				0A4E5E1D2EC4C259006AB03E /* MainView2.swift */,
@@ -186,7 +190,28 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
-		0A4E5E1A2EC4C140006AB03E /* Legacy */ = {
+		0A71CD1A2763A94900F0C2C7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0A71CD1B2763A96800F0C2C7 /* Post.swift */,
+				0A281FC02779FC8D00D707AE /* Comment.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0AB9C9102EC6333F0032223F /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				0A30EDF92760E61C00976B98 /* ViewModel */,
+				0A30EDFC2760E6C900976B98 /* Data */,
+				0AB9C9112EC6341C0032223F /* UI */,
+				0A71CD1A2763A94900F0C2C7 /* Model */,
+				0AF9C74A276B905600379C39 /* Common */,
+			);
+			path = Legacy;
+			sourceTree = "<group>";
+		};
+		0AB9C9112EC6341C0032223F /* UI */ = {
 			isa = PBXGroup;
 			children = (
 				0A3C9F1E2770CD4C0014EDF2 /* ProfileView.swift */,
@@ -199,22 +224,30 @@
 				0A4CE237276610CE00C0A889 /* PostDetailView.swift */,
 				0A3F8E37274E765000DD11F9 /* ContentView.swift */,
 			);
-			path = Legacy;
+			path = UI;
 			sourceTree = "<group>";
 		};
-		0A71CD1A2763A94900F0C2C7 /* Model */ = {
+		0AB9C9122EC636700032223F /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				0A71CD1B2763A96800F0C2C7 /* Post.swift */,
-				0A281FC02779FC8D00D707AE /* Comment.swift */,
+				0A0ACC76276B808D00192C0B /* Resource.swift */,
+				0AB9C9182EC650290032223F /* DependencyContainer.swift */,
 			);
-			path = Model;
+			path = Common;
+			sourceTree = "<group>";
+		};
+		0AB9C9132EC637880032223F /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				0A3B68A02757C0480041CE9F /* UserRepository.swift */,
+				0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 		0AF9C74A276B905600379C39 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				0A0ACC76276B808D00192C0B /* Resource.swift */,
 				0AF9C74C276BA85000379C39 /* Firebase.swift */,
 				0A2CDEF3278F0E0D0058618A /* UiEvent.swift */,
 				95D96BB7294DB57D00606845 /* UIScreen.swift */,
@@ -302,6 +335,7 @@
 			files = (
 				0AFE8D092768CD6D0066F9FC /* PostDetailViewModel.swift in Sources */,
 				0A4E5E202EC4C295006AB03E /* FirstView.swift in Sources */,
+				0AB9C9172EC63DF20032223F /* UserRepository2.swift in Sources */,
 				0AFE8D0F2768CEAD0066F9FC /* WriteEditViewModel.swift in Sources */,
 				0A415C9F276789AB00490796 /* WriteEditView.swift in Sources */,
 				0A1A6F60275B143D009C6A27 /* HomeView.swift in Sources */,
@@ -329,8 +363,10 @@
 				0AF55AC7275F9F3E0042D9F3 /* LoungeViewModel.swift in Sources */,
 				0A4E5E242EC4C31A006AB03E /* SubFirstView.swift in Sources */,
 				0AF9C74D276BA85000379C39 /* Firebase.swift in Sources */,
+				0AB9C9152EC637BD0032223F /* UserRemoteDataSource.swift in Sources */,
 				0A4E5E1E2EC4C259006AB03E /* MainView2.swift in Sources */,
 				0A3F40302753B38700034106 /* SignUpView.swift in Sources */,
+				0AB9C9192EC650290032223F /* DependencyContainer.swift in Sources */,
 				0A3F8E38274E765000DD11F9 /* ContentView.swift in Sources */,
 				0A3F8E36274E765000DD11F9 /* DateMateApp.swift in Sources */,
 				0A4E5E262EC4C354006AB03E /* SubSecondView.swift in Sources */,

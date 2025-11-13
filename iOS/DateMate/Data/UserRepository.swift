@@ -10,39 +10,76 @@ import FirebaseAuth
 import Combine
 
 class UserRepository {
-    let auth = Auth.auth()
+    private let userRemoteDataSource: UserRemoteDataSource
     
-    var user: User?
+    private var authStateHandle: AuthStateDidChangeListenerHandle?
     
-    func signIn(email: String, password: String) -> AnyPublisher<AuthDataResult, Error> {
-        Future { promise in
-            self.auth.signIn(withEmail: email, password: password) { authDataResult, error in
-                if let auth = authDataResult {
-                    promise(.success(auth))
-                } else if let error = error {
-                    promise(.failure(error))
-                }
+    private let userSubject = CurrentValueSubject<User?, Never>(nil)
+    
+    var userStatePublisher: AnyPublisher<User?, Never> {
+        userSubject.eraseToAnyPublisher()
+    }
+    
+    // Flow<FirebaseUser?> → AsyncStream<User?>
+    /*var userStateStream: AsyncStream<User?> {
+        AsyncStream { continuation in
+            let handle = userRemoteDataSource.addAuthStateListener { user in
+                continuation.yield(user)
             }
-        }.eraseToAnyPublisher()
-    }
-    
-    func signOut() {
-        try? auth.signOut()
-    }
-    
-    func signUp(email: String, password: String) -> AnyPublisher<AuthDataResult, Error> {
-        Future { promise in
-            self.auth.createUser(withEmail: email, password: password) { authDataResult, error in
-                if let auth = authDataResult {
-                    promise(.success(auth))
-                } else if let error = error {
-                    promise(.failure(error))
-                }
+                
+            continuation.onTermination = { _ in
+                self.userRemoteDataSource.removeAuthStateListener(handle)
             }
-        }.eraseToAnyPublisher()
+        }
+    }*/
+    
+    init(_ userRemoteDataSource: UserRemoteDataSource) {
+        self.userRemoteDataSource = userRemoteDataSource
+        
+        authStateHandle = userRemoteDataSource.addAuthStateListener { auth, user in
+            self.userSubject.send(user)
+        }
     }
     
-    func getCurrentUser() -> User? {
-        return auth.currentUser
+    deinit {
+        if let handle = authStateHandle {
+            userRemoteDataSource.removeAuthStateListener(handle)
+        }
+    }
+    
+    private static var instance: UserRepository? = nil
+    
+    static func getInstance(userRemoteDataSource: UserRemoteDataSource) -> UserRepository {
+        if let instance = self.instance {
+            return instance
+        } else {
+            let userRepository = UserRepository(userRemoteDataSource)
+            self.instance = userRepository
+            return userRepository
+        }
     }
 }
+
+/**
+ 사용 예시
+ let dataSource = UserRemoteDataSource.getInstance()
+ let repository = UserRepository.getInstance(userRemoteDataSource: dataSource)
+
+ let cancellable = repository.userStatePublisher
+     .sink { user in
+         if let user = user {
+             print("로그인된 사용자: \(user.email ?? "")")
+         } else {
+             print("로그아웃 상태")
+         }
+     }
+
+ Task {
+     do {
+         let result = try await dataSource.signIn(email: "test@example.com", password: "123456")
+         print("로그인 성공: \(result.user.email ?? "")")
+     } catch {
+         print("로그인 실패: \(error.localizedDescription)")
+     }
+ }
+ */

@@ -10,7 +10,7 @@ import Combine
 import FirebaseAuth
 
 class SignUpViewModel: ObservableObject {
-    private let repository: UserRepository
+    private let repository: UserRepository2
     
     private var subscription = Set<AnyCancellable>()
     
@@ -34,7 +34,7 @@ class SignUpViewModel: ObservableObject {
         repository.signUp(email: email, password: password).sink(receiveCompletion: onReceive, receiveValue: onReceive).store(in: &subscription)
     }
     
-    init(_ repository: UserRepository) {
+    init(_ repository: UserRepository2) {
         self.repository = repository
     }
     
