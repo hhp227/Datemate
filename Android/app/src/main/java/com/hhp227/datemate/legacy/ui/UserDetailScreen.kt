@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui.legacy
+package com.hhp227.datemate.legacy.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

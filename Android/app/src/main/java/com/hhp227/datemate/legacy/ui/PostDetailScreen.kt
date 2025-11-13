@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui.legacy
+package com.hhp227.datemate.legacy.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
@@ -29,11 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.hhp227.datemate.R
-import com.hhp227.datemate.data.CommentRepository
-import com.hhp227.datemate.data.PostRepository
-import com.hhp227.datemate.model.Comment
+import com.hhp227.datemate.legacy.data.CommentRepository
+import com.hhp227.datemate.legacy.data.PostRepository
+import com.hhp227.datemate.legacy.model.Comment
 import com.hhp227.datemate.util.viewModelProviderFactoryOf
-import com.hhp227.datemate.viewmodel.PostDetailViewModel
+import com.hhp227.datemate.legacy.viewmodel.PostDetailViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)

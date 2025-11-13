@@ -1,7 +1,7 @@
-package com.hhp227.datemate.data
+package com.hhp227.datemate.legacy.data
 
 import com.google.firebase.database.*
-import com.hhp227.datemate.model.Comment
+import com.hhp227.datemate.legacy.model.Comment
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow

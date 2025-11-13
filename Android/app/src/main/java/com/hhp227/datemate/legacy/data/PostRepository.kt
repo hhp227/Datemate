@@ -1,10 +1,8 @@
-package com.hhp227.datemate.data
+package com.hhp227.datemate.legacy.data
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.hhp227.datemate.model.Comment
-import com.hhp227.datemate.model.Post
+import com.hhp227.datemate.legacy.model.Post
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow

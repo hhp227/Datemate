@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui.legacy
+package com.hhp227.datemate.legacy.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,10 +19,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hhp227.datemate.R
-import com.hhp227.datemate.data.PostRepository
-import com.hhp227.datemate.model.Post
+import com.hhp227.datemate.legacy.data.PostRepository
+import com.hhp227.datemate.legacy.model.Post
 import com.hhp227.datemate.util.viewModelProviderFactoryOf
-import com.hhp227.datemate.viewmodel.LoungeViewModel
+import com.hhp227.datemate.legacy.viewmodel.LoungeViewModel
 import com.kortek.myapplication.ui.theme.DateMateTheme
 
 @Composable
