@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun SubSecondScreen(navController: NavController) {
+fun SubSecondScreen(onNavigateUp: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Sub Second") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 }

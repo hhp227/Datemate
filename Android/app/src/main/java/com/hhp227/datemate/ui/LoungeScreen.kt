@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun LoungeScreen(navController: NavController) {
+fun LoungeScreen(onNavigateToSubFirst: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -24,7 +24,7 @@ fun LoungeScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            navController.navigate("sub_first/Test")
+            onNavigateToSubFirst("Test")
         }) {
             Text("Next")
         }

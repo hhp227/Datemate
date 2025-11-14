@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.hhp227.datemate.common.InjectorUtils
 import com.hhp227.datemate.legacy.ui.MainScreen
 import com.kortek.myapplication.ui.theme.DateMateTheme
 
@@ -21,15 +22,43 @@ fun DateMateApp() {
                 navController = navController,
                 startDestination = "main"
             ) {
-                composable("main") { MainScreen(navController) }
+                composable("main") {
+                    MainScreen(
+                        onNavigateToLogin = {
+                            navController.navigate("sign_in") {
+                                popUpTo("main") { inclusive = true }
+                            }
+                        },
+                        onNavigateToSubFirst = { data -> navController.navigate("sub_first/$data") },
+                        onNavigateToSubSecond = { navController.navigate("sub_second") }
+                    )
+                }
                 composable(
                     route = "sub_first/{data}",
                     arguments = listOf(navArgument("data") { type = NavType.StringType })
                 ) { backStackEntry ->
                     val data = backStackEntry.arguments?.getString("data") ?: ""
-                    SubFirstScreen(navController, data)
+                    SubFirstScreen(onNavigateUp = { navController.navigateUp() }, data)
                 }
-                composable("sub_second") { SubSecondScreen(navController) }
+                composable("sub_second") { SubSecondScreen(onNavigateUp = { navController.navigateUp() }) }
+                composable("sign_in") {
+                    SignInScreen(
+                        onLoggedIn = {
+                            InjectorUtils.set(true)
+                            navController.navigate("main") {
+                                popUpTo("sign_in") { inclusive = true }
+                            }
+                        },
+                        onSignUp = { navController.navigate("sign_up") })
+                }
+                composable("sign_up") {
+                    SignUpScreen(onSignUpComplete = {
+                        InjectorUtils.set(true)
+                        navController.navigate("main") {
+                            popUpTo(0)
+                        }
+                    })
+                }
             }
         }
     }

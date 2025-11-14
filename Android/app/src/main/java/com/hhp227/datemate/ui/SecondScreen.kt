@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun SecondScreen(navController: NavController) {
+fun SecondScreen(onNavigateToSubSecond: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -24,7 +24,7 @@ fun SecondScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            navController.navigate("sub_second")
+            onNavigateToSubSecond()
         }) {
             Text("Previous")
         }
