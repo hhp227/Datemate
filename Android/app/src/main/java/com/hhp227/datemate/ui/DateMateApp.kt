@@ -2,6 +2,9 @@ package com.hhp227.datemate.ui
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,7 +12,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.hhp227.datemate.common.InjectorUtils
+import com.hhp227.datemate.legacy.data.UserRepository
 import com.hhp227.datemate.legacy.ui.MainScreen
+import com.hhp227.datemate.legacy.viewmodel.SignInViewModelFactory
+import com.hhp227.datemate.ui.SignInViewModel
 import com.kortek.myapplication.ui.theme.DateMateTheme
 
 @Composable
@@ -24,7 +30,7 @@ fun DateMateApp() {
             ) {
                 composable("main") {
                     MainScreen(
-                        onNavigateToLogin = {
+                        onNavigateToSignIn = {
                             navController.navigate("sign_in") {
                                 popUpTo("main") { inclusive = true }
                             }

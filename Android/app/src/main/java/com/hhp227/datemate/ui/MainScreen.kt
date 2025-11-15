@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,7 +27,7 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun MainScreen(onNavigateToLogin: () -> Unit, onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: () -> Unit) {
+fun MainScreen(onNavigateToSignIn: () -> Unit, onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: () -> Unit) {
     val viewModel: MainViewModel = viewModel()
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
 
@@ -40,7 +39,7 @@ fun MainScreen(onNavigateToLogin: () -> Unit, onNavigateToSubFirst: (String) -> 
 
     LaunchedEffect(isLoggedIn) {
         if (!isLoggedIn) {
-            onNavigateToLogin()
+            onNavigateToSignIn()
         }
     }
     Scaffold(
