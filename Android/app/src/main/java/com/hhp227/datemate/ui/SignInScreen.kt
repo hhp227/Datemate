@@ -14,7 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hhp227.datemate.common.InjectorUtils
 
 @Composable
-fun SignInScreen(onLoggedIn: () -> Unit, onSignUp: () -> Unit) {
+fun SignInScreen(onSignUp: () -> Unit) {
     val viewModel: SignInViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -29,7 +29,10 @@ fun SignInScreen(onLoggedIn: () -> Unit, onSignUp: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Button(onClick = { onLoggedIn() }) {
+        Button(onClick = {
+            /* viewModel.login() */
+            InjectorUtils.set(true)
+        }) {
             Text("Login")
         }
         Button(onClick = { onSignUp() }) { Text("Register") }

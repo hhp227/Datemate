@@ -8,11 +8,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.hhp227.datemate.common.InjectorUtils
 
 @Composable
-fun SignUpScreen(onSignUpComplete: () -> Unit) {
+fun SignUpScreen() {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text(text = "Hello")
-        Button(onClick = { onSignUpComplete() }) { Text("Complete Register") }
+        Button(onClick = {
+            /* viewModel.signUp() */
+            InjectorUtils.set(true)
+        }) { Text("Complete Register") }
     }
 }

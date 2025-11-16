@@ -27,21 +27,14 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun MainScreen(onNavigateToSignIn: () -> Unit, onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: () -> Unit) {
+fun MainScreen(onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: () -> Unit) {
     val viewModel: MainViewModel = viewModel()
-    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
-
     val bottomNavController = rememberNavController()
     val items = listOf(
         BottomNavItem("first", Icons.Default.Home, "First"),
         BottomNavItem("second", Icons.Default.Favorite, "Second")
     )
 
-    LaunchedEffect(isLoggedIn) {
-        if (!isLoggedIn) {
-            onNavigateToSignIn()
-        }
-    }
     Scaffold(
         topBar = {
             TopAppBar(
