@@ -28,10 +28,14 @@
 		0A4CE238276610CE00C0A889 /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4CE237276610CE00C0A889 /* PostDetailView.swift */; };
 		0A4E5E1C2EC4C235006AB03E /* RootNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E1B2EC4C235006AB03E /* RootNavigation.swift */; };
 		0A4E5E1E2EC4C259006AB03E /* MainView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E1D2EC4C259006AB03E /* MainView2.swift */; };
-		0A4E5E202EC4C295006AB03E /* FirstView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E1F2EC4C295006AB03E /* FirstView.swift */; };
+		0A4E5E202EC4C295006AB03E /* LoungeView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E1F2EC4C295006AB03E /* LoungeView2.swift */; };
 		0A4E5E222EC4C2F2006AB03E /* SecondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E212EC4C2F2006AB03E /* SecondView.swift */; };
 		0A4E5E242EC4C31A006AB03E /* SubFirstView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E232EC4C31A006AB03E /* SubFirstView.swift */; };
 		0A4E5E262EC4C354006AB03E /* SubSecondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E252EC4C354006AB03E /* SubSecondView.swift */; };
+		0A4F5B9B2EC902F200DA2C4F /* SignInView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F5B9A2EC902F200DA2C4F /* SignInView2.swift */; };
+		0A4F5B9D2EC9037700DA2C4F /* SignInViewModel2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F5B9C2EC9037700DA2C4F /* SignInViewModel2.swift */; };
+		0A4F5B9F2EC905E800DA2C4F /* SignUpView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F5B9E2EC905E800DA2C4F /* SignUpView2.swift */; };
+		0A4F5BA12EC9089A00DA2C4F /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F5BA02EC9089A00DA2C4F /* MainViewModel.swift */; };
 		0A71CD1C2763A96800F0C2C7 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A71CD1B2763A96800F0C2C7 /* Post.swift */; };
 		0AA843542EC4F73B00529431 /* SubFirstViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */; };
 		0AB9C9152EC637BD0032223F /* UserRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */; };
@@ -76,10 +80,14 @@
 		0A4CE237276610CE00C0A889 /* PostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
 		0A4E5E1B2EC4C235006AB03E /* RootNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootNavigation.swift; sourceTree = "<group>"; };
 		0A4E5E1D2EC4C259006AB03E /* MainView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView2.swift; sourceTree = "<group>"; };
-		0A4E5E1F2EC4C295006AB03E /* FirstView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstView.swift; sourceTree = "<group>"; };
+		0A4E5E1F2EC4C295006AB03E /* LoungeView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoungeView2.swift; sourceTree = "<group>"; };
 		0A4E5E212EC4C2F2006AB03E /* SecondView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondView.swift; sourceTree = "<group>"; };
 		0A4E5E232EC4C31A006AB03E /* SubFirstView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubFirstView.swift; sourceTree = "<group>"; };
 		0A4E5E252EC4C354006AB03E /* SubSecondView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSecondView.swift; sourceTree = "<group>"; };
+		0A4F5B9A2EC902F200DA2C4F /* SignInView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView2.swift; sourceTree = "<group>"; };
+		0A4F5B9C2EC9037700DA2C4F /* SignInViewModel2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel2.swift; sourceTree = "<group>"; };
+		0A4F5B9E2EC905E800DA2C4F /* SignUpView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView2.swift; sourceTree = "<group>"; };
+		0A4F5BA02EC9089A00DA2C4F /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		0A71CD1B2763A96800F0C2C7 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubFirstViewModel.swift; sourceTree = "<group>"; };
 		0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRemoteDataSource.swift; sourceTree = "<group>"; };
@@ -180,12 +188,16 @@
 			isa = PBXGroup;
 			children = (
 				0A4E5E1B2EC4C235006AB03E /* RootNavigation.swift */,
-				0A4E5E1F2EC4C295006AB03E /* FirstView.swift */,
+				0A4E5E1F2EC4C295006AB03E /* LoungeView2.swift */,
 				0A4E5E1D2EC4C259006AB03E /* MainView2.swift */,
+				0A4F5BA02EC9089A00DA2C4F /* MainViewModel.swift */,
 				0A4E5E212EC4C2F2006AB03E /* SecondView.swift */,
 				0A4E5E232EC4C31A006AB03E /* SubFirstView.swift */,
 				0A4E5E252EC4C354006AB03E /* SubSecondView.swift */,
 				0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */,
+				0A4F5B9A2EC902F200DA2C4F /* SignInView2.swift */,
+				0A4F5B9C2EC9037700DA2C4F /* SignInViewModel2.swift */,
+				0A4F5B9E2EC905E800DA2C4F /* SignUpView2.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -334,7 +346,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0AFE8D092768CD6D0066F9FC /* PostDetailViewModel.swift in Sources */,
-				0A4E5E202EC4C295006AB03E /* FirstView.swift in Sources */,
+				0A4F5B9B2EC902F200DA2C4F /* SignInView2.swift in Sources */,
+				0A4E5E202EC4C295006AB03E /* LoungeView2.swift in Sources */,
 				0AB9C9172EC63DF20032223F /* UserRepository2.swift in Sources */,
 				0AFE8D0F2768CEAD0066F9FC /* WriteEditViewModel.swift in Sources */,
 				0A415C9F276789AB00490796 /* WriteEditView.swift in Sources */,
@@ -351,6 +364,7 @@
 				0A71CD1C2763A96800F0C2C7 /* Post.swift in Sources */,
 				0A2CDEF4278F0E0D0058618A /* UiEvent.swift in Sources */,
 				95D96BB8294DB57D00606845 /* UIScreen.swift in Sources */,
+				0A4F5B9D2EC9037700DA2C4F /* SignInViewModel2.swift in Sources */,
 				0AFE8D0C2768CDA80066F9FC /* PostRepository.swift in Sources */,
 				0AA843542EC4F73B00529431 /* SubFirstViewModel.swift in Sources */,
 				0A4CE238276610CE00C0A889 /* PostDetailView.swift in Sources */,
@@ -367,8 +381,10 @@
 				0A4E5E1E2EC4C259006AB03E /* MainView2.swift in Sources */,
 				0A3F40302753B38700034106 /* SignUpView.swift in Sources */,
 				0AB9C9192EC650290032223F /* DependencyContainer.swift in Sources */,
+				0A4F5B9F2EC905E800DA2C4F /* SignUpView2.swift in Sources */,
 				0A3F8E38274E765000DD11F9 /* ContentView.swift in Sources */,
 				0A3F8E36274E765000DD11F9 /* DateMateApp.swift in Sources */,
+				0A4F5BA12EC9089A00DA2C4F /* MainViewModel.swift in Sources */,
 				0A4E5E262EC4C354006AB03E /* SubSecondView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

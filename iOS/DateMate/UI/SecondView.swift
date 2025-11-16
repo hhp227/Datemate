@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct SecondView: View {
-    var onNext: () -> Void
+    var onNavigateToSubSecond: () -> Void
 
     var body: some View {
         VStack(spacing: 16) {
             Button("Previous") {
-                onNext()
+                onNavigateToSubSecond()
             }
             Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 .padding(.horizontal)
@@ -25,6 +25,6 @@ struct SecondView: View {
 
 struct SecondView_Previews: PreviewProvider {
     static var previews: some View {
-        SecondView(onNext: {})
+        SecondView(onNavigateToSubSecond: {})
     }
 }

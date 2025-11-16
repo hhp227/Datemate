@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct FirstView: View {
-    var onNext: () -> Void
+struct LoungeView2: View {
+    var onNavigateToSubFirst: (String) -> Void
 
     var body: some View {
         VStack(spacing: 16) {
             Button("Next") {
-                onNext()
+                onNavigateToSubFirst("Test")
             }
             Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 .padding(.horizontal)
@@ -23,8 +23,8 @@ struct FirstView: View {
     }
 }
 
-struct FirstView_Previews: PreviewProvider {
+struct LoungeView2_Previews: PreviewProvider {
     static var previews: some View {
-        FirstView(onNext: {})
+        LoungeView2(onNavigateToSubFirst: { _ in })
     }
 }

@@ -8,6 +8,40 @@
 import SwiftUI
 
 struct MainView2: View {
+    @StateObject private var viewModel = MainViewModel()
+    
+    @State private var selectedTab = 0
+    
+    var onNavigateToSubFirst: (String) -> Void
+    
+    var onNavigateToSubSecond: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Content
+            // TODO
+
+            // Main Tab Content
+            TabView(selection: $selectedTab) {
+                LoungeView2(onNavigateToSubFirst: onNavigateToSubFirst)
+                .tabItem {
+                    Label("First", systemImage: "house")
+                }
+                .tag(0)
+
+                SecondView(onNavigateToSubSecond: onNavigateToSubSecond)
+                .tabItem {
+                    Label("Second", systemImage: "heart")
+                }
+                .tag(1)
+            }
+        }
+        .navigationTitle("Datemate")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/*struct MainView2: View {
     @State private var selectedTab = 0
     
     var onNavigate: (String) -> Void
@@ -39,10 +73,13 @@ struct MainView2: View {
         .navigationTitle("Datemate")
         .navigationBarTitleDisplayMode(.inline)
     }
-}
+}*/
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView2(onNavigate: { _ in })
+        MainView2(
+            onNavigateToSubFirst: { _ in },
+            onNavigateToSubSecond: {}
+        )
     }
 }
