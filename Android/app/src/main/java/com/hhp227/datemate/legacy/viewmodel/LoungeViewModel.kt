@@ -3,7 +3,7 @@ package com.hhp227.datemate.legacy.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hhp227.datemate.legacy.common.Resource
+import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.legacy.data.PostRepository
 import com.hhp227.datemate.legacy.model.Post
 import kotlinx.coroutines.Dispatchers

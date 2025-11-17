@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hhp227.datemate.legacy.common.Resource
+import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.legacy.data.CommentRepository
 import com.hhp227.datemate.legacy.data.PostRepository
 import com.hhp227.datemate.legacy.model.Comment

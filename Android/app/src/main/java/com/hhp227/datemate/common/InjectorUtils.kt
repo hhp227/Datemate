@@ -1,10 +1,15 @@
 package com.hhp227.datemate.common
 
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavBackStackEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.hhp227.datemate.data.UserRemoteDataSource
 import com.hhp227.datemate.data.UserRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.hhp227.datemate.ui.detail.SubFirstViewModel
+import com.hhp227.datemate.ui.signin.SignInViewModel
 
 object InjectorUtils {
     private fun getUserRemoteDataSource() = UserRemoteDataSource.getInstance(provideFirebaseAuth())
@@ -13,11 +18,32 @@ object InjectorUtils {
 
     fun getUserRepository() = UserRepository.getInstance(getUserRemoteDataSource())
 
-    // Temp
-    private val _isLoggedIn = MutableStateFlow(false)
-    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+    fun provideSignInViewModelFactory(): ViewModelProvider.Factory {
+        return object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return SignInViewModel(getUserRepository()) as T
+            }
+        }
+    }
 
-    fun set(value: Boolean) {
-        _isLoggedIn.value = value
+    fun provideDetailViewModelFactory(
+        backStackEntry: NavBackStackEntry
+    ): AbstractSavedStateViewModelFactory {
+        return object : AbstractSavedStateViewModelFactory(backStackEntry, backStackEntry.arguments) {
+            override fun <T : ViewModel> create(
+                key: String,
+                modelClass: Class<T>,
+                handle: SavedStateHandle
+            ): T {
+                if (modelClass.isAssignableFrom(SubFirstViewModel::class.java)) {
+                    return SubFirstViewModel(
+                        getUserRepository(),
+                        handle
+                    ) as T
+                }
+                return super.create(modelClass)
+            }
+        }
     }
 }

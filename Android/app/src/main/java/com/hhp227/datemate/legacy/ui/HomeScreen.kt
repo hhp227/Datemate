@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hhp227.datemate.legacy.viewmodel.HomeViewModel
-import com.kortek.myapplication.ui.theme.DateMateTheme
+import com.hhp227.datemate.ui.main.home.HomeViewModel
+import com.hhp227.datemate.ui.theme.DateMateTheme
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, onNavigate: () -> Unit) {

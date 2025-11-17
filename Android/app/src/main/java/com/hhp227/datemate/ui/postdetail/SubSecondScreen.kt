@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui
+package com.hhp227.datemate.ui.postdetail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,8 +11,8 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 
 @Composable
 fun SubSecondScreen(onNavigateUp: () -> Unit) {
@@ -32,7 +32,7 @@ fun SubSecondScreen(onNavigateUp: () -> Unit) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            contentAlignment = androidx.compose.ui.Alignment.Center
+            contentAlignment = Alignment.Center
         ) {
             Text("Fragment_sub_second")
         }
