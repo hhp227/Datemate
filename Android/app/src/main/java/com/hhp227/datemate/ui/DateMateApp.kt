@@ -13,7 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.hhp227.datemate.common.InjectorUtils
-import com.hhp227.datemate.data.UserRepository.LoginState
+import com.hhp227.datemate.data.UserRepository.SignInState
 import com.hhp227.datemate.ui.detail.SubFirstScreen
 import com.hhp227.datemate.ui.main.MainScreen
 import com.hhp227.datemate.ui.postdetail.SubSecondScreen
@@ -25,12 +25,12 @@ import com.hhp227.datemate.ui.theme.DateMateTheme
 fun DateMateApp() {
     ProvideWindowInsets {
         DateMateTheme {
-            val loginState by InjectorUtils.getUserRepository().loginStateFlow.collectAsState(LoginState.Loading)
+            val signInState by InjectorUtils.getUserRepository().signInStateFlow.collectAsState(SignInState.Loading)
 
-            when (loginState) {
-                LoginState.Login -> AppNavHost()
-                LoginState.Logout -> SignInNavHost()
-                LoginState.Loading -> Unit
+            when (signInState) {
+                SignInState.SignIn -> AppNavHost()
+                SignInState.SignOut -> SignInNavHost()
+                SignInState.Loading -> Unit
             }
         }
     }

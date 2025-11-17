@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.onStart
 class UserRepository private constructor(
     private val userRemoteDataSource: UserRemoteDataSource
 ) {
-    val loginStateFlow = userRemoteDataSource.userStateFlow
-        .map { if (it != null) LoginState.Login else LoginState.Logout }
-        .onStart { emit(LoginState.Loading) }
+    val signInStateFlow = userRemoteDataSource.userStateFlow
+        .map { if (it != null) SignInState.SignIn else SignInState.SignOut }
+        .onStart { emit(SignInState.Loading) }
 
     fun getSignInResultStream(email: String, password: String): Flow<Resource<FirebaseUser>> {
         return userRemoteDataSource.signIn(email, password)
@@ -21,8 +21,8 @@ class UserRepository private constructor(
         return userRemoteDataSource.signOut()
     }
 
-    enum class LoginState {
-        Login, Logout, Loading
+    enum class SignInState {
+        SignIn, SignOut, Loading
     }
 
     companion object {
