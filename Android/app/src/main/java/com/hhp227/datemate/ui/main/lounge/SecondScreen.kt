@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui
+package com.hhp227.datemate.ui.main.lounge
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,10 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 
 @Composable
-fun LoungeScreen(onNavigateToSubFirst: (String) -> Unit) {
+fun SecondScreen(onNavigateToSubSecond: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -24,12 +23,12 @@ fun LoungeScreen(onNavigateToSubFirst: (String) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            onNavigateToSubFirst("Test")
+            onNavigateToSubSecond()
         }) {
-            Text("Next")
+            Text("Previous")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Lorem Ipsum First Screen")
+        Text("Lorem Ipsum Second Screen")
     }
 }

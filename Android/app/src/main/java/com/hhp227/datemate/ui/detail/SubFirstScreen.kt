@@ -1,21 +1,19 @@
-package com.hhp227.datemate.ui
+package com.hhp227.datemate.ui.detail
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun SubFirstScreen(onNavigateUp: () -> Unit, data: String) {
+fun SubFirstScreen(viewModel: SubFirstViewModel = viewModel(), onNavigateUp: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -32,9 +30,9 @@ fun SubFirstScreen(onNavigateUp: () -> Unit, data: String) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            contentAlignment = androidx.compose.ui.Alignment.Center
+            contentAlignment = Alignment.Center
         ) {
-            Text("Data: $data")
+            Text("Data: ${viewModel.data}", Modifier.clickable { viewModel.signOut() })
         }
     }
 }

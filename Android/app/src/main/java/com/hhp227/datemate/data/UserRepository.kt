@@ -1,21 +1,28 @@
 package com.hhp227.datemate.data
 
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.channels.awaitClose
+import com.hhp227.datemate.common.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 class UserRepository private constructor(
     private val userRemoteDataSource: UserRemoteDataSource
 ) {
-    val userStateFlow: Flow<FirebaseUser?> = callbackFlow {
-        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            trySend(firebaseAuth.currentUser)
-        }
+    val signInStateFlow = userRemoteDataSource.userStateFlow
+        .map { if (it != null) SignInState.SignIn else SignInState.SignOut }
+        .onStart { emit(SignInState.Loading) }
 
-        userRemoteDataSource.addAuthStateListener(listener)
-        awaitClose { userRemoteDataSource.removeAuthStateListener(listener) }
+    fun getSignInResultStream(email: String, password: String): Flow<Resource<FirebaseUser>> {
+        return userRemoteDataSource.signIn(email, password)
+    }
+
+    fun getSignOutResultStream(): Flow<Resource<Boolean>> {
+        return userRemoteDataSource.signOut()
+    }
+
+    enum class SignInState {
+        SignIn, SignOut, Loading
     }
 
     companion object {

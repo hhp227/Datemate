@@ -23,7 +23,7 @@ import com.hhp227.datemate.legacy.data.PostRepository
 import com.hhp227.datemate.legacy.model.Post
 import com.hhp227.datemate.util.viewModelProviderFactoryOf
 import com.hhp227.datemate.legacy.viewmodel.LoungeViewModel
-import com.kortek.myapplication.ui.theme.DateMateTheme
+import com.hhp227.datemate.ui.theme.DateMateTheme
 
 @Composable
 fun LoungeScreen(
