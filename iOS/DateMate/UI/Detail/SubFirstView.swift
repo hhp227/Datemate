@@ -15,6 +15,9 @@ struct SubFirstView: View {
             Text(viewModel.data)
                 .font(.title2)
                 .padding()
+                .onTapGesture {
+                    viewModel.signOut()
+                }
             Spacer()
         }
         .navigationTitle("Sub First")
@@ -23,6 +26,6 @@ struct SubFirstView: View {
 
 struct SubFirstView_Previews: PreviewProvider {
     static var previews: some View {
-        SubFirstView(viewModel: .init(data: ""))
+        SubFirstView(viewModel: .init(.getInstance(userRemoteDataSource: .getInstance(auth: .auth())), data: ""))
     }
 }

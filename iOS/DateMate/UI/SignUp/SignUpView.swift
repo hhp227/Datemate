@@ -1,5 +1,5 @@
 //
-//  RegisterView.swift
+//  SignUpView.swift
 //  DateMate
 //
 //  Created by 홍희표 on 2021/11/28.
@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct SignUpView: View {
-    @ObservedObject var viewModel = SignUpViewModel(.init())
+    @ObservedObject var viewModel = SignUpViewModel(.init(.getInstance(auth: .auth())))
     
     @State var email = ""
     
     @State var password = ""
+    
+    var onSignUp: () -> Void
     
     var body: some View {
         VStack {
@@ -31,6 +33,6 @@ struct SignUpView: View {
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpView()
+        SignUpView(onSignUp: {})
     }
 }

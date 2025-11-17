@@ -14,8 +14,7 @@ struct DateMateApp: App {
     
     var body: some Scene {
         WindowGroup {
-            //ContentView()
-            RootNavigation()
+            ContentView()
         }
     }
     

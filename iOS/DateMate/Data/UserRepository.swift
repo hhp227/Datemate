@@ -12,39 +12,31 @@ import Combine
 class UserRepository {
     private let userRemoteDataSource: UserRemoteDataSource
     
-    private var authStateHandle: AuthStateDidChangeListenerHandle?
+    private var cancellables = Set<AnyCancellable>()
     
-    private let userSubject = CurrentValueSubject<User?, Never>(nil)
+    @Published var signInState: SignInState = .loading
     
-    var userStatePublisher: AnyPublisher<User?, Never> {
-        userSubject.eraseToAnyPublisher()
+    var signInStatePublisher: AnyPublisher<SignInState, Never> {
+        $signInState.eraseToAnyPublisher()
     }
     
-    // Flow<FirebaseUser?> → AsyncStream<User?>
-    /*var userStateStream: AsyncStream<User?> {
-        AsyncStream { continuation in
-            let handle = userRemoteDataSource.addAuthStateListener { user in
-                continuation.yield(user)
-            }
-                
-            continuation.onTermination = { _ in
-                self.userRemoteDataSource.removeAuthStateListener(handle)
-            }
-        }
-    }*/
+    func getSignInResultStream(email: String, password: String) -> AnyPublisher<Resource<User>, Never> {
+        userRemoteDataSource.signIn(email: email, password: password)
+    }
+
+    func getSignOutResultStream() -> AnyPublisher<Resource<Bool>, Never> {
+        userRemoteDataSource.signOut()
+    }
     
     init(_ userRemoteDataSource: UserRemoteDataSource) {
         self.userRemoteDataSource = userRemoteDataSource
         
-        authStateHandle = userRemoteDataSource.addAuthStateListener { auth, user in
-            self.userSubject.send(user)
-        }
-    }
-    
-    deinit {
-        if let handle = authStateHandle {
-            userRemoteDataSource.removeAuthStateListener(handle)
-        }
+        userRemoteDataSource.userStatePublisher
+            .map { $0 != nil ? SignInState.signIn : SignInState.signOut }
+            .prepend(.loading)
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.signInState, on: self)
+            .store(in: &cancellables)
     }
     
     private static var instance: UserRepository? = nil
@@ -60,26 +52,8 @@ class UserRepository {
     }
 }
 
-/**
- 사용 예시
- let dataSource = UserRemoteDataSource.getInstance()
- let repository = UserRepository.getInstance(userRemoteDataSource: dataSource)
-
- let cancellable = repository.userStatePublisher
-     .sink { user in
-         if let user = user {
-             print("로그인된 사용자: \(user.email ?? "")")
-         } else {
-             print("로그아웃 상태")
-         }
-     }
-
- Task {
-     do {
-         let result = try await dataSource.signIn(email: "test@example.com", password: "123456")
-         print("로그인 성공: \(result.user.email ?? "")")
-     } catch {
-         print("로그인 실패: \(error.localizedDescription)")
-     }
- }
- */
+enum SignInState {
+    case signIn
+    case signOut
+    case loading
+}

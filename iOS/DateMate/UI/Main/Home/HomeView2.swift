@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LoungeView2: View {
+struct HomeView2: View {
     var onNavigateToSubFirst: (String) -> Void
 
     var body: some View {
@@ -23,8 +23,8 @@ struct LoungeView2: View {
     }
 }
 
-struct LoungeView2_Previews: PreviewProvider {
+struct HomeView2_Previews: PreviewProvider {
     static var previews: some View {
-        LoungeView2(onNavigateToSubFirst: { _ in })
+        HomeView2(onNavigateToSubFirst: { _ in })
     }
 }

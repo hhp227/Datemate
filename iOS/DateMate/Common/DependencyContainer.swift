@@ -16,9 +16,13 @@ final class DependencyContainer {
     
     let userRepository: UserRepository
     
-    /*func provideUserViewModel() -> UserViewModel {
-        return UserViewModel(userRepository: userRepository)
-    }*/
+    func provideSignInViewModel() -> SignInViewModel {
+        return SignInViewModel(userRepository)
+    }
+    
+    func provideDetailViewModel(data: String) -> SubFirstViewModel {
+        return SubFirstViewModel(userRepository, data: data)
+    }
     
     // 사용: @StateObject private var viewModel = DependencyContainer.shared.provideUserViewModel()
     

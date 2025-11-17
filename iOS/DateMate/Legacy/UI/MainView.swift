@@ -29,7 +29,7 @@ struct MainView: View {
                 ActionSheet(
                     title: Text("Selection Action"),
                     buttons: [
-                        .default(Text("Sign Out")) { signInViewModel.signOut() },
+                        .default(Text("Sign Out")) { /*signInViewModel.signOut()*/ },
                         .cancel()
                     ]
                 )
