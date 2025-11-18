@@ -8,5 +8,5 @@
 import Foundation
 
 class MainViewModel: ObservableObject {
-    let isLoggedIn = DependencyContainer.instance.isLoggedInPublisher
+    
 }

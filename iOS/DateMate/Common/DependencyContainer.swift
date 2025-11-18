@@ -26,17 +26,6 @@ final class DependencyContainer {
     
     // 사용: @StateObject private var viewModel = DependencyContainer.shared.provideUserViewModel()
     
-    // Temp
-    @Published private var _isLoggedIn: Bool = false
-    var isLoggedInPublisher: AnyPublisher<Bool, Never> {
-        return $_isLoggedIn.eraseToAnyPublisher()
-    }
-    var isLoggedIn: Bool { _isLoggedIn }
-
-    func set(_ value: Bool) {
-        _isLoggedIn = value
-    }
-    
     private init() {
         self.firebaseAuth = Auth.auth()
         self.userRemoteDataSource = UserRemoteDataSource.getInstance(auth: firebaseAuth)
