@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -39,7 +40,7 @@ fun SignInScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically)) {
-            Logo(modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 76.dp))
+            Logo(modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 48.dp))
             Text(
                 text = stringResource(id = R.string.app_tagline),
                 style = MaterialTheme.typography.subtitle1,
@@ -74,7 +75,6 @@ fun SignInScreen(
             ) {
                 Text(text = stringResource(id = R.string.sign_in))
             }
-            Spacer(modifier = Modifier.height(12.dp))
             TextButton(
                 onClick = { onSignUp() },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -95,8 +95,9 @@ private fun Logo(modifier: Modifier = Modifier, lightTheme: Boolean = MaterialTh
 
     Image(
         painter = painterResource(id = assetId),
+        contentDescription = null,
         modifier = modifier,
-        contentDescription = null
+        contentScale = ContentScale.Fit
     )
 }
 
