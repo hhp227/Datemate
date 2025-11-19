@@ -80,16 +80,16 @@ fun MainScreen() {
                     ) {
                         composable(NavigationItem.Home.route) { from ->
                             HomeScreen(onNavigate = {
-                                if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                //if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
                                     navController.navigate("${USER_DETAIL_ROUTE}")
-                                }
+                                //}
                             })
                         }
                         composable(NavigationItem.Lounge.route) { from ->
                             LoungeScreen(onNavigate = { postKey ->
-                                if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                //if (from.lifecycle.currentState == Lifecycle.State.RESUMED) {
                                     navController.navigate("${POST_DETAIL_ROUTE}/$postKey")
-                                }
+                                //}
                             })
                         }
                     }

@@ -1,13 +1,7 @@
 package com.hhp227.datemate.ui.main
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -21,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.hhp227.datemate.ui.main.home.LoungeScreen
+import com.hhp227.datemate.ui.main.home.HomeScreen
 import com.hhp227.datemate.ui.main.lounge.SecondScreen
 
 @Composable
@@ -81,7 +75,7 @@ fun MainScreen(onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: ()
             startDestination = "first",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("first") { LoungeScreen(onNavigateToSubFirst) }
+            composable("first") { HomeScreen(onNavigateToSubFirst = onNavigateToSubFirst) }
             composable("second") { SecondScreen(onNavigateToSubSecond) }
         }
     }
