@@ -27,7 +27,6 @@
 		0A415C9F276789AB00490796 /* WriteEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A415C9E276789AB00490796 /* WriteEditView.swift */; };
 		0A4CE238276610CE00C0A889 /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4CE237276610CE00C0A889 /* PostDetailView.swift */; };
 		0A4E5E1E2EC4C259006AB03E /* MainView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E1D2EC4C259006AB03E /* MainView2.swift */; };
-		0A4E5E202EC4C295006AB03E /* HomeView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E1F2EC4C295006AB03E /* HomeView2.swift */; };
 		0A4E5E222EC4C2F2006AB03E /* SecondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E212EC4C2F2006AB03E /* SecondView.swift */; };
 		0A4E5E242EC4C31A006AB03E /* SubFirstView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E232EC4C31A006AB03E /* SubFirstView.swift */; };
 		0A4E5E262EC4C354006AB03E /* SubSecondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E5E252EC4C354006AB03E /* SubSecondView.swift */; };
@@ -36,7 +35,6 @@
 		0AA843542EC4F73B00529431 /* SubFirstViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */; };
 		0AAE6C3B2ECB8C730063DDC0 /* SignInUiState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAE6C3A2ECB8C730063DDC0 /* SignInUiState.swift */; };
 		0AB9C9152EC637BD0032223F /* UserRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */; };
-		0AB9C9172EC63DF20032223F /* UserRepository2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9162EC63DF20032223F /* UserRepository2.swift */; };
 		0AB9C9192EC650290032223F /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9182EC650290032223F /* DependencyContainer.swift */; };
 		0ABC1A5F2759242200771876 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABC1A5E2759242200771876 /* MainView.swift */; };
 		0AC9F4CD27722364000A8BF9 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC9F4CC27722364000A8BF9 /* ProfileViewModel.swift */; };
@@ -76,7 +74,6 @@
 		0A415C9E276789AB00490796 /* WriteEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteEditView.swift; sourceTree = "<group>"; };
 		0A4CE237276610CE00C0A889 /* PostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
 		0A4E5E1D2EC4C259006AB03E /* MainView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView2.swift; sourceTree = "<group>"; };
-		0A4E5E1F2EC4C295006AB03E /* HomeView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView2.swift; sourceTree = "<group>"; };
 		0A4E5E212EC4C2F2006AB03E /* SecondView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondView.swift; sourceTree = "<group>"; };
 		0A4E5E232EC4C31A006AB03E /* SubFirstView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubFirstView.swift; sourceTree = "<group>"; };
 		0A4E5E252EC4C354006AB03E /* SubSecondView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSecondView.swift; sourceTree = "<group>"; };
@@ -85,7 +82,6 @@
 		0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubFirstViewModel.swift; sourceTree = "<group>"; };
 		0AAE6C3A2ECB8C730063DDC0 /* SignInUiState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInUiState.swift; sourceTree = "<group>"; };
 		0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRemoteDataSource.swift; sourceTree = "<group>"; };
-		0AB9C9162EC63DF20032223F /* UserRepository2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository2.swift; sourceTree = "<group>"; };
 		0AB9C9182EC650290032223F /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		0ABC1A5E2759242200771876 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		0AC9F4CC27722364000A8BF9 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
@@ -117,7 +113,6 @@
 			isa = PBXGroup;
 			children = (
 				0AF55AC6275F9F3E0042D9F3 /* LoungeViewModel.swift */,
-				0AF55AC3275F9F120042D9F3 /* HomeViewModel.swift */,
 				0AFE8D082768CD6D0066F9FC /* PostDetailViewModel.swift */,
 				0AFE8D0E2768CEAD0066F9FC /* WriteEditViewModel.swift */,
 				0AC9F4CC27722364000A8BF9 /* ProfileViewModel.swift */,
@@ -128,7 +123,6 @@
 		0A30EDFC2760E6C900976B98 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				0AB9C9162EC63DF20032223F /* UserRepository2.swift */,
 				0A2339F6276236EA00ED114F /* LoungeRepository.swift */,
 				0AFE8D0B2768CDA80066F9FC /* PostRepository.swift */,
 				0AFE8D112768CF4A0066F9FC /* CommentRepository.swift */,
@@ -248,7 +242,8 @@
 		0AAE6C382ECB7E1B0063DDC0 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				0A4E5E1F2EC4C295006AB03E /* HomeView2.swift */,
+				0A1A6F5F275B143D009C6A27 /* HomeView.swift */,
+				0AF55AC3275F9F120042D9F3 /* HomeViewModel.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -279,7 +274,6 @@
 				0A3C9F1E2770CD4C0014EDF2 /* ProfileView.swift */,
 				0A415C9E276789AB00490796 /* WriteEditView.swift */,
 				0ABC1A5E2759242200771876 /* MainView.swift */,
-				0A1A6F5F275B143D009C6A27 /* HomeView.swift */,
 				0A1A6F62275B1451009C6A27 /* LoungeView.swift */,
 				0A4CE237276610CE00C0A889 /* PostDetailView.swift */,
 			);
@@ -393,8 +387,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0AFE8D092768CD6D0066F9FC /* PostDetailViewModel.swift in Sources */,
-				0A4E5E202EC4C295006AB03E /* HomeView2.swift in Sources */,
-				0AB9C9172EC63DF20032223F /* UserRepository2.swift in Sources */,
 				0AFE8D0F2768CEAD0066F9FC /* WriteEditViewModel.swift in Sources */,
 				0A415C9F276789AB00490796 /* WriteEditView.swift in Sources */,
 				0A1A6F60275B143D009C6A27 /* HomeView.swift in Sources */,

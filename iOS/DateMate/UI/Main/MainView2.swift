@@ -23,12 +23,11 @@ struct MainView2: View {
 
             // Main Tab Content
             TabView(selection: $selectedTab) {
-                HomeView2(onNavigateToSubFirst: onNavigateToSubFirst)
+                HomeView(onNavigateToSubFirst: onNavigateToSubFirst)
                 .tabItem {
                     Label("First", systemImage: "house")
                 }
                 .tag(0)
-
                 SecondView(onNavigateToSubSecond: onNavigateToSubSecond)
                 .tabItem {
                     Label("Second", systemImage: "heart")

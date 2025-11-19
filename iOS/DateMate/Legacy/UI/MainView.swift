@@ -15,7 +15,7 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             TabView {
-                HomeView().tabItem {
+                HomeView(onNavigateToSubFirst: { _ in }).tabItem {
                     Image(systemName: "heart.fill")
                     Text("Home")
                 }
