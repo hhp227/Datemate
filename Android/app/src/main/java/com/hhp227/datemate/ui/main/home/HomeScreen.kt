@@ -26,27 +26,11 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
     onNavigateToSubFirst: (String) -> Unit
 ) {
-    /*Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(onClick = {
-            onNavigateToSubFirst("Test")
-        }) {
-            Text("Next")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Lorem Ipsum First Screen")
-    }*/
     ScrollView(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Column {
             Text(
                 text = "Recommended People for today",
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -56,12 +40,12 @@ fun HomeScreen(
         Column {
             Text(
                 text = "Famous People",
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 20.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items((0..9).toList()) { i ->
@@ -82,12 +66,12 @@ fun HomeScreen(
         Column {
             Text(
                 text = "T.O.P Supporter",
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 20.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items((0..9).toList()) { i ->
