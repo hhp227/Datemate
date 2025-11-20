@@ -1,7 +1,11 @@
-package com.hhp227.datemate.legacy.data
+package com.hhp227.datemate.data
 
-import com.google.firebase.database.*
-import com.hhp227.datemate.legacy.model.Comment
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.hhp227.datemate.data.Comment
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow

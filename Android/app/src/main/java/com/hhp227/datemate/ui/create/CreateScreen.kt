@@ -1,9 +1,9 @@
-package com.hhp227.datemate.legacy.ui
+package com.hhp227.datemate.ui.create
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun WriteEditScreen() {
+fun CreateScreen() {
     Text(text = "WriteScreen")
 }

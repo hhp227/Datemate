@@ -1,7 +1,8 @@
-package com.hhp227.datemate.data
+package com.hhp227.datemate.data.repository
 
 import com.google.firebase.auth.FirebaseUser
 import com.hhp227.datemate.common.Resource
+import com.hhp227.datemate.data.datasource.UserRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart

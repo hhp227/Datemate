@@ -1,4 +1,4 @@
-package com.hhp227.datemate.legacy.model
+package com.hhp227.datemate.data
 
 data class Post(
     var uid: String = "",

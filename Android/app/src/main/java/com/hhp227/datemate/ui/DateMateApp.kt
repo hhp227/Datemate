@@ -13,10 +13,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.hhp227.datemate.common.InjectorUtils
-import com.hhp227.datemate.data.UserRepository.SignInState
+import com.hhp227.datemate.data.repository.UserRepository.SignInState
 import com.hhp227.datemate.ui.detail.SubFirstScreen
 import com.hhp227.datemate.ui.main.MainScreen
-import com.hhp227.datemate.ui.postdetail.SubSecondScreen
+import com.hhp227.datemate.ui.postdetail.PostDetailScreen
 import com.hhp227.datemate.ui.signin.SignInScreen
 import com.hhp227.datemate.ui.signup.SignUpScreen
 import com.hhp227.datemate.ui.theme.DateMateTheme
@@ -59,7 +59,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 onNavigateUp = { navController.navigateUp() }
             )
         }
-        composable("sub_second") { SubSecondScreen(onNavigateUp = { navController.navigateUp() }) }
+        composable("sub_second") { PostDetailScreen(onNavigateUp = { navController.navigateUp() }) }
     }
 }
 

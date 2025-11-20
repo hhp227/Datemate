@@ -1,4 +1,4 @@
-package com.hhp227.datemate.legacy.ui
+package com.hhp227.datemate.ui.profile
 
 import androidx.compose.runtime.Composable
 

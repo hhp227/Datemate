@@ -1,13 +1,16 @@
-package com.hhp227.datemate.legacy.viewmodel
+package com.hhp227.datemate.ui.main.lounge
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
-import com.hhp227.datemate.legacy.data.PostRepository
-import com.hhp227.datemate.legacy.model.Post
+import com.hhp227.datemate.data.PostRepository
+import com.hhp227.datemate.data.Post
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import java.lang.Exception
 
 class LoungeViewModel(
@@ -47,5 +50,3 @@ class LoungeViewModel(
 
     data class State(var isLoading: Boolean = false, var posts: List<Post> = emptyList(), var error: String = "")
 }
-
-

@@ -3,7 +3,7 @@ package com.hhp227.datemate.ui.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hhp227.datemate.data.UserRepository
+import com.hhp227.datemate.data.repository.UserRepository
 import com.hhp227.datemate.common.Resource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

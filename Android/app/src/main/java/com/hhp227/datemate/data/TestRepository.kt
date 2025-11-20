@@ -1,6 +1,7 @@
-package com.hhp227.datemate.legacy.data
+package com.hhp227.datemate.data
 
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class TestRepository(
     private val rootRef: DatabaseReference = FirebaseDatabase.getInstance().reference,

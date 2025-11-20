@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavBackStackEntry
 import com.google.firebase.auth.FirebaseAuth
-import com.hhp227.datemate.data.UserRemoteDataSource
-import com.hhp227.datemate.data.UserRepository
+import com.hhp227.datemate.data.datasource.UserRemoteDataSource
+import com.hhp227.datemate.data.repository.UserRepository
 import com.hhp227.datemate.ui.detail.SubFirstViewModel
 import com.hhp227.datemate.ui.signin.SignInViewModel
 

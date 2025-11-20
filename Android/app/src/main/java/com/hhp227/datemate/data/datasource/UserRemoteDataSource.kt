@@ -1,4 +1,4 @@
-package com.hhp227.datemate.data
+package com.hhp227.datemate.data.datasource
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult

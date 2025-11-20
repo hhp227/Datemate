@@ -1,30 +1,40 @@
-package com.hhp227.datemate.legacy.ui
+package com.hhp227.datemate.ui.main.lounge
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hhp227.datemate.R
-import com.hhp227.datemate.legacy.data.PostRepository
-import com.hhp227.datemate.legacy.model.Post
-import com.hhp227.datemate.util.viewModelProviderFactoryOf
-import com.hhp227.datemate.legacy.viewmodel.LoungeViewModel
 import com.hhp227.datemate.ui.theme.DateMateTheme
 
+@Composable
+fun LoungeScreen(
+    viewModel: LoungeViewModel = viewModel(),
+    onNavigateToSubSecond: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = {
+            onNavigateToSubSecond()
+        }) {
+            Text("Previous")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Lorem Ipsum Second Screen")
+    }
+}
+
+/*
 @Composable
 fun LoungeScreen(
     modifier: Modifier = Modifier,
@@ -72,6 +82,7 @@ fun PostItem(post: Post, onItemClick: (String) -> Unit) {
         }
     }
 }
+ */
 
 @Preview(name = "Lounge light theme")
 @Composable
