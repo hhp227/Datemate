@@ -8,6 +8,18 @@
 import SwiftUI
 
 struct PostDetailView: View {
+    var body: some View {
+        VStack {
+            Text("Fragment_sub_second")
+                .font(.title2)
+                .padding()
+            Spacer()
+        }
+        .navigationTitle("Sub Second")
+    }
+}
+
+/*struct PostDetailView: View {
     @EnvironmentObject var viewModel: PostDetailViewModel
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -71,7 +83,7 @@ struct CommentCell: View {
             }
         }
     }
-}
+}*/
 
 struct PostDetailView_Previews: PreviewProvider {
     static var previews: some View {

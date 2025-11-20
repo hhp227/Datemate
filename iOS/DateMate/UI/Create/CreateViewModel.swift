@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import FirebaseDatabase
 
-class WriteEditViewModel: ObservableObject {
+class CreateViewModel: ObservableObject {
     @Published var title: String = ""
     
     @Published var content: String = ""

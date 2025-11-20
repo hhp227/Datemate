@@ -33,7 +33,7 @@ struct AppNavigation: View {
     
     var body: some View {
         NavigationStack(path: $path) {
-            MainView2(
+            MainView(
                 onNavigateToSubFirst: { data in
                     path.append("sub_first:\(data)")
                 },
@@ -46,7 +46,7 @@ struct AppNavigation: View {
                     let data = route.replacingOccurrences(of: "sub_first:", with: "")
                     SubFirstView(viewModel: DependencyContainer.instance.provideDetailViewModel(data: data))
                 } else if route == "sub_second" {
-                    SubSecondView(
+                    PostDetailView(
                         //onNavigateUp = { path.removeLast() }
                     )
                 }

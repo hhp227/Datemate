@@ -2,12 +2,12 @@
 //  MainView.swift
 //  DateMate
 //
-//  Created by 홍희표 on 2025/11/12.
+//  Created by 홍희표 on 2021/12/03.
 //
 
 import SwiftUI
 
-struct MainView2: View {
+struct MainView: View {
     @StateObject private var viewModel = MainViewModel()
     
     @State private var selectedTab = 0
@@ -28,7 +28,7 @@ struct MainView2: View {
                     Label("First", systemImage: "house")
                 }
                 .tag(0)
-                SecondView(onNavigateToSubSecond: onNavigateToSubSecond)
+                LoungeView(onNavigateToSubSecond: onNavigateToSubSecond)
                 .tabItem {
                     Label("Second", systemImage: "heart")
                 }
@@ -76,9 +76,6 @@ struct MainView2: View {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView2(
-            onNavigateToSubFirst: { _ in },
-            onNavigateToSubSecond: {}
-        )
+        MainView(onNavigateToSubFirst: { _ in }, onNavigateToSubSecond: {})
     }
 }
