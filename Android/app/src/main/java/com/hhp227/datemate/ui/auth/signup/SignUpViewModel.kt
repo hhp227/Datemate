@@ -3,7 +3,6 @@ package com.hhp227.datemate.ui.auth.signup
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

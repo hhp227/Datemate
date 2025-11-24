@@ -1,4 +1,4 @@
-package com.hhp227.datemate.data
+package com.hhp227.datemate.data.model
 
 data class User(
     val id: String, // UID

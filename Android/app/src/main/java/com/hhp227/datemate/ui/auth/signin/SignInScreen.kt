@@ -24,7 +24,8 @@ import com.hhp227.datemate.ui.theme.DateMateTheme
 @Composable
 fun SignInScreen(
     viewModel: SignInViewModel = viewModel(factory = InjectorUtils.provideSignInViewModelFactory()),
-    onSignUp: () -> Unit
+    onSignUp: () -> Unit,
+    onForgotPassword: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -65,16 +66,31 @@ fun SignInScreen(
                 onClick = { viewModel.signIn(uiState.email, uiState.password) },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(16.dp),
-                enabled = uiState.isSignInEnabled
+                enabled = uiState.isSubmitEnabled && !uiState.isLoading
             ) {
-                Text(text = stringResource(id = R.string.sign_in))
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(color = MaterialTheme.colors.onPrimary, modifier = Modifier.size(24.dp))
+                } else {
+                    Text(text = stringResource(id = R.string.sign_in))
+                }
+            }
+            if (uiState.message != null) {
+                Text(
+                    text = uiState.message!!,
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
             TextButton(
-                onClick = { onSignUp() },
+                onClick = onSignUp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text("Sign Up")
             }
+            TextButton(onClick = onForgotPassword) { Text("Forgot Password?") }
         }
     }
 }
@@ -99,7 +115,7 @@ private fun Logo(modifier: Modifier = Modifier, lightTheme: Boolean = MaterialTh
 @Composable
 fun SignInPreview() {
     DateMateTheme {
-        SignInScreen(onSignUp = {})
+        SignInScreen(onSignUp = {}, onForgotPassword = {})
     }
 }
 
@@ -107,6 +123,6 @@ fun SignInPreview() {
 @Composable
 fun SignInPreviewDark() {
     DateMateTheme(darkTheme = true) {
-        SignInScreen(onSignUp = {})
+        SignInScreen(onSignUp = {}, onForgotPassword = {})
     }
 }

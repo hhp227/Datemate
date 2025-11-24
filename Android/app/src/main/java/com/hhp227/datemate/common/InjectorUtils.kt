@@ -8,6 +8,8 @@ import androidx.navigation.NavBackStackEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.hhp227.datemate.data.datasource.UserRemoteDataSource
 import com.hhp227.datemate.data.repository.UserRepository
+import com.hhp227.datemate.ui.auth.forgotpassword.ForgotPasswordViewModel
+import com.hhp227.datemate.ui.auth.profilesetup.ProfileSetupViewModel
 import com.hhp227.datemate.ui.detail.SubFirstViewModel
 import com.hhp227.datemate.ui.auth.signin.SignInViewModel
 import com.hhp227.datemate.ui.auth.signup.SignUpViewModel
@@ -33,6 +35,24 @@ object InjectorUtils {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return SignUpViewModel(getUserRepository()) as T
+            }
+        }
+    }
+
+    fun provideProfileSetupViewModelFactory(): ViewModelProvider.Factory {
+        return object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return ProfileSetupViewModel(getUserRepository()) as T
+            }
+        }
+    }
+
+    fun provideForgotPasswordViewModelFactory(): ViewModelProvider.Factory {
+        return object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return ForgotPasswordViewModel(getUserRepository()) as T
             }
         }
     }

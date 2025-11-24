@@ -10,7 +10,7 @@ data class SignUpUiState(
     val passwordError: String? = null,
     val confirmPasswordError: String? = null,
     val isLoading: Boolean = false,
-    val isSignUpSuccess: Boolean = false, // 회원가입 성공 플래그
+    val isSignUpSuccess: Boolean = false,
     val errorMessage: String? = null
 ) {
     val isSignUpEnabled: Boolean

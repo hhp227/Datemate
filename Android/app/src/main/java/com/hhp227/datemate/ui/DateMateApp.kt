@@ -14,6 +14,7 @@ import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.hhp227.datemate.common.InjectorUtils
 import com.hhp227.datemate.data.repository.UserRepository.SignInState
+import com.hhp227.datemate.ui.auth.forgotpassword.ForgotPasswordScreen
 import com.hhp227.datemate.ui.auth.profilesetup.ProfileSetupScreen
 import com.hhp227.datemate.ui.detail.SubFirstScreen
 import com.hhp227.datemate.ui.main.MainScreen
@@ -71,7 +72,10 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
         startDestination = "sign_in"
     ) {
         composable("sign_in") {
-            SignInScreen(onSignUp = { navController.navigate("sign_up") })
+            SignInScreen(
+                onSignUp = { navController.navigate("sign_up") },
+                onForgotPassword = { navController.navigate("forgot_password") }
+            )
         }
         composable("sign_up") {
             SignUpScreen(
@@ -86,11 +90,15 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
         composable("profile_setup") {
             ProfileSetupScreen(
                 onSetupComplete = {
-                    // 메인 화면으로 이동 등
                     navController.navigate("home") {
-                        popUpTo(0) // 백스택 전체 클리어
+                        popUpTo(0)
                     }
                 }
+            )
+        }
+        composable("forgot_password") {
+            ForgotPasswordScreen(
+                onBackToSignIn = { navController.navigateUp() }
             )
         }
     }

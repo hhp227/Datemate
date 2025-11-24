@@ -17,10 +17,6 @@ class SignInViewModel internal constructor(
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState: StateFlow<SignInUiState> = _uiState
 
-    private fun canSubmit(email: String, password: String): Boolean {
-        return !email.isEmpty() && validateEmail(email) == null && !password.isEmpty() && validatePassword(password) == null
-    }
-
     private fun isEmailValid(email: String): Boolean {
         return Pattern.matches(EMAIL_VALIDATION_REGEX, email)
     }
@@ -41,8 +37,7 @@ class SignInViewModel internal constructor(
         _uiState.update {
             it.copy(
                 email = value,
-                emailError = validateEmail(value),
-                isSignInEnabled = canSubmit(value, it.password)
+                emailError = validateEmail(value)
             )
         }
     }
@@ -51,8 +46,7 @@ class SignInViewModel internal constructor(
         _uiState.update {
             it.copy(
                 password = value,
-                passwordError = validatePassword(value),
-                isSignInEnabled = canSubmit(it.email, value)
+                passwordError = validatePassword(value)
             )
         }
     }
@@ -62,9 +56,21 @@ class SignInViewModel internal constructor(
             userRepository.getSignInResultStream(email, password)
                 .collectLatest { result ->
                     when (result) {
-                        is Resource.Error<*> -> Unit
-                        is Resource.Loading<*> -> _uiState.update { it.copy(isLoading = true) }
-                        is Resource.Success<*> -> Unit
+                        is Resource.Error<*> -> {
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    message = result.message ?: "알 수 없는 로그인 오류가 발생했습니다."
+                                )
+                            }
+                        }
+                        is Resource.Loading<*> -> _uiState.update { it.copy(isLoading = true, message = null) }
+                        is Resource.Success<*> -> _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                message = null
+                            )
+                        }
                     }
                 }
         }

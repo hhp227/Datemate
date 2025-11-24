@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
 
 class UserRemoteDataSource private constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    //private val firestore: FirebaseFirestore,
+    //private val storage: FirebaseStorage
 ) {
     val userStateFlow: Flow<FirebaseUser?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
@@ -54,7 +56,7 @@ class UserRemoteDataSource private constructor(
         try {
             val result = firebaseAuth
                 .createUserWithEmailAndPassword(email, password)
-                .await() // kotlinx-coroutines-play-services 의존성 필요
+                .await()
             val user = result.user
 
             if (user != null) {
@@ -64,6 +66,60 @@ class UserRemoteDataSource private constructor(
             }
         } catch (e: Exception) {
             emit(Resource.Error("회원가입 오류: ${e.message}"))
+        }
+    }
+        .onStart { emit(Resource.Loading()) }
+
+    /*suspend fun uploadProfileImage(imageUri: Uri, path: String): Resource<String> = try {
+        val storageRef = storage.reference.child(path)
+
+        // 업로드 후 성공할 때까지 대기
+        val uploadTask = storageRef.putFile(imageUri).await()
+
+        // 다운로드 URL 획득
+        val downloadUrl = storageRef.downloadUrl.await().toString()
+
+        Resource.Success(downloadUrl)
+    } catch (e: Exception) {
+        Resource.Error("이미지 업로드 실패: ${e.message}")
+    }*/
+
+    suspend fun updateUserProfile(
+        userId: String,
+        nickname: String,
+        profileImageUrls: List<String>?
+    ): Resource<Boolean> = try {
+        /*val user = firebaseAuth.currentUser
+
+        // 1. Firebase Authentication 업데이트 (첫 번째 이미지만 대표 URL로 사용)
+        val firstImageUrl = profileImageUrls?.firstOrNull()
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName(nickname)
+            .setPhotoUri(firstImageUrl?.toUri())
+            .build()
+
+        user.updateProfile(profileUpdates).await()
+
+        // 2. Firestore에 모든 이미지 URL 저장
+        val userDocument = firestore.collection("users").document(userId)
+        val userData = hashMapOf(
+            "nickname" to nickname,
+            "profileImageUrls" to (profileImageUrls ?: emptyList()), // 리스트 전체를 저장
+            "updatedAt" to FieldValue.serverTimestamp()
+        )
+        userDocument.set(userData, SetOptions.merge()).await()*/
+
+        Resource.Success(true)
+    } catch (e: Exception) {
+        Resource.Error("프로필 업데이트 오류: ${e.message}")
+    }
+
+    fun sendPasswordResetEmail(email: String): Flow<Resource<Boolean>> = flow {
+        try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            emit(Resource.Success(true))
+        } catch (e: Exception) {
+            emit(Resource.Error("비밀번호 재설정 이메일 전송 실패: ${e.message}"))
         }
     }
         .onStart { emit(Resource.Loading()) }
