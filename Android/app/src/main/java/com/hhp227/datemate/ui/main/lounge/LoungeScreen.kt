@@ -13,7 +13,7 @@ import com.hhp227.datemate.ui.theme.DateMateTheme
 
 @Composable
 fun LoungeScreen(
-    viewModel: LoungeViewModel = viewModel(),
+    //viewModel: LoungeViewModel = viewModel(),
     onNavigateToSubSecond: () -> Unit
 ) {
     Column(

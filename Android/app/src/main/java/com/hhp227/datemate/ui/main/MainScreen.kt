@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.hhp227.datemate.ui.main.home.HomeScreen
+import com.hhp227.datemate.ui.main.discover.DiscoverScreen
 import com.hhp227.datemate.ui.main.lounge.LoungeScreen
 
 @Composable
@@ -75,7 +75,7 @@ fun MainScreen(onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: ()
             startDestination = "first",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("first") { HomeScreen(onNavigateToSubFirst = onNavigateToSubFirst) }
+            composable("first") { DiscoverScreen(onNavigateToSubFirst = onNavigateToSubFirst) }
             composable("second") { LoungeScreen(onNavigateToSubSecond = onNavigateToSubSecond) }
         }
     }

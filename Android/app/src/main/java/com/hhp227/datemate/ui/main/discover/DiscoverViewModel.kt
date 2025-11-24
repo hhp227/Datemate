@@ -1,9 +1,9 @@
-package com.hhp227.datemate.ui.main.home
+package com.hhp227.datemate.ui.main.discover
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 
-class HomeViewModel : ViewModel() {
+class DiscoverViewModel : ViewModel() {
     private var _list = mutableStateListOf<Int>()
     val list: List<Int> = _list
 

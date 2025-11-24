@@ -1,7 +1,5 @@
 package com.hhp227.datemate.data.datasource
 
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.hhp227.datemate.common.Resource
@@ -52,9 +50,23 @@ class UserRemoteDataSource private constructor(
     }
         .onStart { emit(Resource.Loading()) }
 
-    suspend fun signUp(email: String, password: String): Task<AuthResult> {
-        return firebaseAuth.createUserWithEmailAndPassword(email, password)
+    fun signUp(email: String, password: String): Flow<Resource<FirebaseUser>> = flow {
+        try {
+            val result = firebaseAuth
+                .createUserWithEmailAndPassword(email, password)
+                .await() // kotlinx-coroutines-play-services 의존성 필요
+            val user = result.user
+
+            if (user != null) {
+                emit(Resource.Success(user))
+            } else {
+                emit(Resource.Error("회원가입 실패: 알 수 없는 오류"))
+            }
+        } catch (e: Exception) {
+            emit(Resource.Error("회원가입 오류: ${e.message}"))
+        }
     }
+        .onStart { emit(Resource.Loading()) }
 
     companion object {
         @Volatile

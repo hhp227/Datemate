@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui.signin
+package com.hhp227.datemate.ui.auth.signin
 
 data class SignInUiState(
     val email: String = "",

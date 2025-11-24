@@ -14,11 +14,12 @@ import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.hhp227.datemate.common.InjectorUtils
 import com.hhp227.datemate.data.repository.UserRepository.SignInState
+import com.hhp227.datemate.ui.auth.profilesetup.ProfileSetupScreen
 import com.hhp227.datemate.ui.detail.SubFirstScreen
 import com.hhp227.datemate.ui.main.MainScreen
 import com.hhp227.datemate.ui.postdetail.PostDetailScreen
-import com.hhp227.datemate.ui.signin.SignInScreen
-import com.hhp227.datemate.ui.signup.SignUpScreen
+import com.hhp227.datemate.ui.auth.signin.SignInScreen
+import com.hhp227.datemate.ui.auth.signup.SignUpScreen
 import com.hhp227.datemate.ui.theme.DateMateTheme
 
 @Composable
@@ -73,7 +74,24 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
             SignInScreen(onSignUp = { navController.navigate("sign_up") })
         }
         composable("sign_up") {
-            SignUpScreen()
+            SignUpScreen(
+                onSignUpSuccess = {
+                    navController.navigate("profile_setup") {
+                        popUpTo("sign_in") { inclusive = true }
+                    }
+                },
+                onBackToSignIn = { navController.navigateUp() }
+            )
+        }
+        composable("profile_setup") {
+            ProfileSetupScreen(
+                onSetupComplete = {
+                    // 메인 화면으로 이동 등
+                    navController.navigate("home") {
+                        popUpTo(0) // 백스택 전체 클리어
+                    }
+                }
+            )
         }
     }
 }

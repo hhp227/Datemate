@@ -18,6 +18,10 @@ class UserRepository private constructor(
         return userRemoteDataSource.signIn(email, password)
     }
 
+    fun getSignUpResultStream(email: String, password: String): Flow<Resource<FirebaseUser>> {
+        return userRemoteDataSource.signUp(email, password)
+    }
+
     fun getSignOutResultStream(): Flow<Resource<Boolean>> {
         return userRemoteDataSource.signOut()
     }

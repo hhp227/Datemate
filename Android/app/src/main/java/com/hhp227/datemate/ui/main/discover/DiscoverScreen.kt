@@ -1,4 +1,4 @@
-package com.hhp227.datemate.ui.main.home
+package com.hhp227.datemate.ui.main.discover
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,8 +25,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hhp227.datemate.ui.theme.DateMateTheme
 
 @Composable
-fun HomeScreen(
-    viewModel: HomeViewModel = viewModel(),
+fun DiscoverScreen(
+    viewModel: DiscoverViewModel = viewModel(),
     onNavigateToSubFirst: (String) -> Unit
 ) {
     ScrollView(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -252,6 +252,6 @@ fun ScrollView(
 @Composable
 fun HomePreview() {
     DateMateTheme {
-        HomeScreen(onNavigateToSubFirst = {})
+        DiscoverScreen(onNavigateToSubFirst = {})
     }
 }

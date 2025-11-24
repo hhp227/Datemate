@@ -1,13 +1,9 @@
-package com.hhp227.datemate.ui.signin
+package com.hhp227.datemate.ui.auth.signin
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,17 +11,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hhp227.datemate.R
 import com.hhp227.datemate.common.InjectorUtils
+import com.hhp227.datemate.ui.auth.EmailField
+import com.hhp227.datemate.ui.auth.PasswordField
 import com.hhp227.datemate.ui.theme.DateMateTheme
 
 @Composable
@@ -67,10 +60,11 @@ fun SignInScreen(
                 onValueChange = viewModel::onPasswordChanged,
                 onImeAction = { viewModel.signIn(uiState.email, uiState.password) }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { viewModel.signIn(uiState.email, uiState.password) },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                shape = RoundedCornerShape(16.dp),
                 enabled = uiState.isSignInEnabled
             ) {
                 Text(text = stringResource(id = R.string.sign_in))
@@ -99,79 +93,6 @@ private fun Logo(modifier: Modifier = Modifier, lightTheme: Boolean = MaterialTh
         modifier = modifier,
         contentScale = ContentScale.Fit
     )
-}
-
-@Composable
-fun EmailField(
-    value: String,
-    error: String?,
-    onValueChange: (String) -> Unit,
-    imeAction: ImeAction = ImeAction.Next,
-    onImeAction: () -> Unit = {}
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("Email") },
-        isError = error != null,
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = imeAction),
-        keyboardActions = KeyboardActions(onDone = { onImeAction() })
-    )
-    if (error != null) {
-        TextFieldError(textError = error)
-    }
-}
-
-@Composable
-fun PasswordField(
-    value: String,
-    error: String?,
-    onValueChange: (String) -> Unit,
-    imeAction: ImeAction = ImeAction.Done,
-    onImeAction: () -> Unit = {}
-) {
-    val showPassword = remember { mutableStateOf(false) }
-
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("Password") },
-        visualTransformation =
-            if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            IconButton(onClick = { showPassword.value = !showPassword.value }) {
-                Icon(
-                    imageVector =
-                        if (showPassword.value) Icons.Default.Visibility
-                        else Icons.Default.VisibilityOff,
-                    contentDescription = null
-                )
-            }
-        },
-        isError = error != null,
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = imeAction),
-        keyboardActions = KeyboardActions(onDone = { onImeAction() })
-    )
-    if (error != null) {
-        TextFieldError(textError = error)
-    }
-}
-
-/**
- * To be removed when [TextField]s support error
- */
-@Composable
-fun TextFieldError(textError: String) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = textError,
-            modifier = Modifier.fillMaxWidth(),
-            style = LocalTextStyle.current.copy(color = MaterialTheme.colors.error)
-        )
-    }
 }
 
 @Preview(name = "Sign in light theme")
