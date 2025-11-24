@@ -28,7 +28,7 @@ struct SignUpView: View {
                 Text("Create an Account")
                     .font(.title)
                     .padding(.bottom, 32)
-                VStack(spacing: 16) {
+                VStack(spacing: 20) {
                     GeneralTextField(
                         label: "Full Name",
                         value: uiState.name,
@@ -39,7 +39,6 @@ struct SignUpView: View {
                     .onSubmit {
                         focusedField = .email
                     }
-                    //Spacer().frame(height: 16)
                     EmailField(
                         value: uiState.email,
                         error: uiState.emailError,

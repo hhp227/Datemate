@@ -36,7 +36,7 @@ struct SignInView: View {
                     onSubmit: { focusedField = .password }
                 )
                 .focused($focusedField, equals: .email)
-                Spacer().frame(height: 16)
+                Spacer().frame(height: 20)
                 PasswordField(
                     value: uiState.password,
                     error: uiState.passwordError,
@@ -46,7 +46,7 @@ struct SignInView: View {
                     }
                 )
                 .focused($focusedField, equals: .password)
-                Spacer().frame(height: 16)
+                Spacer().frame(height: 24)
                 Button(action: {
                     viewModel.signIn(email: uiState.email, password: uiState.password)
                 }) {
