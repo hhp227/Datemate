@@ -61,15 +61,20 @@ struct SignInNavigation: View {
     var body: some View {
         NavigationStack(path: $path) {
             SignInView(
-                onSignUp: {
-                    path.append("sign_up")
-                }
+                onSignUp: { path.append("sign_up") },
+                onForgotPassword: { path.append("forgot_password") }
             )
             .navigationDestination(for: String.self) { route in
                 if route == "sign_up" {
                     SignUpView {
+                        path.append("profile_setup")
+                    } onBackToSignIn: {
                         path = []
                     }
+                } else if route == "profile_setup" {
+                    ProfileSetupView(onSetupComplete: {})
+                } else if route == "forgot_password" {
+                    ForgotPasswordView()
                 }
             }
         }

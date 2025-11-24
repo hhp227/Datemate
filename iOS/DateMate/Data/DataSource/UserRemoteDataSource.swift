@@ -14,9 +14,9 @@ class UserRemoteDataSource {
     
     private var authStateHandle: AuthStateDidChangeListenerHandle?
     
-    private let userSubject = CurrentValueSubject<User?, Never>(nil)
+    private let userSubject = CurrentValueSubject<FirebaseAuth.User?, Never>(nil)
     
-    var userStatePublisher: AnyPublisher<User?, Never> {
+    var userStatePublisher: AnyPublisher<FirebaseAuth.User?, Never> {
         userSubject.eraseToAnyPublisher()
     }
     
@@ -33,45 +33,45 @@ class UserRemoteDataSource {
         }
     }*/
     
-    func signIn(email: String, password: String) -> AnyPublisher<Resource<User>, Never> {
-        let subject = PassthroughSubject<Resource<User>, Never>()
-            
-        subject.send(.loading())
-        firebaseAuth.signIn(withEmail: email, password: password) { result, error in
-            if let user = result?.user {
-                subject.send(.success(data: user))
-            } else {
-                subject.send(.error(message: error?.localizedDescription ?? "로그인 실패"))
+    func signIn(email: String, password: String) -> AnyPublisher<Resource<FirebaseAuth.User>, Never> {
+        Future { promise in
+            self.firebaseAuth.signIn(withEmail: email, password: password) { result, error in
+                if let user = result?.user {
+                    promise(.success(.success(data: user)))
+                } else {
+                    promise(.success(.error(message: error?.localizedDescription ?? "로그인 실패")))
+                }
             }
-            subject.send(completion: .finished)
         }
-        return subject.eraseToAnyPublisher()
+        .prepend(.loading())
+        .eraseToAnyPublisher()
     }
     
     func signOut() -> AnyPublisher<Resource<Bool>, Never> {
-        let subject = PassthroughSubject<Resource<Bool>, Never>()
-        
-        subject.send(.loading())
-        do {
-            try firebaseAuth.signOut()
-            subject.send(.success(data: true))
-        } catch {
-            subject.send(.error(message: error.localizedDescription))
+        Future { promise in
+            do {
+                try self.firebaseAuth.signOut()
+                promise(.success(.success(data: true)))
+            } catch {
+                promise(.success(.error(message: error.localizedDescription)))
+            }
         }
-        subject.send(completion: .finished)
-        return subject.eraseToAnyPublisher()
+        .prepend(.loading())
+        .eraseToAnyPublisher()
     }
     
-    func signUp(email: String, password: String) -> AnyPublisher<AuthDataResult, Error> {
+    func signUp(email: String, password: String) -> AnyPublisher<Resource<FirebaseAuth.User>, Error> {
         Future { promise in
-            self.firebaseAuth.createUser(withEmail: email, password: password) { authDataResult, error in
-                if let auth = authDataResult {
-                    promise(.success(auth))
+            self.firebaseAuth.createUser(withEmail: email, password: password) { result, error in
+                if let user = result?.user {
+                    promise(.success(.success(data: user)))
                 } else if let error = error {
                     promise(.failure(error))
                 }
             }
-        }.eraseToAnyPublisher()
+        }
+        .prepend(.loading())
+        .eraseToAnyPublisher()
     }
     
     /*func signIn(email: String, password: String) async throws -> AuthDataResult {
@@ -97,6 +97,20 @@ class UserRemoteDataSource {
             }
         }
     }*/
+    
+    func sendPasswordResetEmail(email: String) -> AnyPublisher<Resource<Bool>, Never> {
+        return Future { promise in
+            self.firebaseAuth.sendPasswordReset(withEmail: email) { error in
+                if let error = error {
+                    promise(.success(.error(message: "비밀번호 재설정 이메일 전송 실패: \(error.localizedDescription)")))
+                } else {
+                    promise(.success(.success(data: true)))
+                }
+            }
+        }
+        .prepend(.loading())
+        .eraseToAnyPublisher()
+    }
     
     init(_ firebaseAuth: Auth) {
         self.firebaseAuth = firebaseAuth

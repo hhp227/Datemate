@@ -1,5 +1,5 @@
 //
-//  HomeView.swift
+//  DiscoverView.swift
 //  DateMate
 //
 //  Created by 홍희표 on 2021/12/04.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct HomeView: View{
-    @StateObject var viewModel = HomeViewModel()
+struct DiscoverView: View{
+    @StateObject var viewModel = DiscoverViewModel()
     
     var onNavigateToSubFirst: (String) -> Void
     
@@ -168,27 +168,8 @@ struct CardView: View {
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
+struct DiscoverView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(onNavigateToSubFirst: { _ in })
+        DiscoverView(onNavigateToSubFirst: { _ in })
     }
 }
-
-
-
-
-
-
-//            Section(header: Text("Recommended People for today"), content: {
-//                LazyHStack(alignment: .center) {
-//
-//                        RoundedRectangle(cornerRadius: 10)
-//                        .frame(width: UIScreen.screenWidth/2.5,height: 100)
-//                            .foregroundColor(.red)
-//                        RoundedRectangle(cornerRadius: 10)
-//                            .foregroundColor(.yellow)
-//                            .frame(width:UIScreen.screenWidth/2.5,height: 100)
-//
-//                    }
-//
-//            })

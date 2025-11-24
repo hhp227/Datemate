@@ -20,11 +20,21 @@ final class DependencyContainer {
         return SignInViewModel(userRepository)
     }
     
+    func provideSignUpViewModel() -> SignUpViewModel {
+        return SignUpViewModel(userRepository)
+    }
+    
+    func provideProfileSetupViewModel() -> ProfileSetupViewModel {
+        return ProfileSetupViewModel(userRepository)
+    }
+    
+    func provideForgotPasswordViewModel() -> ForgotPasswordViewModel {
+        return ForgotPasswordViewModel(userRepository)
+    }
+    
     func provideDetailViewModel(data: String) -> SubFirstViewModel {
         return SubFirstViewModel(userRepository, data: data)
     }
-    
-    // 사용: @StateObject private var viewModel = DependencyContainer.shared.provideUserViewModel()
     
     private init() {
         self.firebaseAuth = Auth.auth()

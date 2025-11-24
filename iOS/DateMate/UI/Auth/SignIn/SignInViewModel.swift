@@ -15,17 +15,9 @@ class SignInViewModel: ObservableObject {
     @Published var uiState = SignInUiState()
     
     private var cancellables = Set<AnyCancellable>()
-    
-    private func canSubmit(email: String, password: String) -> Bool {
-        return !email.isEmpty &&
-        validateEmail(email) == nil &&
-        !password.isEmpty &&
-        validatePassword(password) == nil
-    }
 
     private func isEmailValid(_ email: String) -> Bool {
-        let regex = #"^(.+)@(.+)$"#
-        return email.range(of: regex, options: .regularExpression) != nil
+        return email.range(of: SignInViewModel.EMAIL_VALIDATION_REGEX, options: .regularExpression) != nil
     }
     
     private func validateEmail(_ value: String) -> String? {
@@ -49,17 +41,13 @@ class SignInViewModel: ObservableObject {
     }
     
     func onEmailChanged(_ value: String) {
-        let password = uiState.password
         uiState.email = value
         uiState.emailError = validateEmail(value)
-        uiState.isSignInEnabled = canSubmit(email: value, password: password)
     }
     
     func onPasswordChanged(_ value: String) {
-        let email = uiState.email
         uiState.password = value
         uiState.passwordError = validatePassword(value)
-        uiState.isSignInEnabled = canSubmit(email: email, password: value)
     }
     
     func signIn(email: String, password: String) {
@@ -69,10 +57,13 @@ class SignInViewModel: ObservableObject {
                 switch result.state {
                 case .Loading:
                     self.uiState.isLoading = true
+                    self.uiState.message = nil
                 case .Success:
                     self.uiState.isLoading = false
+                    self.uiState.message = nil
                 case .Error:
                     self.uiState.isLoading = false
+                    self.uiState.message = result.message ?? "알 수 없는 로그인 오류가 발생했습니다."
                 }
             }
             .store(in: &cancellables)
@@ -81,4 +72,6 @@ class SignInViewModel: ObservableObject {
     init(_ userRepository: UserRepository) {
         self.userRepository = userRepository
     }
+    
+    private static let EMAIL_VALIDATION_REGEX = #"^(.+)@(.+)$"#
 }

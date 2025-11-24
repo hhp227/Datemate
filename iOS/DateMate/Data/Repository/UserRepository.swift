@@ -20,12 +20,20 @@ class UserRepository {
         $signInState.eraseToAnyPublisher()
     }
     
-    func getSignInResultStream(email: String, password: String) -> AnyPublisher<Resource<User>, Never> {
+    func getSignInResultStream(email: String, password: String) -> AnyPublisher<Resource<FirebaseAuth.User>, Never> {
         userRemoteDataSource.signIn(email: email, password: password)
+    }
+    
+    func getSignUpResultStream(email: String, password: String) -> AnyPublisher<Resource<FirebaseAuth.User>, Error> {
+        userRemoteDataSource.signUp(email: email, password: password)
     }
 
     func getSignOutResultStream() -> AnyPublisher<Resource<Bool>, Never> {
         userRemoteDataSource.signOut()
+    }
+    
+    func getPasswordResetResultStream(email: String) -> AnyPublisher<Resource<Bool>, Never> {
+        userRemoteDataSource.sendPasswordResetEmail(email: email)
     }
     
     init(_ userRemoteDataSource: UserRemoteDataSource) {
