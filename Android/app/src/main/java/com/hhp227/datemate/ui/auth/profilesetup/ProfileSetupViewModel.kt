@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProfileSetupViewModel(
-    private val userRepository: UserRepository // UserRepository 주입
-    // private val storageRepository: StorageRepository // Storage 관련 Repository 필요
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileSetupUiState())
     val uiState: StateFlow<ProfileSetupUiState> = _uiState.asStateFlow()
@@ -55,7 +54,7 @@ class ProfileSetupViewModel(
         val bioTrimmed = newBio.trim()
         val bioError = when {
             bioTrimmed.isBlank() -> "자기소개를 입력해주세요."
-            bioTrimmed.length > 500 -> "자기소개는 500자 이내로 입력해주세요." // 최대 500자 가정
+            bioTrimmed.length > 500 -> "자기소개는 500자 이내로 입력해주세요."
             else -> null
         }
         _uiState.update { it.copy(bio = newBio, bioError = bioError) }
@@ -65,7 +64,7 @@ class ProfileSetupViewModel(
         val jobTrimmed = newJob.trim()
         val jobError = when {
             jobTrimmed.isBlank() -> "직업을 입력해주세요."
-            jobTrimmed.length > 50 -> "직업은 50자 이내로 입력해주세요." // 최대 50자 가정
+            jobTrimmed.length > 50 -> "직업은 50자 이내로 입력해주세요."
             else -> null
         }
         _uiState.update { it.copy(job = newJob, jobError = jobError) }
@@ -82,11 +81,7 @@ class ProfileSetupViewModel(
             _uiState.update { it.copy(birthdayError = "유효한 생년월일을 선택해주세요.") }
             return
         }
-
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
         viewModelScope.launch {
-            // UserRepository.updateUserProfile을 List<Uri>로 호출하도록 변경
             userRepository.updateUserProfile(
                 currentState.selectedImageUris,
                 currentState.fullName,
@@ -103,7 +98,9 @@ class ProfileSetupViewModel(
                         is Resource.Error -> {
                             _uiState.update { it.copy(isLoading = false, errorMessage = "업데이트 실패: ${resource.message}") }
                         }
-                        is Resource.Loading -> { /* 로딩 중 */ }
+                        is Resource.Loading -> {
+                            _uiState.update { it.copy(isLoading = true) }
+                        }
                     }
                 }
         }

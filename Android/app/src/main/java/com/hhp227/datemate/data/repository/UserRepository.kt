@@ -14,7 +14,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
 
 class UserRepository private constructor(
-    private val userRemoteDataSource: UserRemoteDataSource
+    private val userRemoteDataSource: UserRemoteDataSource,
+    private val storageRepository: StorageRepository
 ) {
     val signInStateFlow = userRemoteDataSource.userStateFlow
         .map { if (it != null) SignInState.SignIn else SignInState.SignOut }
@@ -52,12 +53,7 @@ class UserRepository private constructor(
 
         // 2. 이미지 업로드: 모든 이미지를 순회하며 개별 업로드
         imageUris.forEachIndexed { index, uri ->
-            // 고유한 파일명과 경로를 생성합니다.
-            // (주의: Uri를 String으로 변환하는 'toUri' 확장 함수가 필요할 수 있습니다.)
-            val path = "users/$userId/gallery_${index}_${System.currentTimeMillis()}.jpg"
-
-            // Data Source 호출
-            when (val imageResult = userRemoteDataSource.uploadProfileImage(uri, path)) {
+            when (val imageResult = storageRepository.uploadProfileImage(uri, userId, index)) { // StorageRepository 사용
                 is Resource.Success -> uploadedImageUrls.add(imageResult.data)
                 is Resource.Error -> return@flow emit(Resource.Error("이미지 업로드 실패: ${imageResult.message}"))
                 else -> {}
@@ -89,9 +85,9 @@ class UserRepository private constructor(
     companion object {
         @Volatile private var instance: UserRepository? = null
 
-        fun getInstance(userRemoteDataSource: UserRemoteDataSource) =
+        fun getInstance(userRemoteDataSource: UserRemoteDataSource, storageRepository: StorageRepository) =
             instance ?: synchronized(this) {
-                instance ?: UserRepository(userRemoteDataSource).also { instance = it }
+                instance ?: UserRepository(userRemoteDataSource, storageRepository).also { instance = it }
             }
     }
 }

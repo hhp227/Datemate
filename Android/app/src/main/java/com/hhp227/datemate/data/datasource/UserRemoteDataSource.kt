@@ -1,6 +1,5 @@
 package com.hhp227.datemate.data.datasource
 
-import android.net.Uri
 import androidx.core.net.toUri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -8,7 +7,6 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.storage.FirebaseStorage
 import com.hhp227.datemate.common.Resource
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -19,8 +17,7 @@ import kotlinx.coroutines.tasks.await
 
 class UserRemoteDataSource private constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    private val firestore: FirebaseFirestore
 ) {
     val userStateFlow: Flow<FirebaseUser?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
@@ -77,16 +74,6 @@ class UserRemoteDataSource private constructor(
     }
         .onStart { emit(Resource.Loading()) }
 
-    suspend fun uploadProfileImage(imageUri: Uri, path: String): Resource<String> = try {
-        val storageRef = storage.reference.child(path)
-        val uploadTask = storageRef.putFile(imageUri).await()
-        val downloadUrl = storageRef.downloadUrl.await().toString()
-
-        Resource.Success(downloadUrl)
-    } catch (e: Exception) {
-        Resource.Error("이미지 업로드 실패: ${e.message}")
-    }
-
     suspend fun updateUserProfile(
         userId: String,
         fullName: String,
@@ -116,7 +103,6 @@ class UserRemoteDataSource private constructor(
             "job" to job,
             "profileImageUrls" to (profileImageUrls ?: emptyList()),
             "updatedAt" to FieldValue.serverTimestamp(),
-            // 생성 시에는 'createdAt' 필드가 없다면 추가합니다.
             "createdAt" to FieldValue.serverTimestamp()
         )
 
@@ -143,11 +129,10 @@ class UserRemoteDataSource private constructor(
         private var instance: UserRemoteDataSource? = null
         fun getInstance(
             auth: FirebaseAuth,
-            firestore: FirebaseFirestore,
-            storage: FirebaseStorage
+            firestore: FirebaseFirestore
         ) =
             instance ?: synchronized(this) {
-                instance ?: UserRemoteDataSource(auth, firestore, storage).also { instance = it }
+                instance ?: UserRemoteDataSource(auth, firestore).also { instance = it }
             }
     }
 }
