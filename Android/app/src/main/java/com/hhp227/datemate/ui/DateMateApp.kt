@@ -15,7 +15,9 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.hhp227.datemate.common.InjectorUtils
 import com.hhp227.datemate.data.repository.UserRepository.SignInState
 import com.hhp227.datemate.ui.auth.forgotpassword.ForgotPasswordScreen
-import com.hhp227.datemate.ui.auth.profilesetup.ProfileSetupScreen
+import com.hhp227.datemate.ui.auth.profilesetup.GenderSetupScreen
+import com.hhp227.datemate.ui.auth.profilesetup.InfoSetupScreen
+import com.hhp227.datemate.ui.auth.profilesetup.PhotoSetupScreen
 import com.hhp227.datemate.ui.detail.SubFirstScreen
 import com.hhp227.datemate.ui.main.MainScreen
 import com.hhp227.datemate.ui.postdetail.PostDetailScreen
@@ -80,20 +82,32 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
         composable("sign_up") {
             SignUpScreen(
                 onSignUpSuccess = {
-                    navController.navigate("profile_setup") {
+                    navController.navigate("gender_setup") {
                         popUpTo("sign_in") { inclusive = true }
                     }
                 },
                 onBackToSignIn = { navController.navigateUp() }
             )
         }
-        composable("profile_setup") {
-            ProfileSetupScreen(
+        composable("gender_setup") {
+            GenderSetupScreen(
+                onNext = { navController.navigate("photo_setup") }
+            )
+        }
+        composable("photo_setup") {
+            PhotoSetupScreen(
+                onNext = { navController.navigate("info_setup") },
+                onNavigateUp = { navController.navigateUp() }
+            )
+        }
+        composable("info_setup") {
+            InfoSetupScreen(
                 onSetupComplete = {
                     navController.navigate("home") {
                         popUpTo(0)
                     }
-                }
+                },
+                onNavigateUp = { navController.navigateUp() }
             )
         }
         composable("forgot_password") {

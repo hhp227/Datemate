@@ -1,7 +1,14 @@
 package com.hhp227.datemate.data.datasource
 
+import android.net.Uri
+import androidx.core.net.toUri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 import com.hhp227.datemate.common.Resource
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -12,8 +19,8 @@ import kotlinx.coroutines.tasks.await
 
 class UserRemoteDataSource private constructor(
     private val firebaseAuth: FirebaseAuth,
-    //private val firestore: FirebaseFirestore,
-    //private val storage: FirebaseStorage
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage
 ) {
     val userStateFlow: Flow<FirebaseUser?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
@@ -70,44 +77,51 @@ class UserRemoteDataSource private constructor(
     }
         .onStart { emit(Resource.Loading()) }
 
-    /*suspend fun uploadProfileImage(imageUri: Uri, path: String): Resource<String> = try {
+    suspend fun uploadProfileImage(imageUri: Uri, path: String): Resource<String> = try {
         val storageRef = storage.reference.child(path)
-
-        // 업로드 후 성공할 때까지 대기
         val uploadTask = storageRef.putFile(imageUri).await()
-
-        // 다운로드 URL 획득
         val downloadUrl = storageRef.downloadUrl.await().toString()
 
         Resource.Success(downloadUrl)
     } catch (e: Exception) {
         Resource.Error("이미지 업로드 실패: ${e.message}")
-    }*/
+    }
 
     suspend fun updateUserProfile(
         userId: String,
-        nickname: String,
+        fullName: String,
+        gender: String,
+        birthdayMillis: Long,
+        bio: String,
+        job: String,
         profileImageUrls: List<String>?
     ): Resource<Boolean> = try {
-        /*val user = firebaseAuth.currentUser
-
-        // 1. Firebase Authentication 업데이트 (첫 번째 이미지만 대표 URL로 사용)
+        val user = firebaseAuth.currentUser
         val firstImageUrl = profileImageUrls?.firstOrNull()
         val profileUpdates = UserProfileChangeRequest.Builder()
-            .setDisplayName(nickname)
+            .setDisplayName(fullName)
             .setPhotoUri(firstImageUrl?.toUri())
             .build()
 
-        user.updateProfile(profileUpdates).await()
+        user?.updateProfile(profileUpdates)?.await()
 
-        // 2. Firestore에 모든 이미지 URL 저장
         val userDocument = firestore.collection("users").document(userId)
-        val userData = hashMapOf(
-            "nickname" to nickname,
-            "profileImageUrls" to (profileImageUrls ?: emptyList()), // 리스트 전체를 저장
-            "updatedAt" to FieldValue.serverTimestamp()
+
+        val userData = mapOf(
+            "userId" to userId,
+            "fullName" to fullName,
+            "gender" to gender,
+            "birthdayMillis" to birthdayMillis,
+            "bio" to bio,
+            "job" to job,
+            "profileImageUrls" to (profileImageUrls ?: emptyList()),
+            "updatedAt" to FieldValue.serverTimestamp(),
+            // 생성 시에는 'createdAt' 필드가 없다면 추가합니다.
+            "createdAt" to FieldValue.serverTimestamp()
         )
-        userDocument.set(userData, SetOptions.merge()).await()*/
+
+        // SetOptions.merge()를 사용하여 기존 필드는 유지하고 필요한 필드만 업데이트
+        userDocument.set(userData, SetOptions.merge()).await()
 
         Resource.Success(true)
     } catch (e: Exception) {
@@ -127,7 +141,13 @@ class UserRemoteDataSource private constructor(
     companion object {
         @Volatile
         private var instance: UserRemoteDataSource? = null
-        fun getInstance(auth: FirebaseAuth) =
-            instance ?: synchronized(this) { instance ?: UserRemoteDataSource(auth).also { instance = it } }
+        fun getInstance(
+            auth: FirebaseAuth,
+            firestore: FirebaseFirestore,
+            storage: FirebaseStorage
+        ) =
+            instance ?: synchronized(this) {
+                instance ?: UserRemoteDataSource(auth, firestore, storage).also { instance = it }
+            }
     }
 }

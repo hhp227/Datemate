@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavBackStackEntry
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.hhp227.datemate.data.datasource.UserRemoteDataSource
 import com.hhp227.datemate.data.repository.UserRepository
 import com.hhp227.datemate.ui.auth.forgotpassword.ForgotPasswordViewModel
@@ -15,9 +17,13 @@ import com.hhp227.datemate.ui.auth.signin.SignInViewModel
 import com.hhp227.datemate.ui.auth.signup.SignUpViewModel
 
 object InjectorUtils {
-    private fun getUserRemoteDataSource() = UserRemoteDataSource.getInstance(provideFirebaseAuth())
+    private fun getUserRemoteDataSource() = UserRemoteDataSource.getInstance(provideFirebaseAuth(), provideFirestore(), provideStorage())
 
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    fun provideStorage(): FirebaseStorage = FirebaseStorage.getInstance()
 
     fun getUserRepository() = UserRepository.getInstance(getUserRemoteDataSource())
 

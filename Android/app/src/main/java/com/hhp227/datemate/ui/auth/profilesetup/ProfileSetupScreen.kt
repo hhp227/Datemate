@@ -1,8 +1,6 @@
 package com.hhp227.datemate.ui.auth.profilesetup
 
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -12,123 +10,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.hhp227.datemate.common.InjectorUtils
 import com.hhp227.datemate.data.model.Gender
-import com.hhp227.datemate.ui.auth.TextFieldError
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun ProfileSetupScreen(
-    viewModel: ProfileSetupViewModel = viewModel(factory = InjectorUtils.provideProfileSetupViewModelFactory()),
-    onSetupComplete: () -> Unit
-) {
-    val uiState by viewModel.uiState.collectAsState()
-    val allUris = uiState.selectedImageUris
-    val maxImages = 7
-    val primaryUri = allUris.firstOrNull()
-    val secondaryUris = if (allUris.size > 1) allUris.subList(1, allUris.size) else emptyList()
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> ->
-        viewModel.onImagesSelected(uris)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Setup Your Profile",
-            style = MaterialTheme.typography.h4,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.padding(bottom = 40.dp)
-        )
-        Text(
-            text = "성별을 선택해 주세요",
-            style = MaterialTheme.typography.subtitle1,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        GenderSelector(
-            selectedGender = uiState.selectedGender,
-            onGenderSelected = viewModel::onGenderSelected
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = uiState.nickname,
-            onValueChange = viewModel::onNicknameChange,
-            label = { Text("Nickname") },
-            modifier = Modifier.fillMaxWidth(),
-            isError = uiState.nicknameError != null
-        )
-        if (uiState.nicknameError != null) TextFieldError(textError = uiState.nicknameError!!)
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = "Profile Photos (${allUris.size} / Max $maxImages)", // 텍스트 업데이트
-            style = MaterialTheme.typography.subtitle1,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp)
-        )
-        if (allUris.isEmpty()) {
-            PrimaryImageAddButton(onClick = { launcher.launch("image/*") })
-        } else {
-            PrimaryProfileImage(
-                uri = primaryUri!!,
-                onRemove = { viewModel.removeImage(primaryUri) }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                maxItemsInEachRow = 3
-            ) {
-                if (allUris.size < maxImages) {
-                    SmallImageAddButton(
-                        onClick = { launcher.launch("image/*") },
-                        modifier = Modifier.fillMaxWidth(0.31f).aspectRatio(1f)
-                    )
-                }
-                secondaryUris.forEach { uri ->
-                    SelectedProfileImage(
-                        uri = uri,
-                        onRemove = { viewModel.removeImage(uri) },
-                        modifier = Modifier.fillMaxWidth(0.31f).aspectRatio(1f)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = viewModel::completeProfileSetup,
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-            shape = RoundedCornerShape(16.dp),
-            enabled = uiState.isSubmitEnabled && !uiState.isLoading
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(color = MaterialTheme.colors.onPrimary, modifier = Modifier.size(24.dp))
-            } else {
-                Text("완료")
-            }
-        }
-    }
-}
 
 @Composable
 fun PrimaryImageAddButton(onClick: () -> Unit) {

@@ -38,16 +38,22 @@ class UserRepository private constructor(
 
     fun updateUserProfile(
         imageUris: List<Uri>,
-        nickname: String
+        fullName: String,          // 🆕
+        gender: String,            // 🆕
+        birthdayMillis: Long,      // 🆕
+        bio: String,               // 🆕
+        job: String                // 🆕
     ): Flow<Resource<Boolean>> = flow {
+        // 1. 현재 로그인된 사용자 UID 확인
         /*val userId = userRemoteDataSource.firebaseAuth.currentUser?.uid
             ?: return@flow emit(Resource.Error("로그인이 필요합니다."))
 
         val uploadedImageUrls = mutableListOf<String>()
 
-        // 1. 이미지 업로드: 모든 이미지를 순회하며 개별 업로드
+        // 2. 이미지 업로드: 모든 이미지를 순회하며 개별 업로드
         imageUris.forEachIndexed { index, uri ->
             // 고유한 파일명과 경로를 생성합니다.
+            // (주의: Uri를 String으로 변환하는 'toUri' 확장 함수가 필요할 수 있습니다.)
             val path = "users/$userId/gallery_${index}_${System.currentTimeMillis()}.jpg"
 
             // Data Source 호출
@@ -58,17 +64,23 @@ class UserRepository private constructor(
             }
         }
 
-        // 2. Auth 및 Firestore 업데이트: 닉네임과 URL 목록을 전달
-        // Data Source 호출
-        when (val updateResult = userRemoteDataSource.updateUserProfile(userId, nickname, uploadedImageUrls)) {
-            is Resource.Success -> emit(Resource.Success(true))
-            is Resource.Error -> emit(Resource.Error(updateResult.message))
+        // 3. Auth 및 Firestore 업데이트: 모든 상세 정보와 URL 목록을 전달
+        when (val updateResult = userRemoteDataSource.updateUserProfile(
+            userId = userId,
+            fullName = fullName,
+            gender = gender,
+            birthdayMillis = birthdayMillis,
+            bio = bio,
+            job = job,
+            profileImageUrls = uploadedImageUrls
+        )) {
+            is Resource.Success -> */emit(Resource.Success(true))
+            /*is Resource.Error -> emit(Resource.Error(updateResult.message))
             else -> {}
         }*/
-        emit(Resource.Success(true))
     }
-        //.onStart { emit(Resource.Loading()) }
-        //.catch { e -> emit(Resource.Error(e.message ?: "알 수 없는 프로필 업데이트 오류")) }
+        //.onStart { emit(Resource.Loading()) } // 🌟 로딩 시작 활성화
+        //.catch { e -> emit(Resource.Error(e.message ?: "알 수 없는 프로필 업데이트 오류")) } // 🌟 에러 처리 활성화
 
     enum class SignInState {
         SignIn, SignOut, Loading

@@ -45,8 +45,8 @@ class PostRepository {
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    trySendBlocking(task.result.key?.let {
-                        task.result.getValue(Post::class.java)?.apply { this.key = it }
+                    trySendBlocking(task.result?.key?.let {
+                        task.result?.getValue(Post::class.java)?.apply { this.key = it }
                     } ?: Post())
                 }
             }.addOnFailureListener {
@@ -69,7 +69,7 @@ class PostRepository {
         FirebaseAuth.getInstance().currentUser?.also { user ->
             userPostRef.child(user.uid).get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    mutableStateFlow.value = task.result.children.mapNotNull { it.key }
+                    mutableStateFlow.value = task.result?.children?.mapNotNull { it.key } ?: return@addOnCompleteListener
                 }
             }
         }

@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hhp227.datemate.common.InjectorUtils
 import com.hhp227.datemate.ui.auth.EmailField
-import com.hhp227.datemate.ui.auth.GeneralTextField
 import com.hhp227.datemate.ui.auth.PasswordField
 
 @Composable
@@ -56,13 +55,6 @@ fun SignUpScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            GeneralTextField(
-                label = "Full Name",
-                value = uiState.name,
-                onValueChange = viewModel::onNameChange,
-                imeAction = ImeAction.Next
-            )
-            Spacer(modifier = Modifier.height(16.dp))
             EmailField(
                 value = uiState.email,
                 error = uiState.emailError,
@@ -79,7 +71,7 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(16.dp))
             PasswordField(
                 value = uiState.confirmPassword,
-                error = uiState.confirmPasswordError, // 비밀번호 불일치 에러 등
+                error = uiState.confirmPasswordError,
                 onValueChange = viewModel::onConfirmPasswordChange,
                 imeAction = ImeAction.Done,
                 onImeAction = {

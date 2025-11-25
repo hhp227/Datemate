@@ -15,10 +15,6 @@ class SignUpViewModel internal constructor(
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onNameChange(newValue: String) {
-        _uiState.update { it.copy(name = newValue, nameError = null) }
-    }
-
     fun onEmailChange(newValue: String) {
         _uiState.update { it.copy(email = newValue, emailError = null) }
     }
@@ -34,11 +30,6 @@ class SignUpViewModel internal constructor(
     fun signUp() {
         val currentState = _uiState.value
 
-        // 간단한 유효성 검사
-        if (currentState.name.isBlank()) {
-            _uiState.update { it.copy(nameError = "이름을 입력해주세요.") }
-            return
-        }
         if (currentState.email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()) {
             _uiState.update { it.copy(emailError = "유효한 이메일을 입력해주세요.") }
             return

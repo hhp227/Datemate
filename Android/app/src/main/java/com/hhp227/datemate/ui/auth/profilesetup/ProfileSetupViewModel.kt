@@ -19,12 +19,16 @@ class ProfileSetupViewModel(
     private val _uiState = MutableStateFlow(ProfileSetupUiState())
     val uiState: StateFlow<ProfileSetupUiState> = _uiState.asStateFlow()
 
-    fun onNicknameChange(newNickname: String) {
-        if (newNickname.length > 20) {
-            _uiState.update { it.copy(nicknameError = "닉네임은 20자 이내여야 합니다.") }
+    fun onFullNameChange(newFullName: String) {
+        if (newFullName.length > 50) {
+            _uiState.update { it.copy(fullNameError = "이름은 50자 이내여야 합니다.") }
         } else {
-            _uiState.update { it.copy(nickname = newNickname, nicknameError = null) }
+            _uiState.update { it.copy(fullName = newFullName, fullNameError = null) }
         }
+    }
+
+    fun onBirthdaySelected(newDateMillis: Long) { // Long 타입을 받도록 변경
+        _uiState.update { it.copy(birthdayMillis = newDateMillis, birthdayError = null) }
     }
 
     fun onImagesSelected(newUris: List<Uri>) {
@@ -47,11 +51,35 @@ class ProfileSetupViewModel(
         }
     }
 
+    fun onBioChange(newBio: String) {
+        val bioTrimmed = newBio.trim()
+        val bioError = when {
+            bioTrimmed.isBlank() -> "자기소개를 입력해주세요."
+            bioTrimmed.length > 500 -> "자기소개는 500자 이내로 입력해주세요." // 최대 500자 가정
+            else -> null
+        }
+        _uiState.update { it.copy(bio = newBio, bioError = bioError) }
+    }
+
+    fun onJobChange(newJob: String) {
+        val jobTrimmed = newJob.trim()
+        val jobError = when {
+            jobTrimmed.isBlank() -> "직업을 입력해주세요."
+            jobTrimmed.length > 50 -> "직업은 50자 이내로 입력해주세요." // 최대 50자 가정
+            else -> null
+        }
+        _uiState.update { it.copy(job = newJob, jobError = jobError) }
+    }
+
     fun completeProfileSetup() {
         val currentState = _uiState.value
 
-        if (currentState.nickname.isBlank() || currentState.nicknameError != null) {
-            _uiState.update { it.copy(nicknameError = "유효한 닉네임을 입력해주세요.") }
+        if (currentState.fullName.isBlank() || currentState.fullNameError != null) {
+            _uiState.update { it.copy(fullNameError = "유효한 이름을 입력해주세요.") }
+            return
+        }
+        if (currentState.birthdayMillis == null || currentState.birthdayError != null) {
+            _uiState.update { it.copy(birthdayError = "유효한 생년월일을 선택해주세요.") }
             return
         }
 
@@ -59,7 +87,14 @@ class ProfileSetupViewModel(
 
         viewModelScope.launch {
             // UserRepository.updateUserProfile을 List<Uri>로 호출하도록 변경
-            userRepository.updateUserProfile(currentState.selectedImageUris, currentState.nickname)
+            userRepository.updateUserProfile(
+                currentState.selectedImageUris,
+                currentState.fullName,
+                currentState.selectedGender?.name.toString(),
+                currentState.birthdayMillis,
+                currentState.bio,
+                currentState.job
+            )
                 .collect { resource ->
                     when (resource) {
                         is Resource.Success -> {
