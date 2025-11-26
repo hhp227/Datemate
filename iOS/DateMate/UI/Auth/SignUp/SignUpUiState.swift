@@ -6,11 +6,9 @@
 //
 
 struct SignUpUiState {
-    var name: String = ""
     var email: String = ""
     var password: String = ""
     var confirmPassword: String = ""
-    var nameError: String? = nil
     var emailError: String? = nil
     var passwordError: String? = nil
     var confirmPasswordError: String? = nil
@@ -18,8 +16,7 @@ struct SignUpUiState {
     var isSignUpSuccess: Bool = false
     var errorMessage: String? = nil
     var isSignUpEnabled: Bool {
-        return !name.isEmpty &&
-            !email.isEmpty && emailError == nil &&
+        return !email.isEmpty && emailError == nil &&
             !password.isEmpty && passwordError == nil &&
             !confirmPassword.isEmpty && confirmPassword == password
     }

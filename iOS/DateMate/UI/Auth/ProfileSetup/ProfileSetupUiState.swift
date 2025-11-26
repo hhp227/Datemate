@@ -8,17 +8,27 @@
 import Foundation
 
 struct ProfileSetupUiState {
-    var nickname: String = ""
+    var fullName: String = ""
     var selectedImageUrls: [URL] = []
     var selectedGender: Gender? = nil
+    var bio: String = ""
+    var birthdayMillis: Int64? = nil
+    var job: String = ""
     var isLoading: Bool = false
     var isSetupComplete: Bool = false
     var errorMessage: String? = nil
-    var nicknameError: String? = nil
+    var fullNameError: String? = nil
+    var birthdayError: String? = nil
+    var bioError: String? = nil
+    var jobError: String? = nil
     var isSubmitEnabled: Bool {
-        let isNicknameValid = !nickname.isEmpty && nicknameError == nil
+        let isFullNameValid = !fullName.isEmpty && fullNameError == nil
         let isPhotoListValid = !selectedImageUrls.isEmpty
         let isGenderSelected = selectedGender != nil
-        return isNicknameValid && isPhotoListValid && isGenderSelected
+        let isBirthdayValid = birthdayMillis != nil && birthdayError == nil
+        let isBioValid = !bio.isEmpty && bioError == nil
+        let isJobValid = !job.isEmpty && jobError == nil
+        return isFullNameValid && isPhotoListValid && isGenderSelected &&
+               isBirthdayValid && isBioValid && isJobValid
     }
 }

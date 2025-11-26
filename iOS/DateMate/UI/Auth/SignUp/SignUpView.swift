@@ -12,10 +12,6 @@ struct SignUpView: View {
     
     @FocusState private var focusedField: Field?
     
-    @State var email = ""
-    
-    @State var password = ""
-    
     let onSignUpSuccess: () -> Void
     
     let onBackToSignIn: () -> Void
@@ -29,16 +25,6 @@ struct SignUpView: View {
                     .font(.title)
                     .padding(.bottom, 32)
                 VStack(spacing: 20) {
-                    GeneralTextField(
-                        label: "Full Name",
-                        value: uiState.name,
-                        onValueChange: viewModel.onNameChange
-                    )
-                    .focused($focusedField, equals: .name)
-                    .submitLabel(.next)
-                    .onSubmit {
-                        focusedField = .email
-                    }
                     EmailField(
                         value: uiState.email,
                         error: uiState.emailError,

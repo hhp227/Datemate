@@ -67,12 +67,18 @@ struct SignInNavigation: View {
             .navigationDestination(for: String.self) { route in
                 if route == "sign_up" {
                     SignUpView {
-                        path.append("profile_setup")
+                        path.append("gender_setup")
                     } onBackToSignIn: {
                         path = []
                     }
-                } else if route == "profile_setup" {
-                    ProfileSetupView(onSetupComplete: {})
+                } else if route == "gender_setup" {
+                    GenderSetupView(onNext: { path.append("photo_setup") })
+                } else if route == "photo_setup" {
+                    PhotoSetupView(onNext: { path.append("info_setup") })
+                } else if route == "info_setup" {
+                    InfoSetupView(onSetupComplete: {
+                        path.removeAll()
+                    })
                 } else if route == "forgot_password" {
                     ForgotPasswordView()
                 }

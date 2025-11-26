@@ -15,13 +15,18 @@ class ProfileSetupViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    func onNicknameChange(_ newNickname: String) {
-        if newNickname.count > 20 {
-            uiState.nicknameError = "닉네임은 20자 이내여야 합니다."
+    func onFullnameChange(_ newFullname: String) {
+        if newFullname.count > 50 {
+            uiState.fullNameError = "이름은 50자 이내여야 합니다."
         } else {
-            uiState.nickname = newNickname
-            uiState.nicknameError = nil
+            uiState.fullName = newFullname
+            uiState.fullNameError = nil
         }
+    }
+    
+    func onBirthdaySelected(_ newDateMillis: Int64) {
+        uiState.birthdayMillis = newDateMillis
+        uiState.birthdayError = nil
     }
         
     func onImagesSelected(_ newUrls: [URL]) {
@@ -32,34 +37,75 @@ class ProfileSetupViewModel: ObservableObject {
     func onGenderSelected(_ gender: Gender) {
         uiState.selectedGender = gender
     }
+    
+    func onBioChange(_ newBio: String) {
+        let trimmed = newBio.trimmingCharacters(in: .whitespacesAndNewlines)
         
-    func removeImage(at index: Int) {
-        guard index >= 0 && index < uiState.selectedImageUrls.count else { return }
-        uiState.selectedImageUrls.remove(at: index)
+        if trimmed.isEmpty {
+            uiState.bioError = "자기소개를 입력해주세요."
+        } else if trimmed.count > 500 {
+            uiState.bioError = "자기소개는 500자 이내로 입력해주세요."
+        } else {
+            uiState.bioError = nil
+        }
+        uiState.bio = newBio
+    }
+    
+    func onJobChange(_ newJob: String) {
+        let trimmed = newJob.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if trimmed.isEmpty {
+            uiState.jobError = "직업을 입력해주세요."
+        } else if trimmed.count > 50 {
+            uiState.jobError = "직업은 50자 이내로 입력해주세요."
+        } else {
+            uiState.jobError = nil
+        }
+        uiState.job = newJob
+    }
+    
+    func removeImage(_ url: URL) {
+        uiState.selectedImageUrls.removeAll { $0 == url }
     }
         
     func completeProfileSetup() {
-        if uiState.nickname.isEmpty || uiState.nicknameError != nil {
-            uiState.nicknameError = "유효한 닉네임을 입력해주세요."
+        guard uiState.fullNameError == nil, !uiState.fullName.isEmpty else {
+            uiState.fullNameError = "유효한 이름을 입력해주세요."
             return
         }
-        uiState.isLoading = true
+        guard uiState.birthdayError == nil, uiState.birthdayMillis != nil else {
+            uiState.birthdayError = "유효한 생년월일을 선택해주세요."
+            return
+        }
         uiState.errorMessage = nil
-            
+        
         /*Task {
-            // async/await 기반으로 Resource 처리
-            for await resource in userRepository.updateUserProfile(urls: uiState.selectedImageUrls, nickname: uiState.nickname) {
-                await MainActor.run {
-                    switch resource {
-                    case .success(_):
-                        uiState.isLoading = false
-                        uiState.isSetupComplete = true
-                    case .error(let message):
-                        uiState.isLoading = false
-                        uiState.errorMessage = "업데이트 실패: \(message)"
-                    case .loading:
-                        break
+            do {
+                let result = try await userRepository.updateUserProfile(
+                    images: uiState.selectedImageUrls,
+                    fullName: uiState.fullName,
+                    gender: uiState.selectedGender?.name ?? "",
+                    birthdayMillis: uiState.birthdayMillis!,
+                    bio: uiState.bio,
+                    job: uiState.job
+                )
+                
+                switch result {
+                case .success:
+                    DispatchQueue.main.async {
+                        self.uiState.isLoading = false
+                        self.uiState.isSetupComplete = true
                     }
+                case .failure(let message):
+                    DispatchQueue.main.async {
+                        self.uiState.isLoading = false
+                        self.uiState.errorMessage = "업데이트 실패: \(message)"
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.uiState.isLoading = false
+                    self.uiState.errorMessage = "업데이트 실패: \(error.localizedDescription)"
                 }
             }
         }*/

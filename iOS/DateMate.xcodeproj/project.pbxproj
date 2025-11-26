@@ -45,6 +45,11 @@
 		0A783C0C2ED4CBB60023248F /* ProfileSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A783C0B2ED4CBB60023248F /* ProfileSetupViewModel.swift */; };
 		0A783C0E2ED4D5160023248F /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A783C0D2ED4D5160023248F /* ForgotPasswordViewModel.swift */; };
 		0AA843542EC4F73B00529431 /* SubFirstViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */; };
+		0AADE6DC2ED6C41100FF3A36 /* PhotoSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AADE6DB2ED6C41100FF3A36 /* PhotoSetupView.swift */; };
+		0AADE6DE2ED6C43D00FF3A36 /* InfoSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AADE6DD2ED6C43D00FF3A36 /* InfoSetupView.swift */; };
+		0AADE6E02ED6C48F00FF3A36 /* GenderSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AADE6DF2ED6C48F00FF3A36 /* GenderSetupView.swift */; };
+		0AADE6E22ED6C61A00FF3A36 /* StorageRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AADE6E12ED6C61A00FF3A36 /* StorageRemoteDataSource.swift */; };
+		0AADE6E42ED6CD1400FF3A36 /* StorageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AADE6E32ED6CD1400FF3A36 /* StorageRepository.swift */; };
 		0AAE6C3B2ECB8C730063DDC0 /* SignInUiState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAE6C3A2ECB8C730063DDC0 /* SignInUiState.swift */; };
 		0AB9C9152EC637BD0032223F /* UserRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */; };
 		0AB9C9192EC650290032223F /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB9C9182EC650290032223F /* DependencyContainer.swift */; };
@@ -102,6 +107,11 @@
 		0A783C0B2ED4CBB60023248F /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
 		0A783C0D2ED4D5160023248F /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewModel.swift; sourceTree = "<group>"; };
 		0AA843532EC4F73B00529431 /* SubFirstViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubFirstViewModel.swift; sourceTree = "<group>"; };
+		0AADE6DB2ED6C41100FF3A36 /* PhotoSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSetupView.swift; sourceTree = "<group>"; };
+		0AADE6DD2ED6C43D00FF3A36 /* InfoSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoSetupView.swift; sourceTree = "<group>"; };
+		0AADE6DF2ED6C48F00FF3A36 /* GenderSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderSetupView.swift; sourceTree = "<group>"; };
+		0AADE6E12ED6C61A00FF3A36 /* StorageRemoteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageRemoteDataSource.swift; sourceTree = "<group>"; };
+		0AADE6E32ED6CD1400FF3A36 /* StorageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageRepository.swift; sourceTree = "<group>"; };
 		0AAE6C3A2ECB8C730063DDC0 /* SignInUiState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInUiState.swift; sourceTree = "<group>"; };
 		0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRemoteDataSource.swift; sourceTree = "<group>"; };
 		0AB9C9182EC650290032223F /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
@@ -201,6 +211,7 @@
 			children = (
 				0AB9C9142EC637BD0032223F /* UserRemoteDataSource.swift */,
 				0A4D129C2ECF7F54004D8147 /* PostRemoteDataSource.swift */,
+				0AADE6E12ED6C61A00FF3A36 /* StorageRemoteDataSource.swift */,
 			);
 			path = DataSource;
 			sourceTree = "<group>";
@@ -209,6 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				0A3B68A02757C0480041CE9F /* UserRepository.swift */,
+				0AADE6E32ED6CD1400FF3A36 /* StorageRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -265,6 +277,9 @@
 		0A783C062ED4C9230023248F /* ProfileSetup */ = {
 			isa = PBXGroup;
 			children = (
+				0AADE6DF2ED6C48F00FF3A36 /* GenderSetupView.swift */,
+				0AADE6DD2ED6C43D00FF3A36 /* InfoSetupView.swift */,
+				0AADE6DB2ED6C41100FF3A36 /* PhotoSetupView.swift */,
 				0A783C072ED4C9450023248F /* ProfileSetupView.swift */,
 				0A783C092ED4CACC0023248F /* ProfileSetupUiState.swift */,
 				0A783C0B2ED4CBB60023248F /* ProfileSetupViewModel.swift */,
@@ -452,6 +467,7 @@
 				0A415C9F276789AB00490796 /* CreateView.swift in Sources */,
 				0A783C052ED4C0BD0023248F /* GeneralTextField.swift in Sources */,
 				0A1A6F60275B143D009C6A27 /* DiscoverView.swift in Sources */,
+				0AADE6DE2ED6C43D00FF3A36 /* InfoSetupView.swift in Sources */,
 				0A783BFE2ED4AE850023248F /* TextFieldError.swift in Sources */,
 				0AF55AC4275F9F120042D9F3 /* DiscoverViewModel.swift in Sources */,
 				0A3F40262753A9E900034106 /* SignInViewModel.swift in Sources */,
@@ -466,13 +482,16 @@
 				0A2CDEF4278F0E0D0058618A /* UiEvent.swift in Sources */,
 				95D96BB8294DB57D00606845 /* UIScreen.swift in Sources */,
 				0AFE8D0C2768CDA80066F9FC /* PostRepository.swift in Sources */,
+				0AADE6E42ED6CD1400FF3A36 /* StorageRepository.swift in Sources */,
 				0A783C012ED4B0F30023248F /* ForgotPasswordView.swift in Sources */,
+				0AADE6DC2ED6C41100FF3A36 /* PhotoSetupView.swift in Sources */,
 				0AA843542EC4F73B00529431 /* SubFirstViewModel.swift in Sources */,
 				0A4D129D2ECF7F54004D8147 /* PostRemoteDataSource.swift in Sources */,
 				0A783C032ED4B49E0023248F /* SignUpUiState.swift in Sources */,
 				0A4CE238276610CE00C0A889 /* PostDetailView.swift in Sources */,
 				0ABC1A5F2759242200771876 /* MainView.swift in Sources */,
 				0A3F40292753ABA700034106 /* SignUpViewModel.swift in Sources */,
+				0AADE6E02ED6C48F00FF3A36 /* GenderSetupView.swift in Sources */,
 				0A1F0924275276500025C6E8 /* SignInView.swift in Sources */,
 				0A3B68A12757C0480041CE9F /* UserRepository.swift in Sources */,
 				0AFE8D122768CF4A0066F9FC /* CommentRepository.swift in Sources */,
@@ -485,6 +504,7 @@
 				0AB9C9152EC637BD0032223F /* UserRemoteDataSource.swift in Sources */,
 				0A3F40302753B38700034106 /* SignUpView.swift in Sources */,
 				0A783C0A2ED4CACC0023248F /* ProfileSetupUiState.swift in Sources */,
+				0AADE6E22ED6C61A00FF3A36 /* StorageRemoteDataSource.swift in Sources */,
 				0AB9C9192EC650290032223F /* DependencyContainer.swift in Sources */,
 				0A783C082ED4C9450023248F /* ProfileSetupView.swift in Sources */,
 				0A783BF72ED498C10023248F /* User.swift in Sources */,

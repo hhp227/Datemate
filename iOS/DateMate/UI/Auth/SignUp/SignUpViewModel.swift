@@ -21,11 +21,6 @@ class SignUpViewModel: ObservableObject {
         return email.range(of: regex, options: .regularExpression) != nil
     }
     
-    func onNameChange(_ newValue: String) {
-        uiState.name = newValue
-        uiState.nameError = nil
-    }
-
     func onEmailChange(_ newValue: String) {
         uiState.email = newValue
         uiState.emailError = nil
@@ -44,10 +39,6 @@ class SignUpViewModel: ObservableObject {
     func signUp(email: String, password: String) {
         let current = uiState
         
-        if current.name.isEmpty {
-            uiState.nameError = "이름을 입력해주세요."
-            return
-        }
         if current.email.isEmpty || !isValidEmail(current.email) {
             uiState.emailError = "유효한 이메일을 입력해주세요."
             return
