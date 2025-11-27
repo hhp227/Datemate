@@ -80,7 +80,7 @@ struct SignInNavigation: View {
                         path.removeAll()
                     })
                 } else if route == "forgot_password" {
-                    ForgotPasswordView()
+                    ForgotPasswordView(onBackToSignIn: { path.removeLast() })
                 }
             }
         }

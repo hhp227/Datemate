@@ -12,6 +12,8 @@ import Combine
 class UserRepository {
     private let userRemoteDataSource: UserRemoteDataSource
     
+    private let storageRepository: StorageRepository
+    
     private var cancellables = Set<AnyCancellable>()
     
     @Published var signInState: SignInState = .loading
@@ -36,8 +38,12 @@ class UserRepository {
         userRemoteDataSource.sendPasswordResetEmail(email: email)
     }
     
-    init(_ userRemoteDataSource: UserRemoteDataSource) {
+    init(
+        _ userRemoteDataSource: UserRemoteDataSource,
+        _ storageRepository: StorageRepository
+    ) {
         self.userRemoteDataSource = userRemoteDataSource
+        self.storageRepository = storageRepository
         
         userRemoteDataSource.userStatePublisher
             .map { $0 != nil ? SignInState.signIn : SignInState.signOut }
@@ -49,11 +55,14 @@ class UserRepository {
     
     private static var instance: UserRepository? = nil
     
-    static func getInstance(userRemoteDataSource: UserRemoteDataSource) -> UserRepository {
+    static func getInstance(
+        userRemoteDataSource: UserRemoteDataSource,
+        storageRepository: StorageRepository
+    ) -> UserRepository {
         if let instance = self.instance {
             return instance
         } else {
-            let userRepository = UserRepository(userRemoteDataSource)
+            let userRepository = UserRepository(userRemoteDataSource, storageRepository)
             self.instance = userRepository
             return userRepository
         }
