@@ -36,15 +36,14 @@ fun InfoSetupScreen(
     val context = LocalContext.current
     val dateFormatter = remember { SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA) }
 
-    // Date Picker Dialog 설정
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            // DatePicker의 월(month)은 0부터 시작하므로 그대로 사용
             val selectedCalendar = Calendar.getInstance().apply {
-                set(year, month, dayOfMonth, 0, 0, 0) // 시간을 0으로 설정하여 정확한 날짜만 저장
+                set(year, month, dayOfMonth, 0, 0, 0)
                 set(Calendar.MILLISECOND, 0)
             }
+
             viewModel.onBirthdaySelected(selectedCalendar.timeInMillis)
         },
         Calendar.getInstance().get(Calendar.YEAR) - 20,

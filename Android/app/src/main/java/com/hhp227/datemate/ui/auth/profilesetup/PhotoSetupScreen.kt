@@ -63,12 +63,11 @@ fun PhotoSetupScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "나를 잘 나타내는 사진을 올려주세요.",
                 style = MaterialTheme.typography.subtitle1,
                 color = Color.Gray,
-                modifier = Modifier.align(Alignment.Start).padding(bottom = 16.dp)
+                modifier = Modifier.align(Alignment.Start).padding(top = 16.dp, bottom = 24.dp)
             )
             Text(
                 text = "Profile Photos (${allUris.size} / Max $maxImages)",

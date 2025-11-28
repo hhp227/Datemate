@@ -3,16 +3,20 @@ package com.hhp227.datemate.data.datasource
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
 import com.hhp227.datemate.common.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class StorageRemoteDataSource private constructor(private val storage: FirebaseStorage) {
-    suspend fun uploadFile(fileUri: Uri, path: String): Resource<String> = try {
-        val storageRef = storage.reference.child(path)
-        storageRef.putFile(fileUri).await()
-        val downloadUrl = storageRef.downloadUrl.await().toString()
-        Resource.Success(downloadUrl)
-    } catch (e: Exception) {
-        Resource.Error("파일 업로드 실패: ${e.message}")
+    fun uploadFile(fileUri: Uri, path: String): Flow<String> = flow {
+        try {
+            val storageRef = storage.reference.child(path)
+            storageRef.putFile(fileUri).await()
+            val downloadUrl = storageRef.downloadUrl.await().toString()
+            emit(downloadUrl)
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     companion object {

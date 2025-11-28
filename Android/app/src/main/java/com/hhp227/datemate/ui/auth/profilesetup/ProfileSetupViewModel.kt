@@ -26,7 +26,7 @@ class ProfileSetupViewModel(
         }
     }
 
-    fun onBirthdaySelected(newDateMillis: Long) { // Long 타입을 받도록 변경
+    fun onBirthdaySelected(newDateMillis: Long) {
         _uiState.update { it.copy(birthdayMillis = newDateMillis, birthdayError = null) }
     }
 

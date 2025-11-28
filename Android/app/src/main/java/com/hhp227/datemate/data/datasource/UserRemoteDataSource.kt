@@ -28,53 +28,28 @@ class UserRemoteDataSource private constructor(
         awaitClose { firebaseAuth.removeAuthStateListener(listener) }
     }
 
-    fun signIn(email: String, password: String): Flow<Resource<FirebaseUser>> = flow {
-        try {
-            val result = firebaseAuth
-                .signInWithEmailAndPassword(email, password)
-                .await()
-            val user = result.user
-
-            if (user != null) {
-                emit(Resource.Success(user))
-            } else {
-                emit(Resource.Error("로그인 실패"))
-            }
-        } catch (e: Exception) {
-            emit(Resource.Error("로그인 오류: ${e.message}"))
-        }
+    fun signIn(email: String, password: String): Flow<FirebaseUser> = flow {
+        val result = firebaseAuth
+            .signInWithEmailAndPassword(email, password)
+            .await()
+        val user = result.user ?: throw Exception("로그인 실패")
+        emit(user)
     }
-        .onStart { emit(Resource.Loading()) }
 
-    fun signOut(): Flow<Resource<Boolean>> = flow {
-        try {
-            firebaseAuth.signOut()
-            emit(Resource.Success(true))
-        } catch (e: Exception) {
-            emit(Resource.Error(e.message ?: ""))
-        }
+    fun signOut(): Flow<Boolean> = flow {
+        firebaseAuth.signOut()
+        emit(true)
     }
-        .onStart { emit(Resource.Loading()) }
 
-    fun signUp(email: String, password: String): Flow<Resource<FirebaseUser>> = flow {
-        try {
-            val result = firebaseAuth
-                .createUserWithEmailAndPassword(email, password)
-                .await()
-            val user = result.user
-
-            if (user != null) {
-                emit(Resource.Success(user))
-            } else {
-                emit(Resource.Error("회원가입 실패: 알 수 없는 오류"))
-            }
-        } catch (e: Exception) {
-            emit(Resource.Error("회원가입 오류: ${e.message}"))
-        }
+    fun signUp(email: String, password: String): Flow<FirebaseUser> = flow {
+        val result = firebaseAuth
+            .createUserWithEmailAndPassword(email, password)
+            .await()
+        val user = result.user ?: throw Exception("회원가입 실패")
+        emit(user)
     }
-        .onStart { emit(Resource.Loading()) }
 
-    suspend fun updateUserProfile(
+    fun updateUserProfile(
         userId: String,
         fullName: String,
         gender: String,
@@ -82,18 +57,16 @@ class UserRemoteDataSource private constructor(
         bio: String,
         job: String,
         profileImageUrls: List<String>?
-    ): Resource<Boolean> = try {
-        val user = firebaseAuth.currentUser
-        val firstImageUrl = profileImageUrls?.firstOrNull()
+    ): Flow<Boolean> = flow {
+        val user = firebaseAuth.currentUser ?: throw Exception("로그인 정보 없음")
         val profileUpdates = UserProfileChangeRequest.Builder()
             .setDisplayName(fullName)
-            .setPhotoUri(firstImageUrl?.toUri())
+            .setPhotoUri(profileImageUrls?.firstOrNull()?.toUri())
             .build()
 
-        user?.updateProfile(profileUpdates)?.await()
+        user.updateProfile(profileUpdates).await()
 
         val userDocument = firestore.collection("users").document(userId)
-
         val userData = mapOf(
             "userId" to userId,
             "fullName" to fullName,
@@ -102,27 +75,17 @@ class UserRemoteDataSource private constructor(
             "bio" to bio,
             "job" to job,
             "profileImageUrls" to (profileImageUrls ?: emptyList()),
-            "updatedAt" to FieldValue.serverTimestamp(),
-            "createdAt" to FieldValue.serverTimestamp()
+            "updatedAt" to FieldValue.serverTimestamp()
         )
 
-        // SetOptions.merge()를 사용하여 기존 필드는 유지하고 필요한 필드만 업데이트
         userDocument.set(userData, SetOptions.merge()).await()
-
-        Resource.Success(true)
-    } catch (e: Exception) {
-        Resource.Error("프로필 업데이트 오류: ${e.message}")
+        emit(true)
     }
 
-    fun sendPasswordResetEmail(email: String): Flow<Resource<Boolean>> = flow {
-        try {
-            firebaseAuth.sendPasswordResetEmail(email).await()
-            emit(Resource.Success(true))
-        } catch (e: Exception) {
-            emit(Resource.Error("비밀번호 재설정 이메일 전송 실패: ${e.message}"))
-        }
+    fun sendPasswordResetEmail(email: String): Flow<Boolean> = flow {
+        firebaseAuth.sendPasswordResetEmail(email).await()
+        emit(true)
     }
-        .onStart { emit(Resource.Loading()) }
 
     companion object {
         @Volatile
