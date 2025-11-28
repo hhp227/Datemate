@@ -26,6 +26,6 @@ struct SubFirstView: View {
 
 struct SubFirstView_Previews: PreviewProvider {
     static var previews: some View {
-        SubFirstView(viewModel: .init(.getInstance(userRemoteDataSource: .getInstance(auth: .auth())), data: ""))
+        SubFirstView(viewModel: DependencyContainer.instance.provideDetailViewModel(data: ""))
     }
 }

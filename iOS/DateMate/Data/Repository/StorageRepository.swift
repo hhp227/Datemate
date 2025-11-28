@@ -6,18 +6,39 @@
 //
 
 import Foundation
+import Combine
 
 class StorageRepository {
     private let storageRemoteDataSource: StorageRemoteDataSource
     
-    func uploadProfileImage(fileURL: URL, userId: String, index: Int) async -> Resource<String> {
-        let timestamp = Int(Date().timeIntervalSince1970 * 1000)
-        let path = "users/\(userId)/gallery_\(index)_\(timestamp).jpg"
-        return await storageRemoteDataSource.uploadFile(fileURL: fileURL, path: path)
+    private let defaultConcurrency: Int
+    
+    func uploadProfileImagePublisher(fileUrl: URL, userId: String, index: Int) -> AnyPublisher<Resource<String>, Never> {
+        let path = "users/\(userId)/gallery_\(index)_\(Int(Date().timeIntervalSince1970 * 1000)).jpg"
+        return storageRemoteDataSource.uploadFile(fileUrl: fileUrl, path: path).asResource()
     }
     
-    private init(_ storageRemoteDataSource: StorageRemoteDataSource) {
+    func uploadAllImages(
+        imageUrls: [URL],
+        userId: String,
+        concurrency: Int? = nil,
+        retryCount: Int = 0
+    ) -> AnyPublisher<[String], Error> {
+        let concurrency = concurrency ?? defaultConcurrency
+        let publishers = imageUrls.enumerated().map { (index, url) -> AnyPublisher<String, Error> in
+            let path = "users/\(userId)/gallery_\(index)_\(Int(Date().timeIntervalSince1970 * 1000)).jpg"
+            return storageRemoteDataSource.uploadFile(fileUrl: url, path: path)
+                .retry(retryCount)
+                .eraseToAnyPublisher()
+        }
+        return Publishers.MergeMany(publishers)
+            .collect()
+            .eraseToAnyPublisher()
+    }
+    
+    private init(_ storageRemoteDataSource: StorageRemoteDataSource, defaultConcurrency: Int = 4) {
         self.storageRemoteDataSource = storageRemoteDataSource
+        self.defaultConcurrency = defaultConcurrency
     }
     
     private static var instance: StorageRepository? = nil

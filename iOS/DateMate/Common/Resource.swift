@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 struct Resource<T> {
     var data: T? = nil
@@ -30,5 +31,17 @@ struct Resource<T> {
         case Success
         case Error
         case Loading
+    }
+}
+
+extension Publisher {
+    func asResource() -> AnyPublisher<Resource<Output>, Never> {
+        return self
+            .map(Resource.success)
+            .prepend(Resource.loading())
+            .catch { error in
+                Just(Resource.error(message: error.localizedDescription))
+            }
+            .eraseToAnyPublisher()
     }
 }

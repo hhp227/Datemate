@@ -52,7 +52,7 @@ final class DependencyContainer {
         self.storage = Storage.storage()
         self.storageRemoteDataSource = StorageRemoteDataSource.getInstance(storage: storage)
         self.storageRepository = StorageRepository.getInstance(storageRemoteDataSource: storageRemoteDataSource)
-        self.userRemoteDataSource = UserRemoteDataSource.getInstance(auth: firebaseAuth)
+        self.userRemoteDataSource = UserRemoteDataSource.getInstance(auth: firebaseAuth, firestore: firestore)
         self.userRepository = UserRepository.getInstance(
             userRemoteDataSource: userRemoteDataSource,
             storageRepository: storageRepository
