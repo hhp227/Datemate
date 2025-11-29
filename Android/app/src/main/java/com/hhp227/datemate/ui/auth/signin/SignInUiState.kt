@@ -6,7 +6,8 @@ data class SignInUiState(
     val password: String = "",
     val passwordError: String? = null,
     val isLoading: Boolean = false,
-    val message: String? = null
+    val message: String? = null,
+    val isAlreadySignIn: Boolean = false
 ) {
     val isSubmitEnabled: Boolean
         get() {

@@ -3,6 +3,8 @@ package com.hhp227.datemate.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -11,13 +13,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.hhp227.datemate.common.InjectorUtils
 import com.hhp227.datemate.data.repository.UserRepository.SignInState
 import com.hhp227.datemate.ui.auth.forgotpassword.ForgotPasswordScreen
+import com.hhp227.datemate.ui.auth.phoneauth.PhoneAuthScreen
 import com.hhp227.datemate.ui.auth.profilesetup.GenderSetupScreen
 import com.hhp227.datemate.ui.auth.profilesetup.InfoSetupScreen
 import com.hhp227.datemate.ui.auth.profilesetup.PhotoSetupScreen
+import com.hhp227.datemate.ui.auth.profilesetup.ProfileSetupViewModel
 import com.hhp227.datemate.ui.detail.SubFirstScreen
 import com.hhp227.datemate.ui.main.MainScreen
 import com.hhp227.datemate.ui.postdetail.PostDetailScreen
@@ -29,7 +34,9 @@ import com.hhp227.datemate.ui.theme.DateMateTheme
 fun DateMateApp() {
     ProvideWindowInsets {
         DateMateTheme {
-            val signInState by InjectorUtils.getUserRepository().signInStateFlow.collectAsState(SignInState.Loading)
+            val signInState by InjectorUtils.getUserRepository(LocalContext.current.applicationContext)
+                .signInStateFlow
+                .collectAsState(SignInState.Loading)
 
             when (signInState) {
                 SignInState.SignIn -> AppNavHost()
@@ -59,7 +66,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             )
         ) { backStackEntry ->
             SubFirstScreen(
-                viewModel = viewModel(factory = InjectorUtils.provideDetailViewModelFactory(backStackEntry)),
+                viewModel = viewModel(factory = InjectorUtils.provideDetailViewModelFactory(backStackEntry, LocalContext.current.applicationContext)),
                 onNavigateUp = { navController.navigateUp() }
             )
         }
@@ -76,39 +83,77 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
         composable("sign_in") {
             SignInScreen(
                 onSignUp = { navController.navigate("sign_up") },
-                onForgotPassword = { navController.navigate("forgot_password") }
+                onForgotPassword = { navController.navigate("forgot_password") },
+                onProfileSetup = {
+                    navController.navigate("profile_setup") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
         composable("sign_up") {
             SignUpScreen(
                 onSignUpSuccess = {
-                    navController.navigate("gender_setup") {
+                    navController.navigate("phone_auth") {
                         popUpTo("sign_in") { inclusive = true }
                     }
                 },
                 onBackToSignIn = { navController.navigateUp() }
             )
         }
-        composable("gender_setup") {
-            GenderSetupScreen(
-                onNext = { navController.navigate("photo_setup") }
-            )
-        }
-        composable("photo_setup") {
-            PhotoSetupScreen(
-                onNext = { navController.navigate("info_setup") },
-                onNavigateUp = { navController.navigateUp() }
-            )
-        }
-        composable("info_setup") {
-            InfoSetupScreen(
-                onSetupComplete = {
-                    navController.navigate("home") {
-                        popUpTo(0)
+        composable("phone_auth") {
+            PhoneAuthScreen(
+                onVerified = {
+                    navController.navigate("profile_setup") {
+                        popUpTo("phone_auth") { inclusive = true }
                     }
-                },
-                onNavigateUp = { navController.navigateUp() }
+                }
             )
+        }
+        navigation(
+            startDestination = "gender_setup",
+            route = "profile_setup"
+        ) {
+            composable("gender_setup") { entry ->
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry("profile_setup")
+                }
+                val viewModel: ProfileSetupViewModel =
+                    viewModel(parentEntry, factory = InjectorUtils.provideProfileSetupViewModelFactory(LocalContext.current))
+
+                GenderSetupScreen(
+                    viewModel = viewModel,
+                    onNext = { navController.navigate("photo_setup") }
+                )
+            }
+            composable("photo_setup") { entry ->
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry("profile_setup")
+                }
+                val viewModel: ProfileSetupViewModel =
+                    viewModel(parentEntry, factory = InjectorUtils.provideProfileSetupViewModelFactory(LocalContext.current))
+
+                PhotoSetupScreen(
+                    viewModel = viewModel,
+                    onNext = { navController.navigate("info_setup") },
+                    onNavigateUp = { navController.navigateUp() }
+                )
+            }
+            composable("info_setup") { entry ->
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry("profile_setup")
+                }
+                val viewModel: ProfileSetupViewModel =
+                    viewModel(parentEntry, factory = InjectorUtils.provideProfileSetupViewModelFactory(LocalContext.current))
+
+                InfoSetupScreen(
+                    viewModel = viewModel,
+                    onSetupComplete = {
+                        navController.navigate("home") { popUpTo(0) }
+                    },
+                    onNavigateUp = { navController.navigateUp() }
+                )
+            }
         }
         composable("forgot_password") {
             ForgotPasswordScreen(

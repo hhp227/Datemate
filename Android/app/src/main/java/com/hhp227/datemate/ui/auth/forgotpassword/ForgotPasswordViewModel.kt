@@ -21,9 +21,7 @@ class ForgotPasswordViewModel(
         _uiState.update { it.copy(email = newValue, emailError = null, message = null) }
     }
 
-    fun sendResetEmail() {
-        val email = _uiState.value.email
-
+    fun sendResetEmail(email: String) {
         if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _uiState.update { it.copy(emailError = "유효한 이메일 주소를 입력해주세요.") }
             return
@@ -58,7 +56,6 @@ class ForgotPasswordViewModel(
         }
     }
 
-    // 이메일 전송 성공 상태를 소비하고 초기화하는 함수
     fun consumeMessage() {
         _uiState.update { it.copy(isEmailSent = false, message = null) }
     }

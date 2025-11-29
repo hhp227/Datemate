@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -30,7 +31,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ForgotPasswordScreen(
-    viewModel: ForgotPasswordViewModel = viewModel(factory = InjectorUtils.provideForgotPasswordViewModelFactory()),
+    viewModel: ForgotPasswordViewModel = viewModel(factory = InjectorUtils.provideForgotPasswordViewModelFactory(LocalContext.current.applicationContext)),
     onBackToSignIn: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -69,18 +70,18 @@ fun ForgotPasswordScreen(
             error = uiState.emailError,
             onValueChange = viewModel::onEmailChange,
             imeAction = ImeAction.Done,
-            onImeAction = { viewModel.sendResetEmail() }
+            onImeAction = { viewModel.sendResetEmail(uiState.email) }
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = viewModel::sendResetEmail,
+            onClick = { viewModel.sendResetEmail(uiState.email) },
             modifier = Modifier.fillMaxWidth().height(52.dp),
             enabled = !uiState.isLoading,
             shape = RoundedCornerShape(16.dp)
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(
-                    color = MaterialTheme.colors.onPrimary,
+                    color = MaterialTheme.colors.primary,
                     modifier = Modifier.size(24.dp),
                     strokeWidth = 2.dp
                 )

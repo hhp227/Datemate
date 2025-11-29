@@ -2,7 +2,6 @@ package com.hhp227.datemate.data.datasource
 
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
-import com.hhp227.datemate.common.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await

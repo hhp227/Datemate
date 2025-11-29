@@ -19,15 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hhp227.datemate.common.InjectorUtils
 import com.hhp227.datemate.ui.auth.TextFieldError
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun InfoSetupScreen(
-    viewModel: ProfileSetupViewModel = viewModel(factory = InjectorUtils.provideProfileSetupViewModelFactory()),
+    viewModel: ProfileSetupViewModel,
     onSetupComplete: () -> Unit,
     onNavigateUp: () -> Unit
 ) {
@@ -75,14 +73,15 @@ fun InfoSetupScreen(
                 modifier = Modifier.align(Alignment.Start).padding(top = 16.dp, bottom = 24.dp)
             )
             OutlinedTextField(
-                value = uiState.fullName,
-                onValueChange = viewModel::onFullNameChange,
+                value = uiState.name,
+                onValueChange = viewModel::onNameChange,
                 label = { Text("Full Name (필수)") },
                 modifier = Modifier.fillMaxWidth(),
-                isError = uiState.fullNameError != null,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+                isError = uiState.nameError != null,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                shape = RoundedCornerShape(12.dp)
             )
-            if (uiState.fullNameError != null) TextFieldError(textError = uiState.fullNameError!!)
+            if (uiState.nameError != null) TextFieldError(textError = uiState.nameError!!)
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = if (uiState.birthdayMillis != null) dateFormatter.format(Date(uiState.birthdayMillis!!)) else "",
@@ -97,7 +96,8 @@ fun InfoSetupScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { datePickerDialog.show() },
-                isError = uiState.birthdayError != null
+                isError = uiState.birthdayError != null,
+                shape = RoundedCornerShape(12.dp)
             )
             if (uiState.birthdayError != null) TextFieldError(textError = uiState.birthdayError!!)
             Spacer(modifier = Modifier.height(16.dp))
@@ -111,7 +111,8 @@ fun InfoSetupScreen(
                     .heightIn(min = 100.dp),
                 singleLine = false,
                 maxLines = 5,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                shape = RoundedCornerShape(12.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))
             OutlinedTextField(
@@ -121,20 +122,34 @@ fun InfoSetupScreen(
                 placeholder = { Text("직업이나 하는 일을 입력해주세요.") },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 modifier = Modifier.fillMaxWidth(),
-                isError = uiState.jobError != null
+                isError = uiState.jobError != null,
+                shape = RoundedCornerShape(12.dp)
             )
             if (uiState.jobError != null) TextFieldError(textError = uiState.jobError!!)
             // * 기타 정보 (키, 관심사 등)는 Dropdown이나 Chip 방식으로 구현 가능
 
             Spacer(modifier = Modifier.height(40.dp))
             Button(
-                onClick = { viewModel.completeProfileSetup() },
+                onClick = {
+                    viewModel.completeProfileSetup(
+                        uiState.selectedImageUris,
+                        uiState.name,
+                        uiState.selectedGender?.name.toString(),
+                        uiState.birthdayMillis ?: 0,
+                        uiState.bio,
+                        uiState.job
+                    )
+                },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(16.dp),
                 enabled = uiState.isSubmitEnabled && !uiState.isLoading
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(color = MaterialTheme.colors.onPrimary, modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colors.primary,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
                 } else {
                     Text("프로필 설정 완료")
                 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.data.model.Gender
+import com.hhp227.datemate.data.model.UserCache
 import com.hhp227.datemate.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,11 +19,11 @@ class ProfileSetupViewModel(
     private val _uiState = MutableStateFlow(ProfileSetupUiState())
     val uiState: StateFlow<ProfileSetupUiState> = _uiState.asStateFlow()
 
-    fun onFullNameChange(newFullName: String) {
-        if (newFullName.length > 50) {
-            _uiState.update { it.copy(fullNameError = "이름은 50자 이내여야 합니다.") }
+    fun onNameChange(newName: String) {
+        if (newName.length > 50) {
+            _uiState.update { it.copy(nameError = "이름은 50자 이내여야 합니다.") }
         } else {
-            _uiState.update { it.copy(fullName = newFullName, fullNameError = null) }
+            _uiState.update { it.copy(name = newName, nameError = null) }
         }
     }
 
@@ -70,29 +71,18 @@ class ProfileSetupViewModel(
         _uiState.update { it.copy(job = newJob, jobError = jobError) }
     }
 
-    fun completeProfileSetup() {
-        val currentState = _uiState.value
-
-        if (currentState.fullName.isBlank() || currentState.fullNameError != null) {
-            _uiState.update { it.copy(fullNameError = "유효한 이름을 입력해주세요.") }
-            return
-        }
-        if (currentState.birthdayMillis == null || currentState.birthdayError != null) {
-            _uiState.update { it.copy(birthdayError = "유효한 생년월일을 선택해주세요.") }
-            return
-        }
+    fun completeProfileSetup(imageUrls: List<Uri>, name: String, gender: String, birthday: Long, bio: String, job: String) {
         viewModelScope.launch {
-            userRepository.updateUserProfile(
-                currentState.selectedImageUris,
-                currentState.fullName,
-                currentState.selectedGender?.name.toString(),
-                currentState.birthdayMillis,
-                currentState.bio,
-                currentState.job
-            )
+            userRepository.updateUserProfile(imageUrls, name, gender, birthday, bio, job)
                 .collect { resource ->
                     when (resource) {
                         is Resource.Success -> {
+                            val data = resource.data ?: ""
+                            val userToStore = UserCache(
+                                uid = data
+                            )
+
+                            userRepository.storeUserProfile(userToStore)
                             _uiState.update { it.copy(isLoading = false, isSetupComplete = true) }
                         }
                         is Resource.Error -> {

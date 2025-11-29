@@ -4,14 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +23,7 @@ import com.hhp227.datemate.ui.auth.PasswordField
 
 @Composable
 fun SignUpScreen(
-    viewModel: SignUpViewModel = viewModel(factory = InjectorUtils.provideSignUpViewModelFactory()),
+    viewModel: SignUpViewModel = viewModel(factory = InjectorUtils.provideSignUpViewModelFactory(LocalContext.current.applicationContext)),
     onSignUpSuccess: () -> Unit,
     onBackToSignIn: () -> Unit
 ) {
@@ -75,19 +73,28 @@ fun SignUpScreen(
                 onValueChange = viewModel::onConfirmPasswordChange,
                 imeAction = ImeAction.Done,
                 onImeAction = {
-                    if(uiState.isSignUpEnabled) {
-                        viewModel.signUp()
+                    if (uiState.isSignUpEnabled) {
+                        viewModel.signUp(uiState.email, uiState.password, uiState.confirmPassword)
                     }
-                }
+                },
+                isConfirmPassword = true
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { viewModel.signUp() },
+                onClick = { viewModel.signUp(uiState.email, uiState.password, uiState.confirmPassword) },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(16.dp),
-                enabled = uiState.isSignUpEnabled
+                enabled = uiState.isSignUpEnabled && !uiState.isLoading
             ) {
-                Text(text = "Sign Up", style = MaterialTheme.typography.button)
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colors.primary,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(text = "Sign Up", style = MaterialTheme.typography.button)
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             TextButton(onClick = onBackToSignIn) {
