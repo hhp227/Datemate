@@ -45,16 +45,17 @@ struct SignUpView: View {
                     PasswordField(
                         value: uiState.confirmPassword,
                         error: uiState.confirmPasswordError,
-                        onValueChange: viewModel.onConfirmPasswordChange
+                        onValueChange: viewModel.onConfirmPasswordChange,
+                        isConfirmPassword: true
                     )
                     .focused($focusedField, equals: .confirmPassword)
                     .submitLabel(.done)
                     .onSubmit {
                         if viewModel.uiState.isSignUpEnabled {
-                            viewModel.signUp(email: uiState.email, password: uiState.password)
+                            viewModel.signUp(email: uiState.email, password: uiState.password, confirmPassword: uiState.confirmPassword)
                         }
                     }
-                    Button(action: { viewModel.signUp(email: uiState.email, password: uiState.password) }) {
+                    Button(action: { viewModel.signUp(email: uiState.email, password: uiState.password, confirmPassword: uiState.confirmPassword) }) {
                         Text("Sign Up")
                             .frame(maxWidth: .infinity, minHeight: 52)
                             .foregroundColor(.white)
@@ -72,13 +73,6 @@ struct SignUpView: View {
                     .padding(.top, 8)
                 }
                 .padding(.horizontal, 16)
-                /*TextField("Email", text: $email).padding().disableAutocorrection(true).autocapitalization(.none).background(Color(.secondarySystemBackground))
-                SecureField("Password", text: $password).padding().disableAutocorrection(true).autocapitalization(.none).background(Color(.secondarySystemBackground))
-                Button(action: {
-                    viewModel.signUp(email: email, password: password)
-                }, label: {
-                    Text("Register").foregroundColor(Color.white).frame(width: 200, height: 50).cornerRadius(8).background(Color.blue)
-                })*/
             }
         }
         .onChange(of: uiState.isSignUpSuccess) { success in

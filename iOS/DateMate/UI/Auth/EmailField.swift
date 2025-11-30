@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct EmailField: View {
+    @FocusState private var isFocused: Bool
+    
     let value: String
     
     let error: String?
@@ -24,10 +26,13 @@ struct EmailField: View {
             ))
             .textContentType(.emailAddress)
             .keyboardType(.emailAddress)
+            .textInputAutocapitalization(.none)
+            .autocorrectionDisabled()
+            .focused($isFocused)
             .submitLabel(.next)
             .onSubmit { onSubmit() }
             .padding()
-            .background(RoundedRectangle(cornerRadius: 8).stroke(error == nil ? Color.gray : Color.red))
+            .background(RoundedRectangle(cornerRadius: 12).stroke(error == nil ? Color.gray : Color.red))
             if let err = error {
                 TextFieldError(textError: err)
             }

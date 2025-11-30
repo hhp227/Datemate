@@ -16,6 +16,8 @@ struct SignInView: View {
     
     var onForgotPassword: () -> Void
     
+    var onProfileSetup: () -> Void
+    
     var body: some View {
         let uiState = viewModel.uiState
         
@@ -104,6 +106,6 @@ struct Logo: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView(onSignUp: {}, onForgotPassword: {}).preferredColorScheme(.dark)
+        SignInView(onSignUp: {}, onForgotPassword: {}, onProfileSetup: {}).preferredColorScheme(.dark)
     }
 }

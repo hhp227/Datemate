@@ -20,13 +20,12 @@ class SubFirstViewModel: ObservableObject {
         userRepository.getSignOutResultStream()
             .receive(on: DispatchQueue.main)
             .sink { result in
-                /*switch result {
-                case .loading: break
-                case .success: break
-                case .error: break
-                default:
-                    <#code#>
-                }*/
+                switch result.state {
+                case .Loading: break
+                case .Success:
+                    self.userRepository.storeUserProfile(nil)
+                case .Error: break
+                }
             }
             .store(in: &cancellables)
     }

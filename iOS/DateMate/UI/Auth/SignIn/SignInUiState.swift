@@ -14,6 +14,7 @@ struct SignInUiState {
     var passwordError: String? = nil
     var isLoading: Bool = false
     var message: String? = nil
+    var isAlreadySignIn: Bool = false
     var isSubmitEnabled: Bool {
         let isEmailValid = !email.isEmpty && emailError == nil
         let isPasswordValid = !password.isEmpty && passwordError == nil

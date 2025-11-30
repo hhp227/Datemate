@@ -10,7 +10,7 @@ import Combine
 import FirebaseAuth
 
 class SignUpViewModel: ObservableObject {
-    private let repository: UserRepository
+    private let userRepository: UserRepository
     
     @Published var uiState = SignUpUiState()
     
@@ -19,6 +19,25 @@ class SignUpViewModel: ObservableObject {
     private func isValidEmail(_ email: String) -> Bool {
         let regex = #"^(.+)@(.+)$"#
         return email.range(of: regex, options: .regularExpression) != nil
+    }
+    
+    private func createUserProfile(_ userId: String, _ email: String?) {
+        userRepository.createUserProfile(userId: userId, email: email)
+            .receive(on: DispatchQueue.main)
+            .sink { resource in
+                switch resource.state {
+                case .Success:
+                    self.uiState.isLoading = false
+                    self.uiState.isSignUpSuccess = true
+                case .Error:
+                    self.uiState.isLoading = false
+                    self.uiState.errorMessage = "초기 데이터 저장 실패: \(String(describing: resource.message))}"
+                case .Loading:
+                    self.uiState.isLoading = true
+                    self.uiState.errorMessage = nil
+                }
+            }
+            .store(in: &subscription)
     }
     
     func onEmailChange(_ newValue: String) {
@@ -36,51 +55,44 @@ class SignUpViewModel: ObservableObject {
         uiState.confirmPasswordError = nil
     }
     
-    func signUp(email: String, password: String) {
-        let current = uiState
-        
-        if current.email.isEmpty || !isValidEmail(current.email) {
+    func signUp(email: String, password: String, confirmPassword: String) {
+        if email.isEmpty || !isValidEmail(email) {
             uiState.emailError = "유효한 이메일을 입력해주세요."
             return
         }
-        if current.password.count < 6 {
+        if password.count < 6 {
             uiState.passwordError = "비밀번호는 6자 이상이어야 합니다."
             return
         }
-        if current.password != current.confirmPassword {
+        if password != confirmPassword {
             uiState.confirmPasswordError = "비밀번호가 일치하지 않습니다."
             return
         }
-        uiState.isLoading = true
-        /*userRepository.getSignUpResultStream(email: current.email, password: current.password)
+        userRepository.getSignUpResultStream(email: email, password: password)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] resource in
-                guard let self = self else { return }
-                switch resource {
-                case .loading:
+            .sink { resource in
+                switch resource.state {
+                case .Loading:
                     self.uiState.isLoading = true
                     self.uiState.errorMessage = nil
-                case .success:
+                case .Success:
+                    if let firebaseUser = resource.data {
+                        self.createUserProfile(firebaseUser.uid, firebaseUser.email)
+                    }
+                case .Error:
                     self.uiState.isLoading = false
-                    self.uiState.isSignUpSuccess = true
-                case .error(let message):
-                    self.uiState.isLoading = false
-                    self.uiState.errorMessage = message
+                    self.uiState.errorMessage = resource.message
                 }
             }
-            .store(in: &cancellables)*/
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.uiState.isLoading = false
-            self.uiState.isSignUpSuccess = true
-        }
+            .store(in: &subscription)
     }
     
     func consumeSuccessEvent() {
         uiState.isSignUpSuccess = false
     }
     
-    init(_ repository: UserRepository) {
-        self.repository = repository
+    init(_ userRepository: UserRepository) {
+        self.userRepository = userRepository
     }
     
     deinit {

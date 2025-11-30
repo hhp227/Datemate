@@ -40,6 +40,30 @@ class SignInViewModel: ObservableObject {
         }
     }
     
+    private func fetchUserProfile(_ userId: String) {
+        userRepository.fetchUserProfile(userId: userId)
+            .receive(on: DispatchQueue.main)
+            .sink { resource in
+                switch resource.state {
+                case .Success:
+                    let userCache = UserCache(id: userId)
+                    
+                    if resource.data != nil {
+                        self.userRepository.storeUserProfile(userCache)
+                        self.uiState.isLoading = false
+                        self.uiState.message = nil
+                    }
+                case .Error:
+                    self.uiState.isLoading = false
+                    self.uiState.message = "로그인 성공, 프로필 로드 실패. 설정 화면으로 이동합니다."
+                case .Loading:
+                    self.uiState.isLoading = true
+                    self.uiState.message = nil
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     func onEmailChanged(_ value: String) {
         uiState.email = value
         uiState.emailError = validateEmail(value)
@@ -59,8 +83,12 @@ class SignInViewModel: ObservableObject {
                     self.uiState.isLoading = true
                     self.uiState.message = nil
                 case .Success:
-                    self.uiState.isLoading = false
-                    self.uiState.message = nil
+                    guard let firebaseUser = result.data else {
+                        self.uiState.isLoading = false
+                        self.uiState.message = "로그인 성공 후 사용자 정보를 찾을 수 없습니다."
+                        return
+                    }
+                    self.fetchUserProfile(firebaseUser.uid)
                 case .Error:
                     self.uiState.isLoading = false
                     self.uiState.message = result.message ?? "알 수 없는 로그인 오류가 발생했습니다."
@@ -71,6 +99,24 @@ class SignInViewModel: ObservableObject {
     
     init(_ userRepository: UserRepository) {
         self.userRepository = userRepository
+        
+        // 이미 로그인된 사용자 체크 및 프로필 fetch
+        userRepository.remoteUserStatePublisher
+            .compactMap { $0 }
+            .flatMap(maxPublishers: .max(1)) { user in
+                userRepository.fetchUserProfile(userId: user.uid)
+            }
+            .sink { resource in
+                switch resource.state {
+                case .Success:
+                    self.uiState.isAlreadySignIn = resource.data == nil
+                case .Error:
+                    self.uiState.isAlreadySignIn = false
+                    self.uiState.message = resource.message
+                case .Loading: break
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private static let EMAIL_VALIDATION_REGEX = #"^(.+)@(.+)$"#

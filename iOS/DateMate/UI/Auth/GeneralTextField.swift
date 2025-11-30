@@ -29,7 +29,7 @@ struct GeneralTextField: View {
             .submitLabel(submitLabel)
             .onSubmit { onSubmit?() }
             .padding()
-            .background(RoundedRectangle(cornerRadius: 8).stroke(Color.gray))
+            .background(RoundedRectangle(cornerRadius: 12).stroke(Color.gray))
         }
     }
 }

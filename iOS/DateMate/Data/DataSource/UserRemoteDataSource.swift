@@ -25,16 +25,16 @@ class UserRemoteDataSource {
     
     // Flow<FirebaseUser?> → AsyncStream<User?>
     /*var userStateStream: AsyncStream<User?> {
-     AsyncStream { continuation in
-     let handle = firebaseAuth.addStateDidChangeListener { _, user in
-     continuation.yield(user)
-     }
-     
-     continuation.onTermination = { _ in
-     self.firebaseAuth.removeStateDidChangeListener(handle)
-     }
-     }
-     }*/
+        AsyncStream { continuation in
+            let handle = firebaseAuth.addStateDidChangeListener { _, user in
+                continuation.yield(user)
+            }
+            
+            continuation.onTermination = { _ in
+                self.firebaseAuth.removeStateDidChangeListener(handle)
+            }
+        }
+    }*/
     
     func signIn(email: String, password: String) -> AnyPublisher<FirebaseAuth.User, Error> {
         Future { promise in
@@ -74,53 +74,129 @@ class UserRemoteDataSource {
         .eraseToAnyPublisher()
     }
     
+    func sendPasswordResetEmail(email: String) -> AnyPublisher<Bool, Error> {
+        Future { promise in
+            self.firebaseAuth.sendPasswordReset(withEmail: email) { error in
+                if let error = error {
+                    promise(.failure(error))
+                } else {
+                    promise(.success(true))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    func fetchUserProfile(userId: String) -> AnyPublisher<Profile?, Error> {
+        Future<Profile?, Error> { promise in
+            self.firestore.collection("profiles").document(userId).getDocument { snapshot, error in
+                if let error = error {
+                    return promise(.failure(error))
+                }
+                if let data = try? snapshot?.data(as: Profile.self) {
+                    return promise(.success(data))
+                }
+                promise(.success(nil))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    func createUserProfile(userId: String, email: String?) -> AnyPublisher<Bool, Error> {
+        Future<Bool, Error> { promise in
+            let data: [String: Any] = [
+                "email": email ?? "",
+                "phoneNumber": "",
+                "createdAt": FieldValue.serverTimestamp(),
+                "lastLogin": FieldValue.serverTimestamp(),
+                "status": "active"
+            ]
+            
+            self.firestore.collection("users").document(userId)
+                .setData(data, merge: true) { error in
+                    if let error = error {
+                        return promise(.failure(error))
+                    }
+                    promise(.success(true))
+                }
+        }
+        .eraseToAnyPublisher()
+    }
+    
     func updateUserProfile(
         userId: String,
-        fullName: String,
+        name: String,
         gender: String,
         birthdayMillis: Int64,
         bio: String,
         job: String,
         profileImageUrls: [String]?
-    ) -> AnyPublisher<Bool, Error> {
-        Future { promise in
-            guard let user = self.firebaseAuth.currentUser else {
-                promise(.failure(NSError(domain: "NoUserError", code: -1)))
-                return
-            }
-            let changeRequest = user.createProfileChangeRequest()
-            changeRequest.displayName = fullName
-            
-            if let firstUrl = profileImageUrls?.first, let url = URL(string: firstUrl) {
-                changeRequest.photoURL = url
-            }
-            changeRequest.commitChanges { error in
-                if let error = error {
-                    promise(.failure(error))
-                    return
-                }
-                let userDocument = self.firestore.collection("users").document(userId)
+    ) -> AnyPublisher<String, Error> {
+        userStatePublisher
+            .compactMap { $0 }
+            .flatMap { user -> AnyPublisher<String, Error> in
+                let profileUpdates = user.createProfileChangeRequest()
+                profileUpdates.displayName = name
+                profileUpdates.photoURL = URL(string: profileImageUrls?.first ?? "")
+                let userDoc = self.firestore.collection("profiles").document(userId)
                 let userData: [String: Any] = [
-                    "userId": userId,
-                    "fullName": fullName,
+                    "name": name,
                     "gender": gender,
-                    "birthdayMillis": birthdayMillis,
+                    "birthday": Timestamp(date: Date(timeIntervalSince1970: TimeInterval(birthdayMillis / 1000))),
                     "bio": bio,
                     "job": job,
-                    "profileImageUrls": profileImageUrls ?? [],
+                    "photos": profileImageUrls ?? [],
                     "updatedAt": FieldValue.serverTimestamp()
                 ]
-                
-                userDocument.setData(userData, merge: true) { error in
-                    if let error = error {
-                        promise(.failure(error))
-                    } else {
-                        promise(.success(true))
+                return Future<String, Error> { promise in
+                    profileUpdates.commitChanges { err in
+                        if let err = err {
+                            return promise(.failure(err))
+                        }
+                        userDoc.setData(userData, merge: true) { err2 in
+                            if let err2 = err2 {
+                                return promise(.failure(err2))
+                            }
+                            promise(.success(userId))
+                        }
                     }
                 }
+                .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func sendOtp(phoneNumber: String) -> AnyPublisher<String, Error> {
+        Future<String, Error> { promise in
+            PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { verificationId, error in
+                if let error = error {
+                    return promise(.failure(error))
+                }
+                guard let id = verificationId else {
+                    return promise(.failure(NSError(domain: "OTP Error", code: -1)))
+                }
+                promise(.success(id))
             }
         }
         .eraseToAnyPublisher()
+    }
+    
+    func verifyOtp(verificationId: String, code: String) -> AnyPublisher<Void, Error> {
+        userStatePublisher
+            .compactMap { $0 }
+            .flatMap { user -> AnyPublisher<Void, Error> in
+                let credential = PhoneAuthProvider.provider()
+                    .credential(withVerificationID: verificationId, verificationCode: code)
+                return Future<Void, Error> { promise in
+                    user.link(with: credential) { _, error in
+                        if let error = error {
+                            return promise(.failure(error))
+                        }
+                        promise(.success(()))
+                    }
+                }
+                .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
     }
     
     /*func signIn(email: String, password: String) async throws -> AuthDataResult {
@@ -146,19 +222,6 @@ class UserRemoteDataSource {
             }
         }
     }*/
-    
-    func sendPasswordResetEmail(email: String) -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            self.firebaseAuth.sendPasswordReset(withEmail: email) { error in
-                if let error = error {
-                    promise(.failure(error))
-                } else {
-                    promise(.success(true))
-                }
-            }
-        }
-        .eraseToAnyPublisher()
-    }
     
     init(_ firebaseAuth: Auth, _ firestore: Firestore) {
         self.firebaseAuth = firebaseAuth

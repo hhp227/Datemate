@@ -12,6 +12,8 @@ import Combine
 class UserRepository {
     private let userRemoteDataSource: UserRemoteDataSource
     
+    private let userLocalDataSource: UserLocalDataSource
+    
     private let storageRepository: StorageRepository
     
     private var cancellables = Set<AnyCancellable>()
@@ -20,6 +22,14 @@ class UserRepository {
     
     var signInStatePublisher: AnyPublisher<SignInState, Never> {
         $signInState.eraseToAnyPublisher()
+    }
+    
+    var remoteUserStatePublisher: AnyPublisher<User?, Never> {
+        userRemoteDataSource.userStatePublisher
+    }
+
+    var localUserStatePublisher: AnyPublisher<UserCache?, Never> {
+        userLocalDataSource.userPublisher
     }
     
     func getSignInResultStream(email: String, password: String) -> AnyPublisher<Resource<FirebaseAuth.User>, Never> {
@@ -37,49 +47,71 @@ class UserRepository {
     func getPasswordResetResultStream(email: String) -> AnyPublisher<Resource<Bool>, Never> {
         userRemoteDataSource.sendPasswordResetEmail(email: email).asResource()
     }
-        
+    
+    func fetchUserProfile(userId: String) -> AnyPublisher<Resource<Profile?>, Never> {
+        userRemoteDataSource.fetchUserProfile(userId: userId).asResource()
+    }
+    
+    func createUserProfile(userId: String, email: String?) -> AnyPublisher<Resource<Bool>, Never> {
+        userRemoteDataSource.createUserProfile(userId: userId, email: email).asResource()
+    }
+
+    func storeUserProfile(_ cache: UserCache?) {
+        userLocalDataSource.storeUser(cache)
+    }
+    
     func updateUserProfile(
-        imageUrls: [URL],
-        fullName: String,
+        images: [URL],
+        name: String,
         gender: String,
         birthdayMillis: Int64,
         bio: String,
         job: String,
         concurrency: Int = 4,
-        retryCount: Int = 0
-    ) -> AnyPublisher<Resource<Bool>, Never> {
-        return userRemoteDataSource.userStatePublisher
+        retryCount: Int = 1
+    ) -> AnyPublisher<Resource<String>, Never> {
+        userRemoteDataSource.userStatePublisher
             .compactMap { $0 }
-            .flatMap { [weak self] user -> AnyPublisher<Bool, Error> in
-                guard let self else {
-                    return Fail(error: NSError(domain: "RepositoryError", code: -1)).eraseToAnyPublisher()
+            .flatMap(maxPublishers: .max(1)) { user in
+                self.storageRepository.uploadAllImages(
+                    imageUrls: images,
+                    userId: user.uid,
+                    concurrency: concurrency,
+                    retryCount: retryCount
+                )
+                .flatMap { uploadedUrls in
+                    self.userRemoteDataSource.updateUserProfile(
+                        userId: user.uid,
+                        name: name,
+                        gender: gender,
+                        birthdayMillis: birthdayMillis,
+                        bio: bio,
+                        job: job,
+                        profileImageUrls: uploadedUrls
+                    )
                 }
-                return self.storageRepository
-                    .uploadAllImages(imageUrls: imageUrls, userId: user.uid, concurrency: concurrency, retryCount: retryCount)
-                    .flatMap { uploadedUrls in
-                        self.userRemoteDataSource.updateUserProfile(
-                            userId: user.uid,
-                            fullName: fullName,
-                            gender: gender,
-                            birthdayMillis: birthdayMillis,
-                            bio: bio,
-                            job: job,
-                            profileImageUrls: uploadedUrls
-                        )
-                    }
-                    .eraseToAnyPublisher()
             }
             .asResource()
     }
     
+    func sendOtp(phoneNumber: String) -> AnyPublisher<Resource<String>, Never> {
+        userRemoteDataSource.sendOtp(phoneNumber: phoneNumber).asResource()
+    }
+
+    func verifyOtp(verificationId: String, code: String) -> AnyPublisher<Resource<Void>, Never> {
+        userRemoteDataSource.verifyOtp(verificationId: verificationId, code: code).asResource()
+    }
+    
     init(
         _ userRemoteDataSource: UserRemoteDataSource,
+        _ userLocalDataSource: UserLocalDataSource,
         _ storageRepository: StorageRepository
     ) {
         self.userRemoteDataSource = userRemoteDataSource
+        self.userLocalDataSource = userLocalDataSource
         self.storageRepository = storageRepository
         
-        userRemoteDataSource.userStatePublisher
+        userLocalDataSource.userPublisher
             .map { $0 != nil ? SignInState.signIn : SignInState.signOut }
             .prepend(.loading)
             .receive(on: DispatchQueue.main)
@@ -91,12 +123,17 @@ class UserRepository {
     
     static func getInstance(
         userRemoteDataSource: UserRemoteDataSource,
+        userLocalDataSource: UserLocalDataSource,
         storageRepository: StorageRepository
     ) -> UserRepository {
         if let instance = self.instance {
             return instance
         } else {
-            let userRepository = UserRepository(userRemoteDataSource, storageRepository)
+            let userRepository = UserRepository(
+                userRemoteDataSource,
+                userLocalDataSource,
+                storageRepository
+            )
             self.instance = userRepository
             return userRepository
         }

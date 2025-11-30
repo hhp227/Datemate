@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PasswordField: View {
+    @FocusState private var isFocused: Bool
+    
     @State private var showPassword = false
     
     let value: String
@@ -17,22 +19,34 @@ struct PasswordField: View {
     let onValueChange: (String) -> Void
     
     var onSubmit: () -> Void = {}
+    
+    var isConfirmPassword: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 if showPassword {
-                    TextField("Password", text: Binding(
-                        get: { value },
-                        set: { onValueChange($0) }
-                    ))
+                    TextField(
+                        isConfirmPassword ? "Confirm Password" : "Password",
+                        text: Binding(
+                            get: { value },
+                            set: { onValueChange($0) }
+                        )
+                    )
+                    .textInputAutocapitalization(.none)
+                    .autocorrectionDisabled()
+                    .focused($isFocused)
                     .submitLabel(.done)
                     .onSubmit { onSubmit() }
                 } else {
-                    SecureField("Password", text: Binding(
-                        get: { value },
-                        set: { onValueChange($0) }
-                    ))
+                    SecureField(
+                        isConfirmPassword ? "Confirm Password" : "Password",
+                        text: Binding(
+                            get: { value },
+                            set: { onValueChange($0) }
+                        )
+                    )
+                    .focused($isFocused)
                     .submitLabel(.done)
                     .onSubmit { onSubmit() }
                 }
@@ -41,7 +55,7 @@ struct PasswordField: View {
                 }
             }
             .padding()
-            .background(RoundedRectangle(cornerRadius: 8).stroke(error == nil ? Color.gray : Color.red))
+            .background(RoundedRectangle(cornerRadius: 12).stroke(error == nil ? Color.gray : Color.red))
             if let err = error {
                 TextFieldError(textError: err)
             }
