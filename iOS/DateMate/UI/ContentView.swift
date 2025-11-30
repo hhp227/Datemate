@@ -65,20 +65,22 @@ struct SignInNavigation: View {
             SignInView(
                 onSignUp: { path.append("sign_up") },
                 onForgotPassword: { path.append("forgot_password") },
-                onProfileSetup: { path.append("profile_setup") }
+                onProfileSetup: {
+                    path = []
+                    path.append("profile_setup")
+                }
             )
             .navigationDestination(for: String.self) { route in
                 if route == "sign_up" {
                     SignUpView {
-                        path.append("phone_auth")
+                        path = ["phone_auth"]
                     } onBackToSignIn: {
-                        path = []
+                        path.removeLast()
                     }
                 } else if route == "phone_auth" {
                     PhoneAuthView(
                         onVerified: {
-                            path.removeAll()
-                            path.append("profile_setup")
+                            path = ["profile_setup"]
                         }
                     )
                 } else if route == "profile_setup" {
@@ -97,6 +99,7 @@ struct SignInNavigation: View {
                         viewModel: profileSetupViewModel,
                         onSetupComplete: {
                             path.removeAll()
+                            //path.append("home")
                         }
                     )
                 } else if route == "forgot_password" {

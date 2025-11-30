@@ -12,6 +12,8 @@ struct SignInView: View {
     
     @FocusState private var focusedField: Field?
     
+    @State private var isVisible = false // SignIn화면은 네비게이션스택에 상단에 있기때문에 하위뷰들이 영향을 받는다.
+    
     var onSignUp: () -> Void
     
     var onForgotPassword: () -> Void
@@ -85,7 +87,10 @@ struct SignInView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear { isVisible = true }
+        .onDisappear { isVisible = false }
         .onChange(of: uiState.isAlreadySignIn) { isSignedIn in
+            guard isVisible else { return } // 화면이 보일때만 동작
             if isSignedIn {
                 onProfileSetup()
             }

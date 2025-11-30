@@ -23,6 +23,8 @@ struct InfoSetupView: View {
     let onSetupComplete: () -> Void
     
     var body: some View {
+        let uiState = viewModel.uiState
+        
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("나에 대한 매력적인 정보를 알려주세요.")
@@ -32,20 +34,20 @@ struct InfoSetupView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     GeneralTextField(
                         label: "Full Name (필수)",
-                        value: viewModel.uiState.name,
+                        value: uiState.name,
                         onValueChange: viewModel.onNameChange,
                         submitLabel: .next
                     )
-                    if let error = viewModel.uiState.nameError {
+                    if let error = uiState.nameError {
                         Text(error).foregroundColor(.red).font(.caption)
                     }
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(viewModel.uiState.birthdayMillis != nil ?
-                             dateFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(viewModel.uiState.birthdayMillis! / 1000)))
+                        Text(uiState.birthdayMillis != nil ?
+                             dateFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(uiState.birthdayMillis! / 1000)))
                              : "생년월일 (필수)")
-                        .foregroundColor(viewModel.uiState.birthdayMillis != nil ? .primary : .gray)
+                        .foregroundColor(uiState.birthdayMillis != nil ? .primary : .gray)
                         Spacer()
                         Image(systemName: "calendar")
                             .onTapGesture { showDatePicker = true }
@@ -53,9 +55,9 @@ struct InfoSetupView: View {
                     .padding()
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(viewModel.uiState.birthdayError != nil ? Color.red : Color.gray)
+                            .stroke(uiState.birthdayError != nil ? Color.red : Color.gray)
                     )
-                    if let error = viewModel.uiState.birthdayError {
+                    if let error = uiState.birthdayError {
                         Text(error).foregroundColor(.red).font(.caption)
                     }
                 }
@@ -71,19 +73,26 @@ struct InfoSetupView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     GeneralTextField(
                         label: "직업 (필수)",
-                        value: viewModel.uiState.job,
+                        value: uiState.job,
                         onValueChange: viewModel.onJobChange,
                         submitLabel: .done
                     )
-                    if let error = viewModel.uiState.jobError {
+                    if let error = uiState.jobError {
                         Text(error).foregroundColor(.red).font(.caption)
                     }
                 }
                 Button(action: {
-                    viewModel.completeProfileSetup()
+                    viewModel.completeProfileSetup(
+                        uiState.selectedImageUrls,
+                        uiState.name,
+                        uiState.selectedGender?.rawValue ?? "",
+                        uiState.birthdayMillis ?? 0,
+                        uiState.bio,
+                        uiState.job
+                    )
                 }) {
                     ZStack {
-                        if viewModel.uiState.isLoading {
+                        if uiState.isLoading {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                         } else {
@@ -93,12 +102,11 @@ struct InfoSetupView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(viewModel.uiState.isSubmitEnabled ? Color.blue : Color.gray)
+                    .background(uiState.isSubmitEnabled && !uiState.isLoading ? Color.blue : Color.gray.opacity(0.4))
                     .cornerRadius(16)
                 }
-                .disabled(!viewModel.uiState.isSubmitEnabled || viewModel.uiState.isLoading)
+                .disabled(!uiState.isSubmitEnabled || uiState.isLoading)
                 .padding(.vertical, 20)
-                
                 Spacer()
             }
             .padding(.horizontal, 24)
@@ -109,7 +117,7 @@ struct InfoSetupView: View {
                 viewModel.onBirthdaySelected(selectedDate)
             }
         }
-        .onChange(of: viewModel.uiState.isSetupComplete) { completed in
+        .onChange(of: uiState.isSetupComplete) { completed in
             if completed {
                 viewModel.consumeSetupCompleteEvent()
                 onSetupComplete()

@@ -56,13 +56,17 @@ struct SignUpView: View {
                         }
                     }
                     Button(action: { viewModel.signUp(uiState.email, uiState.password, uiState.confirmPassword) }) {
-                        Text("Sign Up")
-                            .frame(maxWidth: .infinity, minHeight: 52)
-                            .foregroundColor(.white)
+                        if uiState.isLoading {
+                            ProgressView().frame(width: 24, height: 24)
+                        } else {
+                            Text("Sign Up").foregroundColor(.white)
+                        }
                     }
-                    .background(uiState.isSignUpEnabled ? Color.blue : Color.gray)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(uiState.isSignUpEnabled && !uiState.isLoading ? Color.blue : Color.gray.opacity(0.4))
                     .cornerRadius(16)
-                    .disabled(!uiState.isSignUpEnabled)
+                    .disabled(!uiState.isSignUpEnabled || uiState.isLoading)
                     Button(action: onBackToSignIn) {
                         HStack(spacing: 4) {
                             Text("Already have an account?")

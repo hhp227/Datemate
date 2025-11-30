@@ -68,47 +68,26 @@ class ProfileSetupViewModel: ObservableObject {
         uiState.selectedImageUrls.removeAll { $0 == url }
     }
         
-    func completeProfileSetup() {
-        guard uiState.nameError == nil, !uiState.name.isEmpty else {
-            uiState.nameError = "유효한 이름을 입력해주세요."
-            return
-        }
-        guard uiState.birthdayError == nil, uiState.birthdayMillis != nil else {
-            uiState.birthdayError = "유효한 생년월일을 선택해주세요."
-            return
-        }
-        uiState.errorMessage = nil
-        
-        /*Task {
-            do {
-                let result = try await userRepository.updateUserProfile(
-                    images: uiState.selectedImageUrls,
-                    fullName: uiState.fullName,
-                    gender: uiState.selectedGender?.name ?? "",
-                    birthdayMillis: uiState.birthdayMillis!,
-                    bio: uiState.bio,
-                    job: uiState.job
-                )
-                
-                switch result {
-                case .success:
-                    DispatchQueue.main.async {
-                        self.uiState.isLoading = false
-                        self.uiState.isSetupComplete = true
-                    }
-                case .failure(let message):
-                    DispatchQueue.main.async {
-                        self.uiState.isLoading = false
-                        self.uiState.errorMessage = "업데이트 실패: \(message)"
-                    }
-                }
-            } catch {
-                DispatchQueue.main.async {
+    func completeProfileSetup(_ imageUrls: [URL], _ name: String, _ gender: String, _ birthday: Int64, _ bio: String, _ job: String) {
+        userRepository.updateUserProfile(images: imageUrls, name: name, gender: gender, birthdayMillis: birthday, bio: bio, job: job)
+            .receive(on: DispatchQueue.main)
+            .sink { resource in
+                switch resource.state {
+                case .Success:
+                    let data = resource.data ?? ""
+                    let userToStore = UserCache(id: data)
+                    
+                    self.userRepository.storeUserProfile(userToStore)
                     self.uiState.isLoading = false
-                    self.uiState.errorMessage = "업데이트 실패: \(error.localizedDescription)"
+                    self.uiState.isSetupComplete = true
+                case .Error:
+                    self.uiState.isLoading = false
+                    self.uiState.errorMessage = "업데이트 실패: \(String(describing: resource.message))"
+                case .Loading:
+                    self.uiState.isLoading = true
                 }
             }
-        }*/
+            .store(in: &cancellables)
     }
         
     func consumeSetupCompleteEvent() {

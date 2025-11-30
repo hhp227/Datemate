@@ -48,7 +48,7 @@ class SignInViewModel: ObservableObject {
                 case .Success:
                     let userCache = UserCache(id: userId)
                     
-                    if resource.data != nil {
+                    if resource.data! != nil {
                         self.userRepository.storeUserProfile(userCache)
                         self.uiState.isLoading = false
                         self.uiState.message = nil
