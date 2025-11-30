@@ -22,7 +22,7 @@ class StorageRepository {
         imageUrls: [URL],
         userId: String,
         concurrency: Int? = nil,
-        retryCount: Int = 0
+        retryCount: Int = 1
     ) -> AnyPublisher<[String], Error> {
         let concurrency = concurrency ?? defaultConcurrency
         let publishers = imageUrls.enumerated().map { (index, url) -> AnyPublisher<String, Error> in
