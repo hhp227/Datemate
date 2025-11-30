@@ -58,6 +58,8 @@ struct AppNavigation: View {
 struct SignInNavigation: View {
     @State private var path: [String] = []
     
+    @StateObject private var profileSetupViewModel = DependencyContainer.instance.provideProfileSetupViewModel()
+    
     var body: some View {
         NavigationStack(path: $path) {
             SignInView(
@@ -80,42 +82,27 @@ struct SignInNavigation: View {
                         }
                     )
                 } else if route == "profile_setup" {
-                    ProfileSetupView(path: $path)
-                }/*else if route == "gender_setup" {
-                    GenderSetupView(onNext: { path.append("photo_setup") })
+                    GenderSetupView(
+                        viewModel: profileSetupViewModel,
+                        onNext: { path.append("photo_setup") }
+                    )
+                    .navigationBarBackButtonHidden(true)
                 } else if route == "photo_setup" {
-                    PhotoSetupView(onNext: { path.append("info_setup") })
+                    PhotoSetupView(
+                        viewModel: profileSetupViewModel,
+                        onNext: { path.append("info_setup") }
+                    )
                 } else if route == "info_setup" {
-                    InfoSetupView(onSetupComplete: {
-                        path.removeAll()
-                    })
-                }*/ else if route == "forgot_password" {
+                    InfoSetupView(
+                        viewModel: profileSetupViewModel,
+                        onSetupComplete: {
+                            path.removeAll()
+                        }
+                    )
+                } else if route == "forgot_password" {
                     ForgotPasswordView(onBackToSignIn: { path.removeLast() })
                 }
             }
-        }
-    }
-}
-
-struct ProfileSetupView: View {
-    @Binding var path: [String]
-    
-    var body: some View {
-        NavigationStack {
-            GenderSetupView(onNext: { path.append("photo_setup") })
-                .navigationDestination(for: String.self) { route in
-                    switch route {
-                    case "photo_setup":
-                        PhotoSetupView(onNext: { path.append("info_setup") })
-                    case "info_setup":
-                        InfoSetupView(onSetupComplete: {
-                            path.removeAll()
-                            path.append("home")
-                        })
-                    default:
-                        EmptyView()
-                    }
-                }
         }
     }
 }

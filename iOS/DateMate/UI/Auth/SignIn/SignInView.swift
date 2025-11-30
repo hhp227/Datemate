@@ -44,13 +44,13 @@ struct SignInView: View {
                     error: uiState.passwordError,
                     onValueChange: viewModel.onPasswordChanged,
                     onSubmit: {
-                        viewModel.signIn(email: uiState.email, password: uiState.password)
+                        viewModel.signIn(uiState.email, uiState.password)
                     }
                 )
                 .focused($focusedField, equals: .password)
                 Spacer().frame(height: 24)
                 Button(action: {
-                    viewModel.signIn(email: uiState.email, password: uiState.password)
+                    viewModel.signIn(uiState.email, uiState.password)
                 }) {
                     if uiState.isLoading {
                         ProgressView().frame(width: 24, height: 24)
@@ -85,6 +85,11 @@ struct SignInView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onChange(of: uiState.isAlreadySignIn) { isSignedIn in
+            if isSignedIn {
+                onProfileSetup()
+            }
+        }
     }
     
     enum Field {

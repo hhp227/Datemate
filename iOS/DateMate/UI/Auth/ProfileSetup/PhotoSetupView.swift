@@ -9,7 +9,7 @@ import SwiftUI
 import _PhotosUI_SwiftUI
 
 struct PhotoSetupView: View {
-    @StateObject var viewModel: ProfileSetupViewModel = DependencyContainer.instance.provideProfileSetupViewModel()
+    @ObservedObject var viewModel: ProfileSetupViewModel
     
     @State private var selectedItems: [PhotosPickerItem] = []
     
@@ -104,6 +104,6 @@ struct PhotoSetupView: View {
 
 struct PhotoSetupView_Previews: PreviewProvider {
     static var previews: some View {
-        PhotoSetupView(onNext: {})
+        PhotoSetupView(viewModel: DependencyContainer.instance.provideProfileSetupViewModel(), onNext: {})
     }
 }

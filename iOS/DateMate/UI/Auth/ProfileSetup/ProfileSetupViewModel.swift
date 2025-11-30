@@ -15,12 +15,12 @@ class ProfileSetupViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    func onFullnameChange(_ newFullname: String) {
-        if newFullname.count > 50 {
-            uiState.fullNameError = "이름은 50자 이내여야 합니다."
+    func onNameChange(_ newName: String) {
+        if newName.count > 50 {
+            uiState.nameError = "이름은 50자 이내여야 합니다."
         } else {
-            uiState.fullName = newFullname
-            uiState.fullNameError = nil
+            uiState.name = newName
+            uiState.nameError = nil
         }
     }
     
@@ -69,8 +69,8 @@ class ProfileSetupViewModel: ObservableObject {
     }
         
     func completeProfileSetup() {
-        guard uiState.fullNameError == nil, !uiState.fullName.isEmpty else {
-            uiState.fullNameError = "유효한 이름을 입력해주세요."
+        guard uiState.nameError == nil, !uiState.name.isEmpty else {
+            uiState.nameError = "유효한 이름을 입력해주세요."
             return
         }
         guard uiState.birthdayError == nil, uiState.birthdayMillis != nil else {

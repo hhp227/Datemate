@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct InfoSetupView: View {
-    @StateObject var viewModel: ProfileSetupViewModel = DependencyContainer.instance.provideProfileSetupViewModel()
+    @ObservedObject var viewModel: ProfileSetupViewModel
     
     @Environment(\.presentationMode) var presentationMode
 
@@ -32,11 +32,11 @@ struct InfoSetupView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     GeneralTextField(
                         label: "Full Name (필수)",
-                        value: viewModel.uiState.fullName,
-                        onValueChange: viewModel.onFullnameChange,
+                        value: viewModel.uiState.name,
+                        onValueChange: viewModel.onNameChange,
                         submitLabel: .next
                     )
-                    if let error = viewModel.uiState.fullNameError {
+                    if let error = viewModel.uiState.nameError {
                         Text(error).foregroundColor(.red).font(.caption)
                     }
                 }
@@ -52,7 +52,7 @@ struct InfoSetupView: View {
                     }
                     .padding()
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(viewModel.uiState.birthdayError != nil ? Color.red : Color.gray)
                     )
                     if let error = viewModel.uiState.birthdayError {
@@ -64,7 +64,7 @@ struct InfoSetupView: View {
                     TextEditor(text: $viewModel.uiState.bio)
                         .frame(height: 120)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color.gray)
                         )
                 }
@@ -145,6 +145,6 @@ struct BirthdayPickerView: View {
 
 struct InfoSetupView_Previews: PreviewProvider {
     static var previews: some View {
-        InfoSetupView(onSetupComplete: {})
+        InfoSetupView(viewModel: DependencyContainer.instance.provideProfileSetupViewModel(), onSetupComplete: {})
     }
 }

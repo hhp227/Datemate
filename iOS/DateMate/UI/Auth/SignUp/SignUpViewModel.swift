@@ -1,5 +1,5 @@
 //
-//  RegisterViewModel.swift
+//  SignUpViewModel.swift
 //  DateMate
 //
 //  Created by 홍희표 on 2021/11/28.
@@ -55,7 +55,7 @@ class SignUpViewModel: ObservableObject {
         uiState.confirmPasswordError = nil
     }
     
-    func signUp(email: String, password: String, confirmPassword: String) {
+    func signUp(_ email: String, _ password: String, _ confirmPassword: String) {
         if email.isEmpty || !isValidEmail(email) {
             uiState.emailError = "유효한 이메일을 입력해주세요."
             return

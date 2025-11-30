@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GenderSetupView: View {
-    @StateObject var viewModel: ProfileSetupViewModel = DependencyContainer.instance.provideProfileSetupViewModel()
+    @ObservedObject var viewModel: ProfileSetupViewModel
     
     var onNext: () -> Void
     
@@ -44,6 +44,6 @@ struct GenderSetupView: View {
 
 struct GenderSetupView_Previews: PreviewProvider {
     static var previews: some View {
-        GenderSetupView(onNext: {})
+        GenderSetupView(viewModel: DependencyContainer.instance.provideProfileSetupViewModel(), onNext: {})
     }
 }

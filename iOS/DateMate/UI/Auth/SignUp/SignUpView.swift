@@ -52,10 +52,10 @@ struct SignUpView: View {
                     .submitLabel(.done)
                     .onSubmit {
                         if viewModel.uiState.isSignUpEnabled {
-                            viewModel.signUp(email: uiState.email, password: uiState.password, confirmPassword: uiState.confirmPassword)
+                            viewModel.signUp(uiState.email, uiState.password, uiState.confirmPassword)
                         }
                     }
-                    Button(action: { viewModel.signUp(email: uiState.email, password: uiState.password, confirmPassword: uiState.confirmPassword) }) {
+                    Button(action: { viewModel.signUp(uiState.email, uiState.password, uiState.confirmPassword) }) {
                         Text("Sign Up")
                             .frame(maxWidth: .infinity, minHeight: 52)
                             .foregroundColor(.white)

@@ -74,7 +74,7 @@ class SignInViewModel: ObservableObject {
         uiState.passwordError = validatePassword(value)
     }
     
-    func signIn(email: String, password: String) {
+    func signIn(_ email: String, _ password: String) {
         userRepository.getSignInResultStream(email: email, password: password)
             .receive(on: DispatchQueue.main)
             .sink { result in
@@ -109,7 +109,7 @@ class SignInViewModel: ObservableObject {
             .sink { resource in
                 switch resource.state {
                 case .Success:
-                    self.uiState.isAlreadySignIn = resource.data == nil
+                    self.uiState.isAlreadySignIn = resource.data! == nil
                 case .Error:
                     self.uiState.isAlreadySignIn = false
                     self.uiState.message = resource.message
