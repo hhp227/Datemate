@@ -223,7 +223,7 @@ class UserRemoteDataSource {
         }
     }*/
     
-    init(_ firebaseAuth: Auth, _ firestore: Firestore) {
+    private init(_ firebaseAuth: Auth, _ firestore: Firestore) {
         self.firebaseAuth = firebaseAuth
         self.firestore = firestore
         

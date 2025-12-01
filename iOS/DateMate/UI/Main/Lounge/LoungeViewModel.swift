@@ -18,7 +18,7 @@ class LoungeViewModel: ObservableObject {
     private var subscription = Set<AnyCancellable>()
     
     private func getPosts() {
-        repository.getPosts().tryMap(getPostsUseCase).receive(on: DispatchQueue.main).sink(receiveCompletion: onReceive, receiveValue: onReceive).store(in: &subscription)
+        /*repository.getPosts().tryMap(getPostsUseCase).receive(on: DispatchQueue.main).sink(receiveCompletion: onReceive, receiveValue: onReceive).store(in: &subscription)*/
     }
     
     private func getPostsUseCase(posts: [Post]) -> Resource<[Post]> {

@@ -10,7 +10,7 @@ import Combine
 import FirebaseDatabase
 
 class CreateViewModel: ObservableObject {
-    @Published var title: String = ""
+    /*@Published var title: String = ""
     
     @Published var content: String = ""
     
@@ -64,9 +64,10 @@ class CreateViewModel: ObservableObject {
         init(_ success: Bool = false) {
             self.success = success
         }
-    }
+    }*/
 }
 
 enum WriteEvent {
     case OnDoneChange(post: Post, isDone: Bool)
 }
+

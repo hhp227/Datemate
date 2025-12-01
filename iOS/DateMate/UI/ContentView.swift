@@ -39,6 +39,9 @@ struct AppNavigation: View {
                 },
                 onNavigateToSubSecond: {
                     path.append("sub_second")
+                },
+                onNavigateToMyProfile: {
+                    path.append("my_profile")
                 }
             )
             .navigationDestination(for: String.self) { route in
@@ -49,6 +52,8 @@ struct AppNavigation: View {
                     PostDetailView(
                         //onNavigateUp = { path.removeLast() }
                     )
+                } else if route == "my_profile" {
+                    MyProfileView()
                 }
             }
         }

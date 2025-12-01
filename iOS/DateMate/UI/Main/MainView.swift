@@ -12,9 +12,11 @@ struct MainView: View {
     
     @State private var selectedTab = 0
     
-    var onNavigateToSubFirst: (String) -> Void
+    let onNavigateToSubFirst: (String) -> Void
     
-    var onNavigateToSubSecond: () -> Void
+    let onNavigateToSubSecond: () -> Void
+    
+    let onNavigateToMyProfile: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -24,19 +26,36 @@ struct MainView: View {
             // Main Tab Content
             TabView(selection: $selectedTab) {
                 DiscoverView(onNavigateToSubFirst: onNavigateToSubFirst)
-                .tabItem {
-                    Label("First", systemImage: "house")
-                }
-                .tag(0)
+                    .tabItem {
+                        Label("탐색", systemImage: "house")
+                    }
+                    .tag(0)
                 LoungeView(onNavigateToSubSecond: onNavigateToSubSecond)
-                .tabItem {
-                    Label("Second", systemImage: "heart")
-                }
-                .tag(1)
+                    .tabItem {
+                        Label("라운지", systemImage: "heart")
+                    }
+                    .tag(1)
+                FavoriteView()
+                    .tabItem {
+                        Label("관심", systemImage: "heart")
+                    }
+                    .tag(2)
+                ChatRoomView()
+                    .tabItem {
+                        Label("채팅", systemImage: "bubble.left")
+                    }
+                    .tag(3)
             }
         }
         .navigationTitle("Datemate")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: onNavigateToMyProfile) {
+                    Image(systemName: "heart")
+                }
+            }
+        }
     }
 }
 
@@ -76,6 +95,10 @@ struct MainView: View {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView(onNavigateToSubFirst: { _ in }, onNavigateToSubSecond: {})
+        MainView(
+            onNavigateToSubFirst: { _ in },
+            onNavigateToSubSecond: {},
+            onNavigateToMyProfile: {}
+        )
     }
 }

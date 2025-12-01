@@ -102,7 +102,7 @@ class UserRepository {
         userRemoteDataSource.verifyOtp(verificationId: verificationId, code: code).asResource()
     }
     
-    init(
+    private init(
         _ userRemoteDataSource: UserRemoteDataSource,
         _ userLocalDataSource: UserLocalDataSource,
         _ storageRepository: StorageRepository

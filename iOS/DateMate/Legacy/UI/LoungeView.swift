@@ -19,7 +19,7 @@ struct LoungeView: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    NavigationLink(destination: CreateView().environmentObject(CreateViewModel(.init()))) {
+                    NavigationLink(destination: CreateView()) {
                         Text("+").font(.system(.largeTitle)).frame(width: 66, height: 60).foregroundColor(.white).padding(.bottom, 7)
                     }.background(Color.blue).cornerRadius(38.5).padding().shadow(color: Color.black.opacity(0.3), radius: 3, x: 3, y: 3).animation(.none)
                 }
@@ -50,13 +50,13 @@ struct PostCell: View {
         VStack(alignment: .leading) {
             HStack {
                 Image(systemName: "person.fill").frame(width: 40, height: 40, alignment: .center)
-                Text(post.author)
+                Text(post.userId)
             }
             VStack(alignment: .leading) {
                 Text(post.title).lineLimit(1)
-                Text(post.body)
+                Text(post.content)
             }
-            NavigationLink(destination: PostDetailView().environmentObject(PostDetailViewModel(.init(), .init()))) {
+            NavigationLink(destination: PostDetailView()) {
                 EmptyView()
             }.hidden()
         }

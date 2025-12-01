@@ -6,19 +6,20 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 struct Post: Identifiable {
     var id: String
     
-    var author: String
+    var userId: String
     
     var title: String
     
-    var body: String
+    var content: String
     
-    var starCount: Int
+    var imageUrls: [String]
     
-    var stars: [String: Bool]
+    var likeCount: Int
     
-    var key: String
+    var createdAt: Timestamp?
 }

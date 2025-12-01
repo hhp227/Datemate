@@ -14,7 +14,7 @@ class LoungeRepository {
     
     private var postRef: DatabaseReference
     
-    func getPosts() -> AnyPublisher<[Post], Error> {
+    /*func getPosts() -> AnyPublisher<[Post], Error> {
         return postRef.observer(for: .value).tryMap { result in
             result.children.map { dataSnapshot -> Post in
                 if let snapshot = dataSnapshot as? DataSnapshot, let dic = snapshot.value as? [String: Any] {
@@ -33,7 +33,7 @@ class LoungeRepository {
                 }
             }
         }.eraseToAnyPublisher()
-    }
+    }*/
     
     func test() -> String {
         return "헬로우"

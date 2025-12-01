@@ -28,6 +28,10 @@ final class DependencyContainer {
     
     let userRepository: UserRepository
     
+    let postRemoteDataSource: PostRemoteDataSource
+    
+    let postRepository: PostRepository
+    
     func provideSignInViewModel() -> SignInViewModel {
         return SignInViewModel(userRepository)
     }
@@ -52,6 +56,10 @@ final class DependencyContainer {
         return SubFirstViewModel(userRepository, data: data)
     }
     
+    func provideMyProfileViewModel() -> MyProfileViewModel {
+        return MyProfileViewModel(userRepository, postRepository)
+    }
+    
     private init() {
         self.firebaseAuth = Auth.auth()
         self.firestore = Firestore.firestore()
@@ -65,6 +73,8 @@ final class DependencyContainer {
             userLocalDataSource: userLocalDataSource,
             storageRepository: storageRepository
         )
+        self.postRemoteDataSource = PostRemoteDataSource.getInstance(firestore: firestore)
+        self.postRepository = PostRepository.getInstance(postRemoteDataSource: postRemoteDataSource)
     }
     
     static let instance = DependencyContainer.init()
