@@ -28,6 +28,7 @@ import com.hhp227.datemate.ui.main.MainScreen
 import com.hhp227.datemate.ui.postdetail.PostDetailScreen
 import com.hhp227.datemate.ui.auth.signin.SignInScreen
 import com.hhp227.datemate.ui.auth.signup.SignUpScreen
+import com.hhp227.datemate.ui.myprofile.MyProfileScreen
 import com.hhp227.datemate.ui.theme.DateMateTheme
 
 @Composable
@@ -56,7 +57,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         composable("main") {
             MainScreen(
                 onNavigateToSubFirst = { data -> navController.navigate("sub_first/$data") },
-                onNavigateToSubSecond = { navController.navigate("sub_second") }
+                onNavigateToSubSecond = { navController.navigate("sub_second") },
+                onNavigateToMyProfile = { navController.navigate("my_profile") }
             )
         }
         composable(
@@ -67,10 +69,11 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         ) { backStackEntry ->
             SubFirstScreen(
                 viewModel = viewModel(factory = InjectorUtils.provideDetailViewModelFactory(backStackEntry, LocalContext.current.applicationContext)),
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = navController::navigateUp
             )
         }
-        composable("sub_second") { PostDetailScreen(onNavigateUp = { navController.navigateUp() }) }
+        composable("sub_second") { PostDetailScreen(onNavigateUp = navController::navigateUp) }
+        composable("my_profile") { MyProfileScreen(onNavigateUp = navController::navigateUp) }
     }
 }
 
@@ -98,7 +101,7 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
                         popUpTo("sign_in") { inclusive = true }
                     }
                 },
-                onBackToSignIn = { navController.navigateUp() }
+                onBackToSignIn = navController::navigateUp
             )
         }
         composable("phone_auth") {
@@ -136,7 +139,7 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
                 PhotoSetupScreen(
                     viewModel = viewModel,
                     onNext = { navController.navigate("info_setup") },
-                    onNavigateUp = { navController.navigateUp() }
+                    onNavigateUp = navController::navigateUp
                 )
             }
             composable("info_setup") { entry ->
@@ -151,14 +154,12 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
                     onSetupComplete = {
                         navController.navigate("home") { popUpTo(0) }
                     },
-                    onNavigateUp = { navController.navigateUp() }
+                    onNavigateUp = navController::navigateUp
                 )
             }
         }
         composable("forgot_password") {
-            ForgotPasswordScreen(
-                onBackToSignIn = { navController.navigateUp() }
-            )
+            ForgotPasswordScreen(onBackToSignIn = navController::navigateUp)
         }
     }
 }
@@ -167,6 +168,10 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
 @Composable
 fun DefaultPreview() {
     DateMateTheme {
-        MainScreen(onNavigateToSubFirst = fun(_) = Unit, onNavigateToSubSecond = fun() = Unit)
+        MainScreen(
+            onNavigateToSubFirst = fun(_) = Unit,
+            onNavigateToSubSecond = fun() = Unit,
+            onNavigateToMyProfile = fun() = Unit
+        )
     }
 }

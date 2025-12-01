@@ -4,8 +4,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
-import com.hhp227.datemate.data.PostRepository
-import com.hhp227.datemate.data.Post
+import com.hhp227.datemate.data.repository.PostRepository
+import com.hhp227.datemate.data.model.Post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn

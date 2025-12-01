@@ -9,9 +9,11 @@ import androidx.navigation.NavBackStackEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.hhp227.datemate.data.datasource.PostRemoteDataSource
 import com.hhp227.datemate.data.datasource.StorageRemoteDataSource
 import com.hhp227.datemate.data.datasource.UserLocalDataSource
 import com.hhp227.datemate.data.datasource.UserRemoteDataSource
+import com.hhp227.datemate.data.repository.PostRepository
 import com.hhp227.datemate.data.repository.StorageRepository
 import com.hhp227.datemate.data.repository.UserRepository
 import com.hhp227.datemate.ui.auth.forgotpassword.ForgotPasswordViewModel
@@ -20,6 +22,7 @@ import com.hhp227.datemate.ui.auth.profilesetup.ProfileSetupViewModel
 import com.hhp227.datemate.ui.detail.SubFirstViewModel
 import com.hhp227.datemate.ui.auth.signin.SignInViewModel
 import com.hhp227.datemate.ui.auth.signup.SignUpViewModel
+import com.hhp227.datemate.ui.myprofile.MyProfileViewModel
 
 object InjectorUtils {
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
@@ -46,6 +49,14 @@ object InjectorUtils {
 
     fun getUserRepository(context: Context): UserRepository {
         return UserRepository.getInstance(getUserRemoteDataSource(), getUserLocalDataSource(context), getStorageRepository())
+    }
+
+    private fun getPostRemoteDataSource(): PostRemoteDataSource {
+        return PostRemoteDataSource.getInstance(provideFirestore())
+    }
+
+    private fun getPostRepository(): PostRepository {
+        return PostRepository.getInstance(getPostRemoteDataSource())
     }
 
     fun provideSignInViewModelFactory(context: Context): ViewModelProvider.Factory {
@@ -110,6 +121,15 @@ object InjectorUtils {
                     ) as T
                 }
                 return super.create(modelClass)
+            }
+        }
+    }
+
+    fun provideMyProfileViewModelFactory(context: Context): ViewModelProvider.Factory {
+        return object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return MyProfileViewModel(getUserRepository(context), getPostRepository()) as T
             }
         }
     }

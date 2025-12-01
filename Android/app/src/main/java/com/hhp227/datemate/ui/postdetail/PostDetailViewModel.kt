@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.data.CommentRepository
-import com.hhp227.datemate.data.PostRepository
+import com.hhp227.datemate.data.repository.PostRepository
 import com.hhp227.datemate.data.Comment
-import com.hhp227.datemate.data.Post
+import com.hhp227.datemate.data.model.Post
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach

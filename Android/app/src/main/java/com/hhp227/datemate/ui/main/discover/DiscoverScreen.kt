@@ -37,7 +37,6 @@ fun DiscoverScreen(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
-            //TodayRecommendSection(onNavigateToSubFirst = onNavigateToSubFirst, items = viewModel.list, onLoadMore = viewModel::loadMore)
             TodayRecommendSection(onNavigateToSubFirst = onNavigateToSubFirst)
         }
         Column {
@@ -154,42 +153,6 @@ fun TodayRecommendSection(onNavigateToSubFirst: (String) -> Unit) {
         }
     }
 }
-
-/*@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun TodayRecommendSection(
-    onNavigateToSubFirst: (String) -> Unit,
-    items: List<Int>,
-    onLoadMore: () -> Unit
-) {
-    val listState = rememberLazyListState()
-
-    // Snap behavior
-    val flingBehavior = rememberSnapFlingBehavior(listState)
-
-    // Load more when reaching end
-    val shouldLoadMore by remember {
-        derivedStateOf {
-            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-            lastVisible != null && lastVisible >= items.size - 1
-        }
-    }
-
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) onLoadMore()
-    }
-
-    LazyRow(
-        state = listState,
-        flingBehavior = flingBehavior,
-        contentPadding = PaddingValues(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(items) {
-            TodayRecommendCard(onNavigateToSubFirst)
-        }
-    }
-}*/
 
 @Composable
 fun TodayRecommendCard(onNavigateToSubFirst: (String) -> Unit) {

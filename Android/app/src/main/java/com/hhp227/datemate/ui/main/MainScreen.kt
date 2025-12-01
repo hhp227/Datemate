@@ -3,11 +3,12 @@ package com.hhp227.datemate.ui.main
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -15,16 +16,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.hhp227.datemate.ui.main.chatroom.ChatRoomScreen
 import com.hhp227.datemate.ui.main.discover.DiscoverScreen
+import com.hhp227.datemate.ui.main.favorite.FavoriteScreen
 import com.hhp227.datemate.ui.main.lounge.LoungeScreen
 
 @Composable
-fun MainScreen(onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: () -> Unit) {
+fun MainScreen(
+    onNavigateToSubFirst: (String) -> Unit,
+    onNavigateToSubSecond: () -> Unit,
+    onNavigateToMyProfile: () -> Unit
+) {
     val viewModel: MainViewModel = viewModel()
     val bottomNavController = rememberNavController()
     val items = listOf(
-        BottomNavItem("first", Icons.Default.Home, "First"),
-        BottomNavItem("second", Icons.Default.Favorite, "Second")
+        Triple("discover", Icons.Default.Home, "탐색"),
+        Triple("lounge", Icons.AutoMirrored.Filled.List, "라운지"),
+        Triple("favorite", Icons.Default.Favorite, "관심"),
+        Triple("chatroom", Icons.Default.ChatBubble, "채팅")
     )
 
     Scaffold(
@@ -37,10 +46,7 @@ fun MainScreen(onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: ()
                     )
                 },
                 actions = {
-                    IconButton(onClick = {
-                        // 메뉴 항목 예시
-                        //SnackbarHostState().showSnackbar("Settings clicked")
-                    }) {
+                    IconButton(onClick = onNavigateToMyProfile) {
                         Icon(Icons.Default.Favorite, contentDescription = null)
                     }
                 }
@@ -51,11 +57,11 @@ fun MainScreen(onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: ()
                 val currentRoute =
                     bottomNavController.currentBackStackEntryAsState().value?.destination?.route
 
-                items.forEach { item ->
+                items.forEach { (route, icon, label) ->
                     BottomNavigationItem(
-                        selected = currentRoute == item.route,
+                        selected = currentRoute == route,
                         onClick = {
-                            bottomNavController.navigate(item.route) {
+                            bottomNavController.navigate(route) {
                                 popUpTo(bottomNavController.graph.findStartDestination().id) {
                                     saveState = true
                                 }
@@ -63,8 +69,8 @@ fun MainScreen(onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: ()
                                 restoreState = true
                             }
                         },
-                        icon = { Icon(item.icon, contentDescription = item.label) },
-                        label = { Text(item.label) }
+                        icon = { Icon(icon, contentDescription = label) },
+                        label = { Text(label) }
                     )
                 }
             }
@@ -72,13 +78,13 @@ fun MainScreen(onNavigateToSubFirst: (String) -> Unit, onNavigateToSubSecond: ()
     ) { innerPadding ->
         NavHost(
             navController = bottomNavController,
-            startDestination = "first",
+            startDestination = "discover",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("first") { DiscoverScreen(onNavigateToSubFirst = onNavigateToSubFirst) }
-            composable("second") { LoungeScreen(onNavigateToSubSecond = onNavigateToSubSecond) }
+            composable("discover") { DiscoverScreen(onNavigateToSubFirst = onNavigateToSubFirst) }
+            composable("lounge") { LoungeScreen(onNavigateToSubSecond = onNavigateToSubSecond) }
+            composable("favorite") { FavoriteScreen() }
+            composable("chatroom") { ChatRoomScreen() }
         }
     }
 }
-
-data class BottomNavItem(val route: String, val icon: ImageVector, val label: String)
