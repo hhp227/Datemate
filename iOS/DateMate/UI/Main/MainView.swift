@@ -32,7 +32,7 @@ struct MainView: View {
                     .tag(0)
                 LoungeView(onNavigateToSubSecond: onNavigateToSubSecond)
                     .tabItem {
-                        Label("라운지", systemImage: "heart")
+                        Label("라운지", systemImage: "list.bullet")
                     }
                     .tag(1)
                 FavoriteView()
