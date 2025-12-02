@@ -32,6 +32,10 @@ final class DependencyContainer {
     
     let postRepository: PostRepository
     
+    let profileRemoteDataSource: ProfileRemoteDataSource
+    
+    let profileRepository: ProfileRepository
+    
     func provideSignInViewModel() -> SignInViewModel {
         return SignInViewModel(userRepository)
     }
@@ -50,6 +54,10 @@ final class DependencyContainer {
     
     func provideForgotPasswordViewModel() -> ForgotPasswordViewModel {
         return ForgotPasswordViewModel(userRepository)
+    }
+    
+    func provideDiscoverViewModel() -> DiscoverViewModel {
+        return DiscoverViewModel(userRepository, profileRepository)
     }
     
     func provideDetailViewModel(data: String) -> SubFirstViewModel {
@@ -75,6 +83,8 @@ final class DependencyContainer {
         )
         self.postRemoteDataSource = PostRemoteDataSource.getInstance(firestore: firestore)
         self.postRepository = PostRepository.getInstance(postRemoteDataSource: postRemoteDataSource)
+        self.profileRemoteDataSource = ProfileRemoteDataSource.getInstance(firestore: firestore)
+        self.profileRepository = ProfileRepository.getInstance(profileRemoteDataSource: profileRemoteDataSource)
     }
     
     static let instance = DependencyContainer.init()

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiscoverView: View{
-    @StateObject var viewModel = DiscoverViewModel()
+    @StateObject var viewModel: DiscoverViewModel = DependencyContainer.instance.provideDiscoverViewModel()
     
     var onNavigateToSubFirst: (String) -> Void
     
@@ -20,7 +20,28 @@ struct DiscoverView: View{
                         .font(.system(size: 16, weight: .bold))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
-                    TodayRecommendSection(onNavigateToSubFirst: onNavigateToSubFirst)
+                    ZStack {
+                        if viewModel.uiState.isLoading {
+                            ProgressView()
+                        } else if !viewModel.uiState.todayRecommendations.isEmpty {
+                            TodayRecommendationPager(users: viewModel.uiState.todayRecommendations)
+                        } else {
+                            EmptyRecommendationView(
+                                message: viewModel.uiState.message
+                                ?? "아쉽게도 오늘은 추천 가능한 프로필이 없습니다. 내일 다시 확인해주세요!"
+                            )
+                            .frame(minHeight: UIScreen.main.bounds.height * 0.7)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: UIScreen.main.bounds.height * 0.7)
+                }
+                VStack(alignment: .leading) {
+                    Text("Today's Choice")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                    TodaysChoiceSection(onNavigateToSubFirst: onNavigateToSubFirst)
                 }
                 VStack(alignment: .leading) {
                     Text("Famous People")
@@ -63,7 +84,151 @@ struct DiscoverView: View{
     }
 }
 
-struct TodayRecommendSection: View {
+struct TodayRecommendationPager: View {
+    let users: [Profile]
+
+    var body: some View {
+        VStack {
+            TabView {
+                ForEach(users.indices, id: \.self) { index in
+                    DiscoverFullCard(
+                        user: users[index],
+                        onClick: {},
+                        onLike: {},
+                        onPass: {}
+                    )
+                    .frame(height: UIScreen.main.bounds.height * 0.7)
+                    .padding(.horizontal, 20)
+                }
+            }
+            .frame(height: UIScreen.main.bounds.height * 0.7)
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            /*HStack {
+                ForEach(users.indices, id: \.self) { i in
+                    Circle()
+                        .fill(i == 0 ? Color.pink : Color.gray.opacity(0.4))
+                        .frame(width: 8, height: 8)
+                }
+            }
+            .padding(.top, 10)*/
+        }
+    }
+}
+
+struct DiscoverFullCard: View {
+    let user: Profile
+    
+    let onClick: () -> Void
+    
+    let onLike: () -> Void
+    
+    let onPass: () -> Void
+
+    let primaryColor = Color(red: 1.0, green: 0.25, blue: 0.5)
+
+    var body: some View {
+        GeometryReader { proxy in
+            let size = proxy.size
+            
+            ZStack {
+                AsyncImage(url: URL(string: user.photos.first ?? "")) { phase in
+                    switch phase {
+                    case .success(let img):
+                        img.resizable()
+                            .scaledToFill()
+                            .frame(width: size.width, height: size.height)
+                            .clipped()
+                    default:
+                        Color.gray
+                    }
+                }
+                .clipped()
+                LinearGradient(
+                    colors: [.clear, .clear, .black.opacity(0.8)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Today's Pick")
+                            .font(.caption.bold())
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(primaryColor)
+                            .clipShape(Capsule())
+                        Text(user.gender)
+                            .font(.caption)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .overlay(
+                                Capsule().stroke(Color.white, lineWidth: 1)
+                            )
+                    }
+                    Text("\(user.name), \(user.birthday!)")
+                        .font(.largeTitle.bold())
+                        .foregroundColor(.white)
+                    Text(user.job)
+                        .foregroundColor(.white.opacity(0.9))
+                    Text(user.bio.split(separator: "\n").first.map(String.init) ?? "")
+                        .foregroundColor(.white.opacity(0.8))
+                        .lineLimit(1)
+                    Spacer().frame(height: 20)
+                    HStack {
+                        Button(action: onPass) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 32))
+                                .frame(width: 56, height: 56)
+                                .background(Color.white.opacity(0.2))
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                        }
+                        Spacer()
+                        Button(action: onLike) {
+                            HStack {
+                                Image(systemName: "heart.fill")
+                                Text("좋아요")
+                            }
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 12)
+                            .foregroundColor(.white)
+                            .background(primaryColor)
+                            .cornerRadius(12)
+                        }
+                        .frame(height: 56)
+                    }
+                }
+                .padding(24)
+            }
+            .frame(maxWidth: .infinity)
+            .cornerRadius(12)
+            .onTapGesture { onClick() }
+            .shadow(radius: 8)
+        }
+    }
+}
+
+struct EmptyRecommendationView: View {
+    let message: String
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "face.dashed")
+                .font(.system(size: 64))
+                .foregroundColor(.gray)
+            Text("추천 프로필 없음")
+                .font(.title3.bold())
+            Text(message)
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+            Button("추천 기준 변경하기") {}
+                .padding(.top, 24)
+        }
+        .padding(32)
+    }
+}
+
+struct TodaysChoiceSection: View {
     var onNavigateToSubFirst: (String) -> Void
     
     var body: some View {
@@ -73,7 +238,6 @@ struct TodayRecommendSection: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.white)
                 .shadow(radius: 4)
-            
             HStack(spacing: 0) {
                 VStack {
                     Text("Left")
