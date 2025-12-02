@@ -55,7 +55,7 @@ class UserRepository private constructor(
         return userRemoteDataSource.createUserProfile(userId, email).asResource()
     }
 
-    suspend fun storeUserProfile(userCache: UserCache) {
+    suspend fun storeUserProfile(userCache: UserCache?) {
         userLocalDataSource.storeUser(userCache)
     }
 

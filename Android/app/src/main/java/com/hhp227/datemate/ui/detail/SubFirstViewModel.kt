@@ -21,7 +21,9 @@ class SubFirstViewModel(
                     is Resource.Error<*> -> {
                     }
                     is Resource.Loading<*> -> {}
-                    is Resource.Success<*> -> {}
+                    is Resource.Success<*> -> {
+                        userRepository.storeUserProfile(null)
+                    }
                 }
             }
         }
