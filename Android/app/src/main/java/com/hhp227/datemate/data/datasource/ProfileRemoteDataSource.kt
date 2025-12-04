@@ -7,6 +7,7 @@ import com.hhp227.datemate.data.model.Profile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -88,7 +89,7 @@ class ProfileRemoteDataSource private constructor(
     }
 
     private fun getTodayKey(): String {
-        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return sdf.format(Date())
     }
 

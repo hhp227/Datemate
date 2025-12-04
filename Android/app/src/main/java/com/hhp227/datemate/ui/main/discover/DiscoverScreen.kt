@@ -178,7 +178,7 @@ fun TodayRecommendationPager(users: List<Profile>) {
             onPass = { /* 패스 액션 */ }
         )
     }
-    Spacer(Modifier.height(10.dp))
+    /*Spacer(Modifier.height(10.dp))
     Row(
         Modifier
             .fillMaxWidth()
@@ -195,7 +195,7 @@ fun TodayRecommendationPager(users: List<Profile>) {
                     .size(8.dp)
             )
         }
-    }
+    }*/
 }
 
 @Composable
@@ -254,7 +254,7 @@ fun DiscoverFullCard(user: Profile, onClick: () -> Unit, onLike: () -> Unit, onP
                 }
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    "${user.name}, ${user.birthday}", // 나이가 들어가야함
+                    "${user.name}, ${user.ageFormatted}",
                     style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold, color = Color.White)
                 )
                 Text(
