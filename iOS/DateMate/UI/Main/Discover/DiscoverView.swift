@@ -164,7 +164,7 @@ struct DiscoverFullCard: View {
                                 Capsule().stroke(Color.white, lineWidth: 1)
                             )
                     }
-                    Text("\(user.name), \(user.birthday!)")
+                    Text("\(user.name), \(user.ageFormatted)")
                         .font(.largeTitle.bold())
                         .foregroundColor(.white)
                     Text(user.job)
