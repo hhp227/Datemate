@@ -34,33 +34,18 @@ class SignInViewModel internal constructor(
     }
 
     private suspend fun fetchUserProfile(userId: String) {
-        profileRepository.fetchUserProfile(userId)
-            .collect { profileResource ->
-                when (profileResource) {
-                    is Resource.Success<*> -> {
-                        val userCache = UserCache(userId)
+        val profile = profileRepository.getProfile(userId)
+        val userCache = UserCache(userId)
 
-                        if (profileResource.data != null) {
-                            userRepository.storeUserProfile(userCache)
-                            _uiState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    message = null
-                                )
-                            }
-                        }
-                    }
-                    is Resource.Error<*> -> {
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                message = "로그인 성공, 프로필 로드 실패. 설정 화면으로 이동합니다.",
-                            )
-                        }
-                    }
-                    is Resource.Loading<*> -> _uiState.update { it.copy(isLoading = true, message = null) }
-                }
+        if (profile != null) {
+            userRepository.storeUserProfile(userCache)
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    message = null
+                )
             }
+        }
     }
 
     fun onEmailChanged(value: String) {
@@ -113,17 +98,9 @@ class SignInViewModel internal constructor(
         viewModelScope.launch {
             userRepository.remoteUserStateFlow
                 .filterNotNull()
-                .flatMapLatest { profileRepository.fetchUserProfile(it.uid) }
-                .collectLatest { resource ->
-                    when (resource) {
-                        is Resource.Success<*> -> {
-                            _uiState.update { it.copy(isAlreadySignIn = resource.data == null) }
-                        }
-                        is Resource.Error<*> -> {
-                            _uiState.update { it.copy(isAlreadySignIn = false, message = resource.message) }
-                        }
-                        is Resource.Loading<*> -> Unit
-                    }
+                .map { profileRepository.getProfile(it.uid) }
+                .collectLatest { profile ->
+                    _uiState.update { it.copy(isAlreadySignIn = profile == null) }
                 }
         }
     }

@@ -45,22 +45,11 @@ class ProfileRepository private constructor(
     }
         .onStart { emit(Resource.Loading()) }
 
-    fun fetchUserProfile(userId: String): Flow<Resource<Profile?>> {
-        return flow {
-            try {
-                emit(Resource.Success(profileRemoteDataSource.getProfile(userId)))
-            } catch (e: Exception) {
-                emit(Resource.Error(e.message ?: "프로필 로드 실패"))
-            }
-        }
-            .onStart { emit(Resource.Loading()) }
-    }
+    suspend fun getProfile(userId: String) = profileRemoteDataSource.getProfile(userId)
 
-    suspend fun fetchRandomCandidates(
-        gender: Gender,
-        randomStart: Double,
-        limit: Long
-    ): List<Profile> = profileRemoteDataSource.fetchRandomCandidates(gender, randomStart, limit)
+    suspend fun fetchRandomCandidates(gender: Gender, randomStart: Double, limit: Long): List<Profile> {
+        return profileRemoteDataSource.fetchRandomCandidates(gender, randomStart, limit)
+    }
 
     companion object {
         @Volatile private var instance: ProfileRepository? = null

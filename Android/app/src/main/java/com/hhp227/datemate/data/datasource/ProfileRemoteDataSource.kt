@@ -20,11 +20,7 @@ class ProfileRemoteDataSource private constructor(
             .toObject(Profile::class.java)
             ?.apply { this.uid = uid }
 
-    suspend fun fetchRandomCandidates(
-        gender: Gender,
-        randomStart: Double,
-        limit: Long
-    ): List<Profile> {
+    suspend fun fetchRandomCandidates(gender: Gender, randomStart: Double, limit: Long): List<Profile> {
         // batch 1
         val firstDocs = firestore.collection("profiles")
             .whereEqualTo("gender", gender.name)
@@ -36,27 +32,25 @@ class ProfileRemoteDataSource private constructor(
         val first = firstDocs.documents.mapNotNull { doc ->
             doc.toObject(Profile::class.java)?.apply { uid = doc.id }
         }
+
         // enough
         if (first.size >= limit) return first.take(limit.toInt())
 
         // batch 2 (wrap-around)
         val remaining = limit - first.size
-
         val secondDocs = firestore.collection("profiles")
             .whereEqualTo("gender", gender.name)
             .whereLessThan("randomKey", randomStart)
             .limit(remaining)
             .get()
             .await()
-
         val second = secondDocs.documents.mapNotNull { doc ->
             doc.toObject(Profile::class.java)?.apply { uid = doc.id }
         }
-
         return (first + second)
     }
 
-    data class TodaysChoiceResult(
+    data class TodayChoiceResult(
         val left: Profile?,
         val right: Profile?,
         val selected: Profile?

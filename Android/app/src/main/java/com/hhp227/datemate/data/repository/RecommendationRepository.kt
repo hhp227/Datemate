@@ -3,17 +3,15 @@ package com.hhp227.datemate.data.repository
 import com.google.firebase.Timestamp
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.common.asResource
-import com.hhp227.datemate.data.datasource.ProfileRemoteDataSource.TodaysChoiceResult
+import com.hhp227.datemate.data.datasource.ProfileRemoteDataSource.TodayChoiceResult
 import com.hhp227.datemate.data.datasource.RecommendationRemoteDataSource
 import com.hhp227.datemate.data.model.Gender
 import com.hhp227.datemate.data.model.Profile
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class RecommendationRepository private constructor(
     private val recommendationRemoteDataSource: RecommendationRemoteDataSource,
@@ -24,69 +22,62 @@ class RecommendationRepository private constructor(
         return sdf.format(Date())
     }
 
-    suspend fun getRecommendationCandidates(
-        userId: String,
-        fetchLimit: Long = 300
-    ): List<Profile> {
-        val myProfile = profileRepository.fetchUserProfile(userId).first().data
-        val targetGender = if (myProfile?.gender == Gender.MALE.name) Gender.FEMALE else Gender.MALE
+    private suspend fun getRecommendationCandidates(userId: String, fetchLimit: Long = 300): List<Profile> {
         val excluded = recommendationRemoteDataSource.loadExcludedProfileIds(userId)
+        val myProfile = profileRepository.getProfile(userId)
+        val targetGender = if (myProfile?.gender == Gender.MALE.name) Gender.FEMALE else Gender.MALE
         val randomStart = Math.random()
-        val raw = profileRepository.fetchRandomCandidates(targetGender, randomStart, fetchLimit)
-        return raw.filter { p ->
+        val rawCandidates = profileRepository.fetchRandomCandidates(targetGender, randomStart, fetchLimit)
+        return rawCandidates.filter { p ->
             p.uid != userId && !excluded.contains(p.uid)
         }
     }
 
-    fun getTodayRecommendations(
-        userId: String,
-        limit: Int = 5
-    ): Flow<Resource<List<Profile>>> = flow {
-        val today = getTodayKey()
-        val todayDoc = recommendationRemoteDataSource.dailyRef(userId, today).get().await()
+    fun getTodayRecommendations(userId: String, limit: Int = 5): Flow<Resource<List<Profile>>> {
+        return flow {
+            val today = getTodayKey()
+            val todayDoc = recommendationRemoteDataSource.dailyRef(userId, today).get().await()
 
-        if (todayDoc.exists() && todayDoc.get("profileIds") != null) {
-            val ids = todayDoc.get("profileIds") as List<String>
-            val profiles = ids.mapNotNull { profileRepository.fetchUserProfile(it).first().data }
-            emit(profiles)
-        } else {
-            val candidates = getRecommendationCandidates(userId).shuffled().take(limit)
+            if (todayDoc.exists() && todayDoc.get("profileIds") != null) {
+                val ids = todayDoc.get("profileIds") as List<String>
+                val profiles = ids.mapNotNull { profileRepository.getProfile(it) }
 
-            recommendationRemoteDataSource.saveDailyRecommendations(userId, candidates.map { it.uid }, today)
-            emit(candidates)
+                emit(Resource.Success(profiles))
+            } else {
+                val candidates = getRecommendationCandidates(userId).shuffled().take(limit)
+
+                recommendationRemoteDataSource.saveDailyRecommendations(userId, candidates.map { it.uid }, today)
+                emit(Resource.Success(candidates))
+            }
         }
     }
-        .asResource()
 
-
-    fun getTodaysChoice(userId: String): Flow<Resource<TodaysChoiceResult>> = flow {
+    fun getTodayChoice(userId: String): Flow<Resource<TodayChoiceResult>> = flow {
         val today = getTodayKey()
         val todayDoc = recommendationRemoteDataSource.dailyRef(userId, today).get().await()
 
         if (todayDoc.exists() && todayDoc.get("choices") != null) {
-
             val c = todayDoc.get("choices") as Map<*, *>
-
-            val result = TodaysChoiceResult(
-                left = (c["left"] as? String)?.let { profileRepository.fetchUserProfile(it).first().data },
-                right = (c["right"] as? String)?.let { profileRepository.fetchUserProfile(it).first().data },
-                selected = (c["selected"] as? String)?.let { profileRepository.fetchUserProfile(it).first().data }
+            val result = TodayChoiceResult(
+                left = (c["left"] as? String)?.let { profileRepository.getProfile(it) },
+                right = (c["right"] as? String)?.let { profileRepository.getProfile(it) },
+                selected = (c["selected"] as? String)?.let { profileRepository.getProfile(it) }
             )
-            emit(result)
+
+            emit(Resource.Success(result))
         } else {
             val candidates = getRecommendationCandidates(userId, 50).shuffled().take(2)
 
             if (candidates.size < 2) {
-                emit(TodaysChoiceResult(null, null, null))
+                emit(Resource.Success(TodayChoiceResult(null, null, null)))
             } else {
-                val result = TodaysChoiceResult(candidates[0], candidates[1], null)
+                val result = TodayChoiceResult(candidates[0], candidates[1], null)
 
                 recommendationRemoteDataSource.saveTodayChoice(userId, candidates[0].uid, candidates[1].uid, today)
-                emit(result)
+                emit(Resource.Success(result))
             }
         }
     }
-        .asResource()
 
     fun getThemedRecommendations(): Flow<Resource<List<Profile>>> {
         return flow {
@@ -107,10 +98,17 @@ class RecommendationRepository private constructor(
             .asResource()
     }
 
-    suspend fun selectTodayChoice(userId: String, selectedId: String) {
-        val today = getTodayKey()
+    fun selectTodayChoice(userId: String, selectedId: String): Flow<Resource<Unit>> {
+        return flow {
+            try {
+                val today = getTodayKey()
 
-        recommendationRemoteDataSource.selectTodayChoice(userId, selectedId, today)
+                recommendationRemoteDataSource.selectTodayChoice(userId, selectedId, today)
+                emit(Resource.Success(Unit))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "오늘 선택 저장 실패"))
+            }
+        }
     }
 
     companion object {
@@ -128,3 +126,4 @@ class RecommendationRepository private constructor(
             }
     }
 }
+
