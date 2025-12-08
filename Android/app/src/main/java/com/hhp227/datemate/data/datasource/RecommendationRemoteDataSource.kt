@@ -18,14 +18,12 @@ class RecommendationRemoteDataSource private constructor(
 
     suspend fun loadExcludedProfileIds(userId: String): Set<String> {
         val weekAgo = Timestamp(Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(MIN_EXCLUSION_DAYS)))
-
         val docs = firestore.collection("recommendations")
             .document(userId)
             .collection("daily")
             .whereGreaterThan("createdAt", weekAgo)
             .get()
             .await()
-
         val result = mutableSetOf<String>()
 
         for (doc in docs.documents) {
@@ -50,12 +48,7 @@ class RecommendationRemoteDataSource private constructor(
         docRef.set(data, SetOptions.merge()).await()
     }
 
-    suspend fun saveTodaysChoice(
-        userId: String,
-        left: String,
-        right: String,
-        today: String
-    ) {
+    suspend fun saveTodayChoice(userId: String, left: String, right: String, today: String) {
         val data = mapOf(
             "choices" to mapOf(
                 "left" to left,

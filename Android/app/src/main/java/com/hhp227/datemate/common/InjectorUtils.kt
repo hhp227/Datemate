@@ -89,7 +89,7 @@ object InjectorUtils {
         return object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return SignInViewModel(getUserRepository(context)) as T
+                return SignInViewModel(getUserRepository(context), getProfileRepository(context)) as T
             }
         }
     }
@@ -171,7 +171,11 @@ object InjectorUtils {
         return object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MyProfileViewModel(getUserRepository(context), getPostRepository()) as T
+                return MyProfileViewModel(
+                    getUserRepository(context),
+                    getProfileRepository(context),
+                    getPostRepository()
+                ) as T
             }
         }
     }

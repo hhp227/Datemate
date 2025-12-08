@@ -3,16 +3,14 @@ package com.hhp227.datemate.data.datasource
 import android.app.Activity
 import androidx.core.net.toUri
 import com.google.firebase.FirebaseException
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.hhp227.datemate.data.model.Profile
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class UserRemoteDataSource private constructor(
@@ -46,13 +44,6 @@ class UserRemoteDataSource private constructor(
     suspend fun sendPasswordResetEmail(email: String): Boolean {
         firebaseAuth.sendPasswordResetEmail(email).await()
         return true
-    }
-
-    suspend fun fetchUserProfile(userId: String): Profile? {
-        val snapshot = firestore.collection("profiles").document(userId).get().await()
-        return if (snapshot.exists()) {
-            snapshot.toObject(Profile::class.java)?.apply { uid = snapshot.id }
-        } else null
     }
 
     suspend fun createUserProfile(userId: String, email: String?): Boolean {

@@ -4,13 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.data.model.UserCache
+import com.hhp227.datemate.data.repository.ProfileRepository
 import com.hhp227.datemate.data.repository.UserRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 class SignInViewModel internal constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState: StateFlow<SignInUiState> = _uiState
@@ -32,7 +34,7 @@ class SignInViewModel internal constructor(
     }
 
     private suspend fun fetchUserProfile(userId: String) {
-        userRepository.fetchUserProfile(userId)
+        profileRepository.fetchUserProfile(userId)
             .collect { profileResource ->
                 when (profileResource) {
                     is Resource.Success<*> -> {
@@ -111,7 +113,7 @@ class SignInViewModel internal constructor(
         viewModelScope.launch {
             userRepository.remoteUserStateFlow
                 .filterNotNull()
-                .flatMapLatest { userRepository.fetchUserProfile(it.uid) }
+                .flatMapLatest { profileRepository.fetchUserProfile(it.uid) }
                 .collectLatest { resource ->
                     when (resource) {
                         is Resource.Success<*> -> {

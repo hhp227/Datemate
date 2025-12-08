@@ -8,6 +8,7 @@ import com.hhp227.datemate.data.datasource.RecommendationRemoteDataSource
 import com.hhp227.datemate.data.model.Gender
 import com.hhp227.datemate.data.model.Profile
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
@@ -27,15 +28,11 @@ class RecommendationRepository private constructor(
         userId: String,
         fetchLimit: Long = 300
     ): List<Profile> {
-        val myProfile = profileRepository.getProfile(userId)
-        val targetGender =
-            if (myProfile?.gender == Gender.MALE.name) Gender.FEMALE else Gender.MALE
-
+        val myProfile = profileRepository.fetchUserProfile(userId).first().data
+        val targetGender = if (myProfile?.gender == Gender.MALE.name) Gender.FEMALE else Gender.MALE
         val excluded = recommendationRemoteDataSource.loadExcludedProfileIds(userId)
         val randomStart = Math.random()
-
         val raw = profileRepository.fetchRandomCandidates(targetGender, randomStart, fetchLimit)
-
         return raw.filter { p ->
             p.uid != userId && !excluded.contains(p.uid)
         }
@@ -50,7 +47,7 @@ class RecommendationRepository private constructor(
 
         if (todayDoc.exists() && todayDoc.get("profileIds") != null) {
             val ids = todayDoc.get("profileIds") as List<String>
-            val profiles = ids.mapNotNull { profileRepository.getProfile(it) }
+            val profiles = ids.mapNotNull { profileRepository.fetchUserProfile(it).first().data }
             emit(profiles)
         } else {
             val candidates = getRecommendationCandidates(userId).shuffled().take(limit)
@@ -71,9 +68,9 @@ class RecommendationRepository private constructor(
             val c = todayDoc.get("choices") as Map<*, *>
 
             val result = TodaysChoiceResult(
-                left = (c["left"] as? String)?.let { profileRepository.getProfile(it) },
-                right = (c["right"] as? String)?.let { profileRepository.getProfile(it) },
-                selected = (c["selected"] as? String)?.let { profileRepository.getProfile(it) }
+                left = (c["left"] as? String)?.let { profileRepository.fetchUserProfile(it).first().data },
+                right = (c["right"] as? String)?.let { profileRepository.fetchUserProfile(it).first().data },
+                selected = (c["selected"] as? String)?.let { profileRepository.fetchUserProfile(it).first().data }
             )
             emit(result)
         } else {
@@ -84,7 +81,7 @@ class RecommendationRepository private constructor(
             } else {
                 val result = TodaysChoiceResult(candidates[0], candidates[1], null)
 
-                recommendationRemoteDataSource.saveTodaysChoice(userId, candidates[0].uid, candidates[1].uid, today)
+                recommendationRemoteDataSource.saveTodayChoice(userId, candidates[0].uid, candidates[1].uid, today)
                 emit(result)
             }
         }

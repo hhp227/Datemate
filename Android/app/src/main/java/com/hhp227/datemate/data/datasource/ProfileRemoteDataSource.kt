@@ -36,7 +36,6 @@ class ProfileRemoteDataSource private constructor(
         val first = firstDocs.documents.mapNotNull { doc ->
             doc.toObject(Profile::class.java)?.apply { uid = doc.id }
         }
-
         // enough
         if (first.size >= limit) return first.take(limit.toInt())
 

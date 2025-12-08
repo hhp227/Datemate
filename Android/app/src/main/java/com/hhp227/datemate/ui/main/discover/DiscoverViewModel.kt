@@ -1,5 +1,6 @@
 package com.hhp227.datemate.ui.main.discover
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
@@ -32,12 +33,15 @@ class DiscoverViewModel internal constructor(
                 .collect { resource ->
                     when (resource) {
                         is Resource.Error<*> -> {
+                            Log.e("TEST", "error: ${resource.message}")
                             _uiState.update { it.copy(isLoading = false, message = resource.message) }
                         }
                         is Resource.Loading<*> -> {
+                            Log.e("TEST", "loading")
                             _uiState.update { it.copy(isLoading = true, message = null) }
                         }
                         is Resource.Success<*> -> {
+                            Log.e("TEST", "success: ${resource.data}")
                             val list = resource.data ?: emptyList()
 
                             _uiState.update {

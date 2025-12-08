@@ -15,6 +15,7 @@ data class Profile(
     val birthday: Timestamp? = null,
     val job: String = "",
     val photos: List<String> = emptyList(),
+    val randomKey: Double = 0.0,
     val updatedAt: Timestamp? = null
 ) {
     val ageFormatted: String

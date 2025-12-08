@@ -1,20 +1,12 @@
 package com.hhp227.datemate.data.repository
 
 import android.net.Uri
-import android.util.Log
 import com.hhp227.datemate.common.Resource
-import com.hhp227.datemate.common.asResource
 import com.hhp227.datemate.data.datasource.ProfileRemoteDataSource
-import com.hhp227.datemate.data.datasource.ProfileRemoteDataSource.TodaysChoiceResult
 import com.hhp227.datemate.data.model.Gender
 import com.hhp227.datemate.data.model.Profile
 import com.hhp227.datemate.data.model.UserCache
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 
 class ProfileRepository private constructor(
     private val profileRemoteDataSource: ProfileRemoteDataSource,
@@ -50,12 +42,19 @@ class ProfileRepository private constructor(
                 }
             }
         }
-    }.onStart { emit(Resource.Loading()) }
+    }
+        .onStart { emit(Resource.Loading()) }
 
-
-
-    suspend fun getProfile(uid: String): Profile? =
-        profileRemoteDataSource.getProfile(uid)
+    fun fetchUserProfile(userId: String): Flow<Resource<Profile?>> {
+        return flow {
+            try {
+                emit(Resource.Success(profileRemoteDataSource.getProfile(userId)))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "프로필 로드 실패"))
+            }
+        }
+            .onStart { emit(Resource.Loading()) }
+    }
 
     suspend fun fetchRandomCandidates(
         gender: Gender,

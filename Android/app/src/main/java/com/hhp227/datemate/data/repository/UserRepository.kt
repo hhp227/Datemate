@@ -6,7 +6,6 @@ import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.common.asResource
 import com.hhp227.datemate.data.datasource.UserLocalDataSource
 import com.hhp227.datemate.data.datasource.UserRemoteDataSource
-import com.hhp227.datemate.data.model.Profile
 import com.hhp227.datemate.data.model.UserCache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -74,17 +73,6 @@ class UserRepository private constructor(
                 emit(Resource.Success(userRemoteDataSource.sendPasswordResetEmail(email)))
             } catch (e: Exception) {
                 emit(Resource.Error(e.message ?: ""))
-            }
-        }
-            .onStart { emit(Resource.Loading()) }
-    }
-
-    fun fetchUserProfile(userId: String): Flow<Resource<Profile?>> {
-        return flow {
-            try {
-                emit(Resource.Success(userRemoteDataSource.fetchUserProfile(userId)))
-            } catch (e: Exception) {
-                emit(Resource.Error(e.message ?: "프로필 로드 실패"))
             }
         }
             .onStart { emit(Resource.Loading()) }

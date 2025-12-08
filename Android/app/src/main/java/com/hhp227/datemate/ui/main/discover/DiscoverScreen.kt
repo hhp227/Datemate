@@ -74,7 +74,7 @@ fun DiscoverScreen(
         )
         ThemedRecommendationSection(
             title = "Global Friends",
-            isInitiallyExpanded = true,
+            isInitiallyExpanded = false,
             users = uiState.themedRecommendations.shuffled()
         )
         ThemedRecommendationSection(
@@ -130,7 +130,7 @@ fun TodayRecommendationSection(title: String, profiles: List<Profile>) {
     }
 }
 
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TodayRecommendationPager(users: List<Profile>) {
     val pagerState = rememberPagerState(initialPage = 0) { users.size }
@@ -301,82 +301,80 @@ fun TodaysChoiceSection(
 
     if (left == null || right == null) {
         Text("오늘의 추천이 부족합니다.", modifier = Modifier.padding(20.dp))
-        return
-    }
-    val animationSpec = tween<Float>(durationMillis = 400)
+    } else {
+        val animationSpec = tween<Float>(durationMillis = 400)
+        val animatedWeightLeft by animateFloatAsState(
+            targetValue = when {
+                selected == null -> 1f
+                selected.uid == left.uid -> 2f
+                else -> 0f
+            },
+            animationSpec = animationSpec
+        )
+        val animatedWeightRight by animateFloatAsState(
+            targetValue = when {
+                selected == null -> 1f
+                selected.uid == right.uid -> 2f
+                else -> 0f
+            },
+            animationSpec = animationSpec
+        )
 
-    val animatedWeightLeft by animateFloatAsState(
-        targetValue = when {
-            selected == null -> 1f
-            selected.uid == left.uid -> 2f
-            else -> 0f
-        },
-        animationSpec = animationSpec
-    )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp), // 16dp 패딩
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            if (uiState.isLoading) {
+                Text("Loading...", modifier = Modifier.padding(20.dp))
+                return
+            }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .height((LocalConfiguration.current.screenWidthDp / 1.2).dp),
+                shape = RoundedCornerShape(10.dp),
+                elevation = 4.dp
+            ) {
+                Row(Modifier.fillMaxSize()) {
 
-    val animatedWeightRight by animateFloatAsState(
-        targetValue = when {
-            selected == null -> 1f
-            selected.uid == right.uid -> 2f
-            else -> 0f
-        },
-        animationSpec = animationSpec
-    )
+                    // LEFT
+                    if (animatedWeightLeft > 0f) {
+                        ChoiceProfileCard(
+                            profile = left,
+                            isSelected = selected?.uid == left.uid,
+                            isInitial = selected == null,
+                            isLeftCard = true, // ⬅️ 왼쪽 카드임을 명시적으로 전달
+                            modifier = Modifier
+                                .weight(animatedWeightLeft)
+                                .fillMaxHeight()
+                                .clickable { onClick(left) }
+                        )
+                    }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp), // 16dp 패딩
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        if (uiState.isLoading) {
-            Text("Loading...", modifier = Modifier.padding(20.dp))
-            return
-        }
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .height((LocalConfiguration.current.screenWidthDp / 1.2).dp),
-            shape = RoundedCornerShape(10.dp),
-            elevation = 4.dp
-        ) {
-            Row(Modifier.fillMaxSize()) {
-
-                // LEFT
-                if (animatedWeightLeft > 0f) {
-                    ChoiceProfileCard(
-                        profile = left,
-                        isSelected = selected?.uid == left.uid,
-                        isInitial = selected == null,
-                        isLeftCard = true, // ⬅️ 왼쪽 카드임을 명시적으로 전달
-                        modifier = Modifier
-                            .weight(animatedWeightLeft)
-                            .fillMaxHeight()
-                            .clickable { onClick(left) }
-                    )
-                }
-
-                // RIGHT
-                if (animatedWeightRight > 0f) {
-                    ChoiceProfileCard(
-                        profile = right,
-                        isSelected = selected?.uid == right.uid,
-                        isInitial = selected == null,
-                        isLeftCard = false, // ⬅️ 오른쪽 카드임을 명시적으로 전달
-                        modifier = Modifier
-                            .weight(animatedWeightRight)
-                            .fillMaxHeight()
-                            .clickable { onClick(right) }
-                    )
+                    // RIGHT
+                    if (animatedWeightRight > 0f) {
+                        ChoiceProfileCard(
+                            profile = right,
+                            isSelected = selected?.uid == right.uid,
+                            isInitial = selected == null,
+                            isLeftCard = false, // ⬅️ 오른쪽 카드임을 명시적으로 전달
+                            modifier = Modifier
+                                .weight(animatedWeightRight)
+                                .fillMaxHeight()
+                                .clickable { onClick(right) }
+                        )
+                    }
                 }
             }
         }
@@ -506,7 +504,6 @@ fun ThemedRecommendationSection(
         if (isExpanded.value) {
             LazyRow(
                 contentPadding = PaddingValues(horizontal = itemPadding),
-                // 2. horizontalArrangement 설정: 아이템 사이 간격 10dp 적용
                 horizontalArrangement = Arrangement.spacedBy(itemSpacing)
             ) {
                 items(users) { user ->
@@ -517,14 +514,12 @@ fun ThemedRecommendationSection(
     }
 }
 
-// 테마별 추천 섹션 내의 개별 Horizontal 카드
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ThemedHorizontalCard(user: Profile, cardWidth: Dp) {
-    // 1:1 비율 (정사각형)은 유지합니다.
     Card(
         modifier = Modifier
-            .width(cardWidth) // 계산된 너비 적용
+            .width(cardWidth)
             .aspectRatio(1f), // 1:1 비율 (정사각형)
         shape = RoundedCornerShape(12.dp),
         elevation = 4.dp,

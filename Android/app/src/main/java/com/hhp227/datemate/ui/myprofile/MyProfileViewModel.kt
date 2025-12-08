@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.data.repository.PostRepository
+import com.hhp227.datemate.data.repository.ProfileRepository
 import com.hhp227.datemate.data.repository.UserRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MyProfileViewModel(
     private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository,
     private val postRepository: PostRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<MyProfileUiState>(MyProfileUiState())
@@ -20,7 +22,7 @@ class MyProfileViewModel(
             userRepository.remoteUserStateFlow
                 .filterNotNull()
                 .flatMapLatest { user ->
-                    val profileFlow = userRepository.fetchUserProfile(user.uid)
+                    val profileFlow = profileRepository.fetchUserProfile(user.uid)
                     val postsFlow = postRepository.fetchUserPosts(user.uid)
 
                     combine(profileFlow, postsFlow) { profileResource, postsResource ->
