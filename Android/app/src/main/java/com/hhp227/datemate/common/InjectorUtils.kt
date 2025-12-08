@@ -9,21 +9,14 @@ import androidx.navigation.NavBackStackEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.hhp227.datemate.data.datasource.PostRemoteDataSource
-import com.hhp227.datemate.data.datasource.ProfileRemoteDataSource
-import com.hhp227.datemate.data.datasource.StorageRemoteDataSource
-import com.hhp227.datemate.data.datasource.UserLocalDataSource
-import com.hhp227.datemate.data.datasource.UserRemoteDataSource
-import com.hhp227.datemate.data.repository.PostRepository
-import com.hhp227.datemate.data.repository.ProfileRepository
-import com.hhp227.datemate.data.repository.StorageRepository
-import com.hhp227.datemate.data.repository.UserRepository
+import com.hhp227.datemate.data.datasource.*
+import com.hhp227.datemate.data.repository.*
 import com.hhp227.datemate.ui.auth.forgotpassword.ForgotPasswordViewModel
 import com.hhp227.datemate.ui.auth.phoneauth.PhoneAuthViewModel
 import com.hhp227.datemate.ui.auth.profilesetup.ProfileSetupViewModel
-import com.hhp227.datemate.ui.detail.SubFirstViewModel
 import com.hhp227.datemate.ui.auth.signin.SignInViewModel
 import com.hhp227.datemate.ui.auth.signup.SignUpViewModel
+import com.hhp227.datemate.ui.detail.SubFirstViewModel
 import com.hhp227.datemate.ui.main.discover.DiscoverViewModel
 import com.hhp227.datemate.ui.myprofile.MyProfileViewModel
 
@@ -51,7 +44,7 @@ object InjectorUtils {
     }
 
     fun getUserRepository(context: Context): UserRepository {
-        return UserRepository.getInstance(getUserRemoteDataSource(), getUserLocalDataSource(context), getStorageRepository())
+        return UserRepository.getInstance(getUserRemoteDataSource(), getUserLocalDataSource(context))
     }
 
     private fun getPostRemoteDataSource(): PostRemoteDataSource {
@@ -66,8 +59,30 @@ object InjectorUtils {
         return ProfileRemoteDataSource.getInstance(provideFirestore())
     }
 
-    fun getProfileRepository(): ProfileRepository {
-        return ProfileRepository.getInstance(getProfileRemoteDataSource())
+    private fun getProfileRepository(context: Context): ProfileRepository {
+        return ProfileRepository.getInstance(
+            getProfileRemoteDataSource(),
+            getUserRepository(context),
+            getStorageRepository()
+        )
+    }
+
+    private fun getRecommendationRemoteDataSource(): RecommendationRemoteDataSource {
+        return RecommendationRemoteDataSource.getInstance(provideFirestore())
+    }
+
+    private fun getRecommendationRepository(context: Context): RecommendationRepository =
+        RecommendationRepository.getInstance(
+            getRecommendationRemoteDataSource(),
+            getProfileRepository(context) // Repository → Repository (OK)
+        )
+
+    private fun getMatchRemoteDataSource(): MatchRemoteDataSource {
+        return MatchRemoteDataSource.getInstance(provideFirestore())
+    }
+
+    private fun getMatchRepository(): MatchRepository {
+        return MatchRepository.getInstance(getMatchRemoteDataSource())
     }
 
     fun provideSignInViewModelFactory(context: Context): ViewModelProvider.Factory {
@@ -101,7 +116,10 @@ object InjectorUtils {
         return object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProfileSetupViewModel(getUserRepository(context)) as T
+                return ProfileSetupViewModel(
+                    getUserRepository(context),
+                    getProfileRepository(context)
+                ) as T
             }
         }
     }
@@ -119,7 +137,11 @@ object InjectorUtils {
         return object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return DiscoverViewModel(getUserRepository(context), getProfileRepository()) as T
+                return DiscoverViewModel(
+                    getUserRepository(context),
+                    getRecommendationRepository(context),
+                    getMatchRepository()
+                ) as T
             }
         }
     }

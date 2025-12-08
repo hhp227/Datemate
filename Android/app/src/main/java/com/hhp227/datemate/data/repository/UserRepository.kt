@@ -1,7 +1,6 @@
 package com.hhp227.datemate.data.repository
 
 import android.app.Activity
-import android.net.Uri
 import com.google.firebase.auth.FirebaseUser
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.common.asResource
@@ -9,13 +8,14 @@ import com.hhp227.datemate.data.datasource.UserLocalDataSource
 import com.hhp227.datemate.data.datasource.UserRemoteDataSource
 import com.hhp227.datemate.data.model.Profile
 import com.hhp227.datemate.data.model.UserCache
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 class UserRepository private constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
-    private val userLocalDataSource: UserLocalDataSource,
-    private val storageRepository: StorageRepository
+    private val userLocalDataSource: UserLocalDataSource
 ) {
     val remoteUserStateFlow = userRemoteDataSource.userStateFlow
 
@@ -32,69 +32,109 @@ class UserRepository private constructor(
         .onStart { emit(SignInState.Loading) }
 
     fun getSignInResultStream(email: String, password: String): Flow<Resource<FirebaseUser>> {
-        return userRemoteDataSource.signIn(email, password).asResource()
+        return flow {
+            try {
+                val user = userRemoteDataSource.signIn(email, password)
+
+                emit(Resource.Success(user))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "로그인 실패"))
+            }
+        }
+            .onStart { emit(Resource.Loading()) }
     }
 
     fun getSignUpResultStream(email: String, password: String): Flow<Resource<FirebaseUser>> {
-        return userRemoteDataSource.signUp(email, password).asResource()
+        return flow {
+            try {
+                val user = userRemoteDataSource.signUp(email, password)
+
+                emit(Resource.Success(user))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "회원가입 실패"))
+            }
+        }
+            .onStart { emit(Resource.Loading()) }
     }
 
     fun getSignOutResultStream(): Flow<Resource<Boolean>> {
-        return userRemoteDataSource.signOut().asResource()
+        return flow {
+            try {
+                emit(Resource.Success(userRemoteDataSource.signOut()))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "로그아웃 실패"))
+            }
+        }
+            .onStart { emit(Resource.Loading()) }
     }
 
     fun getPasswordResetResultStream(email: String): Flow<Resource<Boolean>> {
-        return userRemoteDataSource.sendPasswordResetEmail(email).asResource()
+        return flow {
+            try {
+                emit(Resource.Success(userRemoteDataSource.sendPasswordResetEmail(email)))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: ""))
+            }
+        }
+            .onStart { emit(Resource.Loading()) }
     }
 
     fun fetchUserProfile(userId: String): Flow<Resource<Profile?>> {
-        return userRemoteDataSource.fetchUserProfile(userId).asResource()
+        return flow {
+            try {
+                emit(Resource.Success(userRemoteDataSource.fetchUserProfile(userId)))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "프로필 로드 실패"))
+            }
+        }
+            .onStart { emit(Resource.Loading()) }
     }
 
     fun createUserProfile(userId: String, email: String?): Flow<Resource<Boolean>> {
-        return userRemoteDataSource.createUserProfile(userId, email).asResource()
+        return flow {
+            try {
+                emit(Resource.Success(userRemoteDataSource.createUserProfile(userId, email)))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "프로필 생성 실패"))
+            }
+        }
+            .onStart { emit(Resource.Loading()) }
     }
 
     suspend fun storeUserProfile(userCache: UserCache?) {
         userLocalDataSource.storeUser(userCache)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun updateUserProfile(
-        imageUris: List<Uri>,
-        name: String,
-        gender: String,
-        birthdayMillis: Long,
-        bio: String,
-        job: String,
-        concurrency: Int = 4,
-        retryCount: Int = 1
-    ): Flow<Resource<String>> {
-        return userRemoteDataSource.userStateFlow
-            .filterNotNull()
-            .flatMapLatest { user ->
-                storageRepository.uploadAllImages(imageUris, user.uid, concurrency, retryCount)
-                    .flatMapLatest { uploadedUrls ->
-                        userRemoteDataSource.updateUserProfile(
-                            userId = user.uid,
-                            name = name,
-                            gender = gender,
-                            birthdayMillis = birthdayMillis,
-                            bio = bio,
-                            job = job,
-                            profileImageUrls = uploadedUrls
-                        )
-                    }
+    fun updateUserProfile(name: String, imageUrl: List<String>): Flow<Resource<Boolean>> {
+        return flow {
+            try {
+                val result = userRemoteDataSource.updateUserProfile(
+                    name,
+                    imageUrl.firstOrNull()
+                )
+
+                emit(Resource.Success(result))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "프로필 업데이트 실패"))
             }
-            .asResource()
+        }
+            .onStart { emit(Resource.Loading()) }
     }
 
     fun sendOtp(phoneNumber: String, activityProvider: () -> Activity): Flow<Resource<String>> {
         return userRemoteDataSource.sendOtp(phoneNumber, activityProvider).asResource()
     }
 
-    fun verifyOtp(verificationId: String, code: String): Flow<Resource<Unit>> {
-        return userRemoteDataSource.verifyOtp(verificationId, code).asResource()
+    fun verifyOtp(verificationId: String, code: String): Flow<Resource<Boolean>> {
+        return flow {
+            try {
+                userRemoteDataSource.verifyOtp(verificationId, code)
+                emit(Resource.Success(true))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "OTP 검증 실패"))
+            }
+        }
+            .onStart { emit(Resource.Loading()) }
     }
 
     enum class SignInState {
@@ -106,11 +146,10 @@ class UserRepository private constructor(
 
         fun getInstance(
             userRemoteDataSource: UserRemoteDataSource,
-            userLocalDataSource: UserLocalDataSource,
-            storageRepository: StorageRepository
+            userLocalDataSource: UserLocalDataSource
         ) =
             instance ?: synchronized(this) {
-                instance ?: UserRepository(userRemoteDataSource, userLocalDataSource, storageRepository).also { instance = it }
+                instance ?: UserRepository(userRemoteDataSource, userLocalDataSource).also { instance = it }
             }
     }
 }

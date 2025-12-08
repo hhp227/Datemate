@@ -1,5 +1,6 @@
 package com.hhp227.datemate.ui
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ import com.hhp227.datemate.ui.postdetail.PostDetailScreen
 import com.hhp227.datemate.ui.auth.signin.SignInScreen
 import com.hhp227.datemate.ui.auth.signup.SignUpScreen
 import com.hhp227.datemate.ui.myprofile.MyProfileScreen
+import com.hhp227.datemate.ui.splash.SplashScreen
 import com.hhp227.datemate.ui.theme.DateMateTheme
 
 @Composable
@@ -42,7 +44,7 @@ fun DateMateApp() {
             when (signInState) {
                 SignInState.SignIn -> AppNavHost()
                 SignInState.SignOut -> SignInNavHost()
-                SignInState.Loading -> Unit
+                SignInState.Loading -> SplashScreen()
             }
         }
     }

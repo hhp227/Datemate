@@ -5,16 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.data.model.Gender
-import com.hhp227.datemate.data.model.UserCache
+import com.hhp227.datemate.data.repository.ProfileRepository
 import com.hhp227.datemate.data.repository.UserRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ProfileSetupViewModel(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileSetupUiState())
     val uiState: StateFlow<ProfileSetupUiState> = _uiState.asStateFlow()
@@ -73,26 +71,25 @@ class ProfileSetupViewModel(
 
     fun completeProfileSetup(imageUrls: List<Uri>, name: String, gender: String, birthday: Long, bio: String, job: String) {
         viewModelScope.launch {
-            userRepository.updateUserProfile(imageUrls, name, gender, birthday, bio, job)
-                .collect { resource ->
-                    when (resource) {
-                        is Resource.Success -> {
-                            val data = resource.data ?: ""
-                            val userToStore = UserCache(
-                                uid = data
-                            )
+            val user = userRepository.remoteUserStateFlow.first() ?: throw Exception("로그인 필요")
 
-                            userRepository.storeUserProfile(userToStore)
-                            _uiState.update { it.copy(isLoading = false, isSetupComplete = true) }
-                        }
-                        is Resource.Error -> {
-                            _uiState.update { it.copy(isLoading = false, errorMessage = "업데이트 실패: ${resource.message}") }
-                        }
-                        is Resource.Loading -> {
-                            _uiState.update { it.copy(isLoading = true) }
-                        }
+            profileRepository.updateUserProfile(
+                userId = user.uid,
+                name = name,
+                gender = gender,
+                birthday = birthday,
+                job = job,
+                bio = bio,
+                imageUris = imageUrls
+            ).collect { result ->
+                when (result) {
+                    is Resource.Error<*> -> _uiState.update { it.copy(isLoading = false, errorMessage = "업데이트 실패: ${result.message}") }
+                    is Resource.Loading<*> -> _uiState.update { it.copy(isLoading = true) }
+                    is Resource.Success<*> -> {
+                        _uiState.update { it.copy(isLoading = false, isSetupComplete = result.data == true) }
                     }
                 }
+            }
         }
     }
 

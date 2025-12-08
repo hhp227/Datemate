@@ -28,49 +28,36 @@ class UserRemoteDataSource private constructor(
         awaitClose { firebaseAuth.removeAuthStateListener(listener) }
     }
 
-    fun signIn(email: String, password: String): Flow<FirebaseUser> = flow {
-        val result = firebaseAuth
-            .signInWithEmailAndPassword(email, password)
-            .await()
-        val user = result.user ?: throw Exception("로그인 실패")
-        emit(user)
+    suspend fun signIn(email: String, password: String): FirebaseUser {
+        val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+        return result.user ?: throw Exception("로그인 실패")
     }
 
-    fun signOut(): Flow<Boolean> = flow {
+    fun signOut(): Boolean {
         firebaseAuth.signOut()
-        emit(true)
+        return true
     }
 
-    fun signUp(email: String, password: String): Flow<FirebaseUser> = flow {
-        val result = firebaseAuth
-            .createUserWithEmailAndPassword(email, password)
-            .await()
-        val user = result.user ?: throw Exception("회원가입 실패")
-        emit(user)
+    suspend fun signUp(email: String, password: String): FirebaseUser {
+        val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+        return result.user ?: throw Exception("회원가입 실패")
     }
 
-    fun sendPasswordResetEmail(email: String): Flow<Boolean> = flow {
+    suspend fun sendPasswordResetEmail(email: String): Boolean {
         firebaseAuth.sendPasswordResetEmail(email).await()
-        emit(true)
+        return true
     }
 
-    fun fetchUserProfile(userId: String): Flow<Profile?> = flow {
-        val profileDocument = firestore.collection("profiles").document(userId).get().await()
-
-        if (profileDocument.exists()) {
-            val profile = profileDocument.toObject(Profile::class.java)?.apply {
-                uid = profileDocument.id
-            }
-
-            emit(profile)
-        } else {
-            emit(null)
-        }
+    suspend fun fetchUserProfile(userId: String): Profile? {
+        val snapshot = firestore.collection("profiles").document(userId).get().await()
+        return if (snapshot.exists()) {
+            snapshot.toObject(Profile::class.java)?.apply { uid = snapshot.id }
+        } else null
     }
 
-    fun createUserProfile(userId: String, email: String?): Flow<Boolean> = flow {
-        val userDocument = firestore.collection("users").document(userId)
-        val user = mapOf(
+    suspend fun createUserProfile(userId: String, email: String?): Boolean {
+        val doc = firestore.collection("users").document(userId)
+        val data = mapOf(
             "email" to email,
             "phoneNumber" to "",
             "createdAt" to FieldValue.serverTimestamp(),
@@ -78,37 +65,18 @@ class UserRemoteDataSource private constructor(
             "status" to "active"
         )
 
-        firestore.runBatch { it.set(userDocument, user, SetOptions.merge()) }.await()
-        emit(true)
+        firestore.runBatch { it.set(doc, data, SetOptions.merge()) }.await()
+        return true
     }
 
-    fun updateUserProfile(
-        userId: String,
-        name: String,
-        gender: String,
-        birthdayMillis: Long,
-        bio: String,
-        job: String,
-        profileImageUrls: List<String>?
-    ): Flow<String> = userStateFlow.filterNotNull().map { user ->
-        val profileUpdates = UserProfileChangeRequest.Builder()
+    suspend fun updateUserProfile(name: String, photoUrl: String?): Boolean {
+        val request = UserProfileChangeRequest.Builder()
             .setDisplayName(name)
-            .setPhotoUri(profileImageUrls?.firstOrNull()?.toUri())
+            .setPhotoUri(photoUrl?.toUri())
             .build()
-        val userDocument = firestore.collection("profiles").document(userId)
-        val userData = mapOf(
-            "name" to name,
-            "gender" to gender,
-            "birthday" to Timestamp(Date(birthdayMillis)),
-            "bio" to bio,
-            "job" to job,
-            "photos" to (profileImageUrls ?: emptyList()),
-            "updatedAt" to FieldValue.serverTimestamp()
-        )
 
-        user.updateProfile(profileUpdates).await()
-        userDocument.set(userData, SetOptions.merge()).await()
-        return@map userId
+        firebaseAuth.currentUser?.updateProfile(request)?.await() ?: return false
+        return true
     }
 
     fun sendOtp(phoneNumber: String, activityProvider: () -> Activity): Flow<String> = callbackFlow {
@@ -122,7 +90,7 @@ class UserRemoteDataSource private constructor(
             }
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
-                trySend(verificationId)
+                trySend(verificationId).isSuccess
             }
         }
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
@@ -133,17 +101,14 @@ class UserRemoteDataSource private constructor(
             .build()
 
         PhoneAuthProvider.verifyPhoneNumber(options)
-        awaitClose { }
+        awaitClose()
     }
 
-    fun verifyOtp(verificationId: String, code: String): Flow<Unit> = userStateFlow.map { user ->
+    suspend fun verifyOtp(verificationId: String, code: String) {
+        val current = firebaseAuth.currentUser ?: throw Exception("로그인된 사용자가 없습니다.")
         val credential = PhoneAuthProvider.getCredential(verificationId, code)
 
-        if (user == null) {
-            Exception("현재 로그인된 사용자가 없습니다. 먼저 로그인해주세요.")
-        } else {
-            user.linkWithCredential(credential).await()
-        }
+        current.linkWithCredential(credential).await()
     }
 
     companion object {
