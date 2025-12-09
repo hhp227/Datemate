@@ -15,7 +15,7 @@ class PostRepository private constructor(
         emit(listOf(Post()))
     }
 
-    fun fetchUserPosts(userId: String): Flow<Resource<List<Post>>> {
+    fun fetchUserPostsResultStream(userId: String): Flow<Resource<List<Post>>> {
         return postRemoteDataSource.fetchUserPosts(userId).asResource()
     }
 

@@ -23,7 +23,7 @@ class MyProfileViewModel(
                 .filterNotNull()
                 .flatMapLatest { user ->
                     val profile = profileRepository.getProfile(user.uid)
-                    val postsFlow = postRepository.fetchUserPosts(user.uid)
+                    val postsFlow = postRepository.fetchUserPostsResultStream(user.uid)
 
                     postsFlow.map { postsResource ->
                         if (postsResource is Resource.Loading) {

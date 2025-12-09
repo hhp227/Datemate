@@ -5,6 +5,8 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavBackStackEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -86,62 +88,56 @@ object InjectorUtils {
     }
 
     fun provideSignInViewModelFactory(context: Context): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return SignInViewModel(getUserRepository(context), getProfileRepository(context)) as T
+        return viewModelFactory {
+            initializer {
+                SignInViewModel(getUserRepository(context), getProfileRepository(context))
             }
         }
     }
 
     fun provideSignUpViewModelFactory(context: Context): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return SignUpViewModel(getUserRepository(context)) as T
+        return viewModelFactory {
+            initializer {
+                SignUpViewModel(getUserRepository(context))
             }
         }
     }
 
     fun providePhoneAuthViewModelFactory(context: Context): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return PhoneAuthViewModel(getUserRepository(context)) as T
+        return viewModelFactory {
+            initializer {
+                PhoneAuthViewModel(getUserRepository(context))
             }
         }
     }
 
     fun provideProfileSetupViewModelFactory(context: Context): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProfileSetupViewModel(
+        return viewModelFactory {
+            initializer {
+                ProfileSetupViewModel(
                     getUserRepository(context),
                     getProfileRepository(context)
-                ) as T
+                )
             }
         }
     }
 
     fun provideForgotPasswordViewModelFactory(context: Context): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ForgotPasswordViewModel(getUserRepository(context)) as T
+        return viewModelFactory {
+            initializer {
+                ForgotPasswordViewModel(getUserRepository(context))
             }
         }
     }
 
     fun provideDiscoverViewModelFactory(context: Context): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return DiscoverViewModel(
+        return viewModelFactory {
+            initializer {
+                DiscoverViewModel(
                     getUserRepository(context),
                     getRecommendationRepository(context),
                     getMatchRepository()
-                ) as T
+                )
             }
         }
     }
@@ -168,14 +164,13 @@ object InjectorUtils {
     }
 
     fun provideMyProfileViewModelFactory(context: Context): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MyProfileViewModel(
+        return viewModelFactory {
+            initializer {
+                MyProfileViewModel(
                     getUserRepository(context),
                     getProfileRepository(context),
                     getPostRepository()
-                ) as T
+                )
             }
         }
     }

@@ -23,7 +23,7 @@ class ProfileRepository private constructor(
         job: String,
         bio: String,
         imageUris: List<Uri>
-    ): Flow<Resource<Boolean>> = storageRepository.uploadAllImages(imageUris, userId).flatMapConcat { result ->
+    ): Flow<Resource<Boolean>> = storageRepository.uploadAllImagesResultStream(imageUris, userId).flatMapConcat { result ->
         when(result) {
             is Resource.Loading -> flowOf(Resource.Loading())
             is Resource.Error -> flowOf(Resource.Error(result.message ?: "이미지 업로드 실패"))

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.onStart
 class MatchRepository private constructor(
     private val matchRemoteDataSource: MatchRemoteDataSource
 ) {
-    fun createMatch(userId: String, selectedId: String): Flow<Resource<Boolean>> {
+    fun createMatchResultStream(userId: String, selectedId: String): Flow<Resource<Boolean>> {
         return flow {
             try {
                 matchRemoteDataSource.createMatch(userId, selectedId)

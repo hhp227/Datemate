@@ -17,7 +17,7 @@ class SignUpViewModel internal constructor(
     val uiState = _uiState.asStateFlow()
 
     private suspend fun createUserProfile(userId: String, email: String?) {
-        userRepository.createUserProfile(userId, email).collect { dataResource ->
+        userRepository.createUserProfileResultStream(userId, email).collect { dataResource ->
             when (dataResource) {
                 is Resource.Success -> {
                     _uiState.update { it.copy(isLoading = false, isSignUpSuccess = true) }

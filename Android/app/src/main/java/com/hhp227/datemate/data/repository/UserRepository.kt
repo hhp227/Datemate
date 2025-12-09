@@ -78,7 +78,7 @@ class UserRepository private constructor(
             .onStart { emit(Resource.Loading()) }
     }
 
-    fun createUserProfile(userId: String, email: String?): Flow<Resource<Boolean>> {
+    fun createUserProfileResultStream(userId: String, email: String?): Flow<Resource<Boolean>> {
         return flow {
             try {
                 emit(Resource.Success(userRemoteDataSource.createUserProfile(userId, email)))

@@ -1,7 +1,6 @@
 package com.hhp227.datemate.data.repository
 
 import android.net.Uri
-import android.util.Log
 import com.hhp227.datemate.common.Resource
 import com.hhp227.datemate.data.datasource.StorageRemoteDataSource
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +20,7 @@ class StorageRepository private constructor(
         return storageRemoteDataSource.uploadFile(uri, path)
     }
 
-    fun uploadAllImages(imageUris: List<Uri>, userId: String, concurrency: Int = 3): Flow<Resource<List<String>>> = flow {
+    fun uploadAllImagesResultStream(imageUris: List<Uri>, userId: String, concurrency: Int = 3): Flow<Resource<List<String>>> = flow {
         try {
             val semaphore = Semaphore(concurrency)
             val urls = coroutineScope {

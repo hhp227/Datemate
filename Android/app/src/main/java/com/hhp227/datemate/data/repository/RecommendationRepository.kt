@@ -33,7 +33,7 @@ class RecommendationRepository private constructor(
         }
     }
 
-    fun getTodayRecommendations(userId: String, limit: Int = 5): Flow<Resource<List<Profile>>> {
+    fun getTodayRecommendationsResultStream(userId: String, limit: Int = 5): Flow<Resource<List<Profile>>> {
         return flow {
             val today = getTodayKey()
             val todayDoc = recommendationRemoteDataSource.dailyRef(userId, today).get().await()
@@ -52,7 +52,7 @@ class RecommendationRepository private constructor(
         }
     }
 
-    fun getTodayChoice(userId: String): Flow<Resource<TodayChoiceResult>> = flow {
+    fun getTodayChoiceResultStream(userId: String): Flow<Resource<TodayChoiceResult>> = flow {
         val today = getTodayKey()
         val todayDoc = recommendationRemoteDataSource.dailyRef(userId, today).get().await()
 
@@ -79,7 +79,7 @@ class RecommendationRepository private constructor(
         }
     }
 
-    fun getThemedRecommendations(): Flow<Resource<List<Profile>>> {
+    fun getThemedRecommendationsResultStream(): Flow<Resource<List<Profile>>> {
         return flow {
             val DummyUser = Profile(
                 uid = "1",
@@ -98,7 +98,7 @@ class RecommendationRepository private constructor(
             .asResource()
     }
 
-    fun selectTodayChoice(userId: String, selectedId: String): Flow<Resource<Unit>> {
+    fun selectTodayChoiceResultStream(userId: String, selectedId: String): Flow<Resource<Unit>> {
         return flow {
             try {
                 val today = getTodayKey()

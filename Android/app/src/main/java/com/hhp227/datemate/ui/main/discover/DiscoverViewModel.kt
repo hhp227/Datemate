@@ -1,14 +1,10 @@
 package com.hhp227.datemate.ui.main.discover
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
 import com.hhp227.datemate.common.Resource
-import com.hhp227.datemate.data.model.Gender
 import com.hhp227.datemate.data.model.Profile
 import com.hhp227.datemate.data.repository.MatchRepository
-import com.hhp227.datemate.data.repository.ProfileRepository
 import com.hhp227.datemate.data.repository.RecommendationRepository
 import com.hhp227.datemate.data.repository.UserRepository
 import kotlinx.coroutines.delay
@@ -28,7 +24,7 @@ class DiscoverViewModel internal constructor(
             userRepository.remoteUserStateFlow
                 .filterNotNull()
                 .flatMapLatest { user ->
-                    recommendationRepository.getTodayRecommendations(user.uid)
+                    recommendationRepository.getTodayRecommendationsResultStream(user.uid)
                 }
                 .collect { resource ->
                     when (resource) {
@@ -59,7 +55,7 @@ class DiscoverViewModel internal constructor(
             userRepository.remoteUserStateFlow
                 .filterNotNull()
                 .flatMapLatest { user ->
-                    recommendationRepository.getTodayChoice(user.uid)
+                    recommendationRepository.getTodayChoiceResultStream(user.uid)
                 }
                 .collect { resource ->
                     when (resource) {
@@ -86,7 +82,7 @@ class DiscoverViewModel internal constructor(
 
     fun loadThemedRecommendations() {
         viewModelScope.launch {
-            recommendationRepository.getThemedRecommendations()
+            recommendationRepository.getThemedRecommendationsResultStream()
                 .collectLatest { resource ->
                     when (resource) {
                         is Resource.Loading -> _uiState.update { it.copy(isLoading = true) }
@@ -118,7 +114,7 @@ class DiscoverViewModel internal constructor(
             delay(450)
 
             // 3) 서버 저장
-            recommendationRepository.selectTodayChoice(currentUser.uid, profile.uid)
+            recommendationRepository.selectTodayChoiceResultStream(currentUser.uid, profile.uid)
                 .collect { res ->
                     when (res) {
                         is Resource.Loading -> _uiState.update { it.copy(isLoading = true) }
@@ -129,7 +125,7 @@ class DiscoverViewModel internal constructor(
                             _uiState.update { it.copy(isLoading = false) }
 
                             // 4) 강제 매칭 생성 (오늘의 초이스는 무조건 매칭)
-                            matchRepository.createMatch(currentUser.uid, profile.uid).first()
+                            matchRepository.createMatchResultStream(currentUser.uid, profile.uid).first()
                         }
                     }
                 }
