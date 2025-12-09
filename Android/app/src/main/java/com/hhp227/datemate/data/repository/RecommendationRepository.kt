@@ -40,7 +40,7 @@ class RecommendationRepository private constructor(
 
             if (todayDoc.exists() && todayDoc.get("profileIds") != null) {
                 val ids = todayDoc.get("profileIds") as List<String>
-                val profiles = ids.mapNotNull { profileRepository.getProfile(it) }
+                val profiles = profileRepository.getProfiles(ids)
 
                 emit(Resource.Success(profiles))
             } else {

@@ -33,15 +33,12 @@ class DiscoverViewModel internal constructor(
                 .collect { resource ->
                     when (resource) {
                         is Resource.Error<*> -> {
-                            Log.e("TEST", "error: ${resource.message}")
                             _uiState.update { it.copy(isLoading = false, message = resource.message) }
                         }
                         is Resource.Loading<*> -> {
-                            Log.e("TEST", "loading")
                             _uiState.update { it.copy(isLoading = true, message = null) }
                         }
                         is Resource.Success<*> -> {
-                            Log.e("TEST", "success: ${resource.data}")
                             val list = resource.data ?: emptyList()
 
                             _uiState.update {
@@ -124,9 +121,7 @@ class DiscoverViewModel internal constructor(
             recommendationRepository.selectTodayChoice(currentUser.uid, profile.uid)
                 .collect { res ->
                     when (res) {
-                        is Resource.Loading -> {
-                            _uiState.update { it.copy(isLoading = true) }
-                        }
+                        is Resource.Loading -> _uiState.update { it.copy(isLoading = true) }
                         is Resource.Error -> {
                             _uiState.update { it.copy(isLoading = false, message = res.message) }
                         }

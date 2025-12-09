@@ -13,6 +13,8 @@ class ProfileRepository private constructor(
     private val userRepository: UserRepository,
     private val storageRepository: StorageRepository
 ) {
+    private val profileCache = mutableMapOf<String, Profile>()
+
     fun updateUserProfile(
         userId: String,
         name: String,
@@ -45,7 +47,28 @@ class ProfileRepository private constructor(
     }
         .onStart { emit(Resource.Loading()) }
 
-    suspend fun getProfile(userId: String) = profileRemoteDataSource.getProfile(userId)
+    suspend fun getProfile(userId: String): Profile? {
+        profileCache[userId]?.let { return it }
+        return try {
+            val remote = profileRemoteDataSource.getProfile(userId)
+
+            if (remote != null) profileCache[userId] = remote
+            remote
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    suspend fun getProfiles(ids: List<String>): List<Profile> {
+        val result = mutableListOf<Profile>()
+
+        for (id in ids) {
+            val p = getProfile(id)
+
+            if (p != null) result.add(p)
+        }
+        return result
+    }
 
     suspend fun fetchRandomCandidates(gender: Gender, randomStart: Double, limit: Long): List<Profile> {
         return profileRemoteDataSource.fetchRandomCandidates(gender, randomStart, limit)
