@@ -12,7 +12,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -38,12 +37,10 @@ class RecommendationRepository private constructor(
 
     private suspend fun getTodayRecommendations(userId: String, limit: Int = 5): List<Profile> {
         val today = getTodayKey()
-        val todayDoc = recommendationRemoteDataSource.dailyRef(userId, today).get().await()
+        val ids = recommendationRemoteDataSource.fetchTodayRecommendedIds(userId, today)
 
-        if (todayDoc.exists() && todayDoc.get("profileIds") != null) {
-            val ids = todayDoc.get("profileIds") as List<String>
-            val profiles = profileRepository.getProfiles(ids)
-            return profiles
+        if (!ids.isEmpty()) {
+            return profileRepository.getProfiles(ids)
         } else {
             val candidates = getRecommendationCandidates(userId).shuffled().take(limit)
 
@@ -54,14 +51,13 @@ class RecommendationRepository private constructor(
 
     private suspend fun getTodayChoice(userId: String): TodayChoice {
         val today = getTodayKey()
-        val todayDoc = recommendationRemoteDataSource.dailyRef(userId, today).get().await()
+        val todayChoice = recommendationRemoteDataSource.fetchTodayChoice(userId, today)
 
-        if (todayDoc.exists() && todayDoc.get("choices") != null) {
-            val c = todayDoc.get("choices") as Map<*, *>
+        if (!todayChoice.isEmpty()) {
             val result = TodayChoice(
-                left = (c["left"] as? String)?.let { profileRepository.getProfile(it) },
-                right = (c["right"] as? String)?.let { profileRepository.getProfile(it) },
-                selected = (c["selected"] as? String)?.let { profileRepository.getProfile(it) }
+                left = (todayChoice["left"] as? String)?.let { profileRepository.getProfile(it) },
+                right = (todayChoice["right"] as? String)?.let { profileRepository.getProfile(it) },
+                selected = (todayChoice["selected"] as? String)?.let { profileRepository.getProfile(it) }
             )
             return result
         } else {

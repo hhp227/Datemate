@@ -10,11 +10,29 @@ import java.util.concurrent.TimeUnit
 class RecommendationRemoteDataSource private constructor(
     private val firestore: FirebaseFirestore
 ) {
-    fun dailyRef(userId: String, date: String) =
+    private fun dailyRef(userId: String, date: String) =
         firestore.collection("recommendations")
             .document(userId)
             .collection("daily")
             .document(date)
+
+    suspend fun fetchTodayRecommendedIds(userId: String, today: String): List<String> {
+        val todayDoc = dailyRef(userId, today).get().await()
+
+        if (todayDoc.exists() && todayDoc.get("profileIds") != null) {
+            val ids = todayDoc.get("profileIds") as List<String>
+            return ids
+        } else {
+            return emptyList()
+        }
+    }
+
+    suspend fun fetchTodayChoice(userId: String, today: String): Map<*, *> {
+        val todayDoc = dailyRef(userId, today).get().await()
+        return if (todayDoc.exists() && todayDoc.get("choices") != null) todayDoc.get("choices") as Map<*, *>
+        else emptyMap<String, String>()
+
+    }
 
     suspend fun loadExcludedProfileIds(userId: String): Set<String> {
         val weekAgo = Timestamp(Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(MIN_EXCLUSION_DAYS)))
