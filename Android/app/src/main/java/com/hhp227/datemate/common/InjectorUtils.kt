@@ -1,13 +1,10 @@
 package com.hhp227.datemate.common
 
 import android.content.Context
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.navigation.NavBackStackEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -142,23 +139,14 @@ object InjectorUtils {
         }
     }
 
-    fun provideDetailViewModelFactory(
-        backStackEntry: NavBackStackEntry,
-        context: Context
-    ): AbstractSavedStateViewModelFactory {
-        return object : AbstractSavedStateViewModelFactory(backStackEntry, backStackEntry.arguments) {
-            override fun <T : ViewModel> create(
-                key: String,
-                modelClass: Class<T>,
-                handle: SavedStateHandle
-            ): T {
-                if (modelClass.isAssignableFrom(SubFirstViewModel::class.java)) {
-                    return SubFirstViewModel(
-                        getUserRepository(context),
-                        handle
-                    ) as T
-                }
-                return super.create(modelClass)
+    fun provideDetailViewModelFactory(context: Context): ViewModelProvider.Factory {
+        return viewModelFactory {
+            initializer {
+                val savedStateHandle = createSavedStateHandle()
+                SubFirstViewModel(
+                    getUserRepository(context),
+                    savedStateHandle
+                )
             }
         }
     }

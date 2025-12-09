@@ -1,6 +1,5 @@
 package com.hhp227.datemate.ui
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -70,7 +69,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             )
         ) { backStackEntry ->
             SubFirstScreen(
-                viewModel = viewModel(factory = InjectorUtils.provideDetailViewModelFactory(backStackEntry, LocalContext.current.applicationContext)),
+                viewModel = viewModel(factory = InjectorUtils.provideDetailViewModelFactory(LocalContext.current.applicationContext)),
                 onNavigateUp = navController::navigateUp
             )
         }
