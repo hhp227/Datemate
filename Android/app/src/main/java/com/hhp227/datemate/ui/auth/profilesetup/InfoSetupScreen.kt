@@ -137,7 +137,8 @@ fun InfoSetupScreen(
                         uiState.selectedGender?.name.toString(),
                         uiState.birthdayMillis ?: 0,
                         uiState.bio,
-                        uiState.job
+                        uiState.job,
+                        "KR" // 임의로 국가는 한국으로 설정
                     )
                 },
                 modifier = Modifier.fillMaxWidth().height(52.dp),

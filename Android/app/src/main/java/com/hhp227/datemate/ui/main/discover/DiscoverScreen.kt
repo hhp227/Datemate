@@ -47,52 +47,62 @@ fun DiscoverScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    ScrollView(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        TodayRecommendationSection("Recommended People for today", uiState.todayRecommendations)
-        TodaysChoiceSection(
-            title = "Today's Choice",
-            uiState = uiState,
-            onClick = {
-                if (uiState.selectedProfile == null) {
-                    viewModel.selectChoice(it)  // 첫 클릭 → 애니메이션 실행
-                } else if (uiState.selectedProfile?.uid == it.uid) {
-                    onNavigateToSubFirst(it.uid) // 두 번째 클릭 → 화면 이동
+    if (!uiState.isLoading) {
+        ScrollView(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            TodayRecommendationSection("Recommended People for today", uiState.todayRecommendations)
+            TodaysChoiceSection(
+                title = "Today's Choice",
+                uiState = uiState,
+                onClick = {
+                    if (uiState.selectedProfile == null) {
+                        viewModel.selectChoice(it)  // 첫 클릭 → 애니메이션 실행
+                    } else if (uiState.selectedProfile?.uid == it.uid) {
+                        onNavigateToSubFirst(it.uid) // 두 번째 클릭 → 화면 이동
+                    }
                 }
-            }
-        )
+            )
 
-        // 테마별 섹션 시작
-        ThemedRecommendationSection(
-            title = "Popular Members",
-            isInitiallyExpanded = true,
-            users = uiState.themedRecommendations.shuffled()
-        )
-        ThemedRecommendationSection(
-            title = "New Members",
-            isInitiallyExpanded = true,
-            users = uiState.themedRecommendations.shuffled()
-        )
-        ThemedRecommendationSection(
-            title = "Global Friends",
-            isInitiallyExpanded = false,
-            users = uiState.themedRecommendations.shuffled()
-        )
-        ThemedRecommendationSection(
-            title = "Recent Active Members",
-            isInitiallyExpanded = false,
-            users = uiState.themedRecommendations.shuffled()
-        )
-        // TODO
-        /*ThemedRecommendationSection(
-            title = "동네 친구 (Nearby)",
-            isInitiallyExpanded = false,
-            users = viewModel.DummyUsers.shuffled()
-        )*/
-        TextButton(onClick = {}) {
-            Text(text = "Be a TOP Supporter")
+            // 테마별 섹션 시작
+            ThemedRecommendationSection(
+                title = "Popular Members",
+                isInitiallyExpanded = true,
+                users = uiState.themedPopular
+            )
+            ThemedRecommendationSection(
+                title = "New Members",
+                isInitiallyExpanded = true,
+                users = uiState.themedNewMembers
+            )
+            ThemedRecommendationSection(
+                title = "Global Friends",
+                isInitiallyExpanded = false,
+                users = uiState.themedGlobalFriends
+            )
+            ThemedRecommendationSection(
+                title = "Recent Active Members",
+                isInitiallyExpanded = false,
+                users = uiState.themedRecentActive
+            )
+            // TODO
+            /*ThemedRecommendationSection(
+                title = "동네 친구 (Nearby)",
+                isInitiallyExpanded = false,
+                users = viewModel.DummyUsers.shuffled()
+            )*/
+            TextButton(onClick = {}) {
+                Text(text = "Be a TOP Supporter")
+            }
+            TextButton(onClick = {}) {
+                Text(text = "New Recommendation")
+            }
         }
-        TextButton(onClick = {}) {
-            Text(text = "New Recommendation")
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()   // 둥근 로딩바
         }
     }
 }

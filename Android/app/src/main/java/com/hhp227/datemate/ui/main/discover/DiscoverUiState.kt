@@ -8,7 +8,9 @@ data class DiscoverUiState(
     val leftProfile: Profile? = null,
     val rightProfile: Profile? = null,
     val selectedProfile: Profile? = null,
-    val themedRecommendations: List<Profile> = emptyList(),
+    val themedPopular: List<Profile> = emptyList(),
+    val themedNewMembers: List<Profile> = emptyList(),
+    val themedGlobalFriends: List<Profile> = emptyList(),
+    val themedRecentActive: List<Profile> = emptyList(),
     val message: String? = null
 )
-

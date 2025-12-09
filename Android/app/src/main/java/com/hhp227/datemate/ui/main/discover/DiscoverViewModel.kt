@@ -16,15 +16,15 @@ class DiscoverViewModel internal constructor(
     private val recommendationRepository: RecommendationRepository,
     private val matchRepository: MatchRepository
 ) : ViewModel() {
-    private var _uiState = MutableStateFlow(DiscoverUiState())
+    private var _uiState = MutableStateFlow(DiscoverUiState(isLoading = true))
     val uiState: StateFlow<DiscoverUiState> = _uiState.asStateFlow()
 
-    private fun loadTodayRecommendations() {
+    private fun loadRecommendations() {
         viewModelScope.launch {
             userRepository.remoteUserStateFlow
                 .filterNotNull()
                 .flatMapLatest { user ->
-                    recommendationRepository.getTodayRecommendationsResultStream(user.uid)
+                    recommendationRepository.getAllRecommendationsResultStream(user.uid)
                 }
                 .collect { resource ->
                     when (resource) {
@@ -35,66 +35,20 @@ class DiscoverViewModel internal constructor(
                             _uiState.update { it.copy(isLoading = true, message = null) }
                         }
                         is Resource.Success<*> -> {
-                            val list = resource.data ?: emptyList()
+                            val result = resource.data ?: return@collect
 
                             _uiState.update {
                                 it.copy(
                                     isLoading = false,
-                                    todayRecommendations = list,
-                                    message = if (list.isNotEmpty()) null else it.message
-                                )
-                            }
-                        }
-                    }
-                }
-        }
-    }
-
-    fun loadTodayChoice() {
-        viewModelScope.launch {
-            userRepository.remoteUserStateFlow
-                .filterNotNull()
-                .flatMapLatest { user ->
-                    recommendationRepository.getTodayChoiceResultStream(user.uid)
-                }
-                .collect { resource ->
-                    when (resource) {
-                        is Resource.Loading -> _uiState.update { it.copy(isLoading = true) }
-                        is Resource.Error -> {
-                            _uiState.update { it.copy(isLoading = false, message = resource.message) }
-                        }
-                        is Resource.Success -> {
-                            val (left, right, selected) = resource.data ?: return@collect
-
-                            _uiState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    leftProfile = left,
-                                    rightProfile = right,
-                                    selectedProfile = selected
-                                )
-                            }
-                        }
-                    }
-                }
-        }
-    }
-
-    fun loadThemedRecommendations() {
-        viewModelScope.launch {
-            recommendationRepository.getThemedRecommendationsResultStream()
-                .collectLatest { resource ->
-                    when (resource) {
-                        is Resource.Loading -> _uiState.update { it.copy(isLoading = true) }
-                        is Resource.Error -> {
-                            _uiState.update { it.copy(isLoading = false, message = resource.message) }
-                        }
-                        is Resource.Success -> {
-                            val themedRecommendations = resource.data ?: emptyList()
-
-                            _uiState.update {
-                                it.copy(
-                                    themedRecommendations = themedRecommendations
+                                    todayRecommendations = result.todayRecommendations,
+                                    leftProfile = result.todayChoices.left,
+                                    rightProfile = result.todayChoices.right,
+                                    selectedProfile = result.todayChoices.selected,
+                                    themedPopular = result.themedPopular,
+                                    themedNewMembers = result.themedNewMembers,
+                                    themedGlobalFriends = result.themedGlobalFriends,
+                                    themedRecentActive = result.themedRecentActive,
+                                    message = it.message
                                 )
                             }
                         }
@@ -133,8 +87,6 @@ class DiscoverViewModel internal constructor(
     }
 
     init {
-        loadTodayRecommendations()
-        loadTodayChoice()
-        loadThemedRecommendations()
+        loadRecommendations()
     }
 }

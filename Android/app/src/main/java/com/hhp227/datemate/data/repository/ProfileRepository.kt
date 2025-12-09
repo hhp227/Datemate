@@ -22,6 +22,7 @@ class ProfileRepository private constructor(
         birthday: Long,
         job: String,
         bio: String,
+        country: String,
         imageUris: List<Uri>
     ): Flow<Resource<Boolean>> = storageRepository.uploadAllImagesResultStream(imageUris, userId).flatMapConcat { result ->
         when(result) {
@@ -36,7 +37,16 @@ class ProfileRepository private constructor(
                     if (authResult is Resource.Error)
                         emit(Resource.Error(authResult.message ?: "Auth 업데이트 실패"))
                     else {
-                        val firestoreUid = profileRemoteDataSource.updateUserProfile(userId, name, gender, birthday, job, bio, uploadedUrls)
+                        val firestoreUid = profileRemoteDataSource.updateUserProfile(
+                            userId,
+                            name,
+                            gender,
+                            birthday,
+                            bio,
+                            job,
+                            country,
+                            uploadedUrls
+                        )
 
                         userRepository.storeUserProfile(UserCache(firestoreUid))
                         emit(Resource.Success(true))
@@ -50,10 +60,10 @@ class ProfileRepository private constructor(
     suspend fun getProfile(userId: String): Profile? {
         profileCache[userId]?.let { return it }
         return try {
-            val remote = profileRemoteDataSource.getProfile(userId)
+            val profile = profileRemoteDataSource.getProfile(userId)
 
-            if (remote != null) profileCache[userId] = remote
-            remote
+            if (profile != null) profileCache[userId] = profile
+            profile
         } catch (_: Exception) {
             null
         }
@@ -63,15 +73,36 @@ class ProfileRepository private constructor(
         val result = mutableListOf<Profile>()
 
         for (id in ids) {
-            val p = getProfile(id)
+            val profile = getProfile(id)
 
-            if (p != null) result.add(p)
+            if (profile != null) result.add(profile)
         }
         return result
     }
 
-    suspend fun fetchRandomCandidates(gender: Gender, randomStart: Double, limit: Long): List<Profile> {
+    suspend fun getRandomProfiles(gender: Gender, randomStart: Double, limit: Long): List<Profile> {
         return profileRemoteDataSource.fetchRandomCandidates(gender, randomStart, limit)
+    }
+
+    suspend fun getPopularProfiles(gender: Gender): List<Profile> {
+        return profileRemoteDataSource.fetchPopularCandidates(gender)
+    }
+
+    suspend fun getNewMemberProfiles(gender: Gender): List<Profile> {
+        return profileRemoteDataSource.fetchNewUserCandidates(gender)
+    }
+
+    suspend fun getRecentActiveProfiles(gender: Gender): List<Profile> {
+        return profileRemoteDataSource.fetchRecentActiveCandidates(gender)
+    }
+
+    suspend fun getGlobalProfiles(gender: Gender, randomStart: Double, country: String?): List<Profile> {
+        return profileRemoteDataSource.fetchGlobalCandidates(gender, randomStart, country)
+    }
+
+    suspend fun rateProfile(targetUid: String, raterUid: String, score: Double) {
+        profileRemoteDataSource.rateProfile(targetUid, raterUid, score)
+        profileCache.remove(targetUid)
     }
 
     companion object {

@@ -69,7 +69,15 @@ class ProfileSetupViewModel(
         _uiState.update { it.copy(job = newJob, jobError = jobError) }
     }
 
-    fun completeProfileSetup(imageUrls: List<Uri>, name: String, gender: String, birthday: Long, bio: String, job: String) {
+    fun completeProfileSetup(
+        imageUrls: List<Uri>,
+        name: String,
+        gender: String,
+        birthday: Long,
+        bio: String,
+        job: String,
+        country: String
+    ) {
         viewModelScope.launch {
             val user = userRepository.remoteUserStateFlow.first() ?: throw Exception("로그인 필요")
 
@@ -80,6 +88,7 @@ class ProfileSetupViewModel(
                 birthday = birthday,
                 job = job,
                 bio = bio,
+                country = country,
                 imageUris = imageUrls
             ).collect { result ->
                 when (result) {

@@ -14,6 +14,7 @@ data class Profile(
     val bio: String = "",
     val birthday: Timestamp? = null,
     val job: String = "",
+    val country: String = "",
     val photos: List<String> = emptyList(),
     val randomKey: Double = 0.0,
     val updatedAt: Timestamp? = null
